@@ -1,0 +1,55 @@
+syntax = "proto3";
+package commonEnum;
+option go_package = "github.com/luxun9527/gex/common/proto/enum;enum";
+//买卖方向
+enum Side{
+  //未知
+  UnknownSide =0;
+  //买
+  Buy=1;
+  //卖
+  Sell=2;
+}
+//订单类型
+enum OrderType{
+  //未知
+  UnknownOrderType =0;
+  //市价单
+  MO =1;
+  //限价单
+  LO=2;
+  //立即全部成交否則取消
+  FOK=3;
+}
+//订单状态
+enum OrderStatus{
+  //未知
+  UnknownOrderStatus =0;
+  //新建未成交
+  NewCreated=1;
+  //部分成交
+  PartFilled=2;
+  //全部成交
+  ALLFilled=3;
+  //撤销
+  Canceled=4;
+  //废弃
+  Wasted=5;
+}
+//成交角色
+enum FillRole{
+  // 未知
+  UnknownFillRole =0;
+  //taker
+  Taker =1;
+  //maker
+  Maker=2;
+}
+//报价类型
+enum Quote{
+    UnknownQuote=0;
+    //卖出价
+    Ask=1;
+    //买入价
+    Bid=2;
+}

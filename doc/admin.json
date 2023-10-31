@@ -1,0 +1,184 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "管理后台",
+    "description": "管理后台",
+    "version": "v1"
+  },
+  "host": "api.gex.com",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/admin/v1/get_service_config": {
+      "post": {
+        "summary": "获取服务配置",
+        "operationId": "GetServiceConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetServiceConfigResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetServiceConfigReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/v1/upload_template_file": {
+      "post": {
+        "summary": "上传配置模板文件",
+        "operationId": "UploadTemplateFile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UploadTemplateFileReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/v1/upsert_service_config": {
+      "post": {
+        "summary": "添加/更新服务的配置",
+        "operationId": "UpsertServiceConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpsertServiceConfigReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Empty": {
+      "type": "object",
+      "title": "Empty"
+    },
+    "GetServiceConfigReq": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        }
+      },
+      "title": "GetServiceConfigReq",
+      "required": [
+        "key"
+      ]
+    },
+    "GetServiceConfigResp": {
+      "type": "object",
+      "properties": {
+        "config_data": {
+          "type": "string"
+        }
+      },
+      "title": "GetServiceConfigResp",
+      "required": [
+        "config_data"
+      ]
+    },
+    "UploadTemplateFileReq": {
+      "type": "object",
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "description": "服务名"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "交易对"
+        }
+      },
+      "title": "UploadTemplateFileReq",
+      "required": [
+        "service_name",
+        "symbol"
+      ]
+    },
+    "UpsertServiceConfigReq": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "交易对"
+        },
+        "config_data": {
+          "type": "string",
+          "description": "配置"
+        }
+      },
+      "title": "UpsertServiceConfigReq",
+      "required": [
+        "key",
+        "config_data"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ]
+}

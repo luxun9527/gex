@@ -1,0 +1,5 @@
+FROM debian:stretch-slim
+WORKDIR /app
+COPY ../../bin/orderrpc /app/orderrpc
+COPY ../../app/order/rpc/etc/order.yaml /app/order.yaml
+

@@ -1,0 +1,5 @@
+FROM debian:stretch-slim
+WORKDIR /app
+COPY ../../bin/adminapi /app/adminapi
+COPY ../../app/admin/api/etc/admin.yaml /app/admin.yaml
+

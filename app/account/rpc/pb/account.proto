@@ -1,0 +1,139 @@
+syntax = "proto3";
+package account;
+option go_package = "./pb";
+message Empty{}
+message GetUserAssetReq {
+  //用户id
+  int64  uid = 1;
+  //币中
+  int32 coin_id=2;
+}
+// 用户资产表
+message Asset {
+  // 主键ID
+  int64 id = 10;
+  // 用户ID
+  int64 user_id = 1;
+  // 用户名
+  string username = 2;
+  // 数字货币ID
+  int32 coin_id = 3;
+  // 数字货币名称
+  string coin_name = 4;
+  // 可用余额
+  string available_qty = 5;
+  // 冻结金额
+  string frozen_qty = 6;
+}
+message GetUserAssetResp {
+  Asset asset=1;
+}
+
+message FreezeUserAssetReq{
+  //用户id
+  int64 uid =1;
+  //币种id
+  int32 coin_id=2;
+  //数量
+  string qty=3;
+}
+
+message UnFreezeUserAssetReq{
+  //用户id
+  int64 uid =1;
+  //币种id
+  int32 coin_id=2;
+  //数量
+  string qty=3;
+}
+message  DeductUserAssetReq{
+  //用户id
+  int64 uid =1;
+    //币种id
+  int32 coin_id=2;
+  //数量
+  string qty=3;
+  //是否从冻结中扣除
+  bool is_from_freeze=4;
+}
+message AddUserAssetReq{
+  //用户id
+  int64 uid =1;
+  //币种id
+  int32 coin_id=2;
+  //数量
+  string qty=3;
+}
+
+message GetUserAssetListReq{
+  //用户id
+  int64 uid =1;
+}
+message GetUserAssetListResp{
+    repeated Asset asset_list =1;
+}
+
+message RegisterReq{
+  //用户名
+  string username=1;
+  //密码
+  string password=2;
+  //手机号
+  int64 phone_number=3;
+}
+message LoginReq{
+  //用户名
+  string username=1;
+  //密码
+  string password=2;
+}
+
+message LoginResp{
+  //用户id
+  int64 uid=3;
+  //用户名
+  string username=1;
+  //token
+  string token=2;
+  //token到期时间
+  int64 expire_time=4;
+
+}
+message ValidateTokenReq{
+  //token
+  string token =1;
+}
+message LoginOutReq{
+  //用户名
+  string uid=1;
+  //token凭证
+  string token=2;
+}
+message ValidateTokenResp{
+  //用户id
+  int64 uid=1;
+  //用户名
+  string username=2;
+}
+service AccountService {
+  //获取用户指定币种的资产。
+  rpc GetUserAssetByCoin(GetUserAssetReq)returns(GetUserAssetResp);
+  //获取用户所有币种资产。
+  rpc GetUserAssetList(GetUserAssetListReq)returns(GetUserAssetListResp);
+  //冻结用户资产。
+  rpc FreezeUserAsset(FreezeUserAssetReq)returns(Empty);
+  //解冻用户资产
+  rpc UnFreezeUserAsset(FreezeUserAssetReq)returns(Empty);
+  //扣减用户资产
+  rpc DeductUserAsset(DeductUserAssetReq)returns(Empty);
+  //增加用户资产
+  rpc AddUserAsset(AddUserAssetReq)returns(Empty);
+  //注册
+  rpc Register(RegisterReq)returns(Empty);
+  //登录
+  rpc Login(LoginReq)returns(LoginResp);
+  //登出
+  rpc LoginOut(LoginOutReq)returns(Empty);
+  //验证token是否有效。
+  rpc ValidateToken(ValidateTokenReq)returns(ValidateTokenResp);
+}

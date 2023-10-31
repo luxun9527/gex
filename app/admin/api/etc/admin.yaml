@@ -1,0 +1,22 @@
+Name: AdminApi
+Host: 0.0.0.0
+Port: 20015
+TimeOut: 0
+EtcdConf:
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 3
+LoggerConfig:
+  Level: debug
+  Stacktrace: true
+  AddCaller: true
+  Mode: console
+  FileName: ""
+  ErrorFileName: ""
+  CallerShip: 3
+  MaxSize: 10
+  MaxAge: 30
+  MaxBackup: 20
+  Async: false
+  Json: false
+  Compress: true

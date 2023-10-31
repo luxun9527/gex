@@ -1,0 +1,6 @@
+FROM debian:stretch-slim
+WORKDIR /app
+
+COPY ../../bin/accountapi /app/accountapi
+COPY ../../app/account/api/etc/account.yaml /app/account.yaml
+

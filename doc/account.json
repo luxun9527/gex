@@ -1,0 +1,341 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "账户",
+    "description": "账户",
+    "version": "v1"
+  },
+  "host": "api.gex.com",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/account/v1/get_captcha": {
+      "post": {
+        "summary": "获取验证码",
+        "operationId": "GetCaptcha",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetCaptchaResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "Account"
+        ]
+      }
+    },
+    "/account/v1/get_user_asset_list": {
+      "post": {
+        "summary": "获取用户所有资产",
+        "operationId": "GetUserAssetList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetUserAssetListResp"
+            }
+          }
+        },
+        "requestBody": {},
+        "tags": [
+          "Account"
+        ]
+      }
+    },
+    "/account/v1/login": {
+      "post": {
+        "summary": "登录",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Account"
+        ]
+      }
+    },
+    "/account/v1/register": {
+      "post": {
+        "summary": "注册",
+        "operationId": "Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Account"
+        ]
+      }
+    },
+    "/account/v1/validate_token": {
+      "post": {
+        "summary": "验证token",
+        "operationId": "ValidateToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ValidateTokenResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ValidateTokenReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Account"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AssetInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "id"
+        },
+        "coin_name": {
+          "type": "string",
+          "description": "币种名称"
+        },
+        "coin_id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "币种id"
+        },
+        "available_qty": {
+          "type": "string",
+          "description": "可用数量"
+        },
+        "frozen_qty": {
+          "type": "string",
+          "description": "冻结数量"
+        }
+      },
+      "title": "AssetInfo",
+      "required": [
+        "id",
+        "coin_name",
+        "coin_id",
+        "available_qty",
+        "frozen_qty"
+      ]
+    },
+    "Empty": {
+      "type": "object",
+      "title": "Empty"
+    },
+    "GetCaptchaResp": {
+      "type": "object",
+      "properties": {
+        "captch": {
+          "type": "string"
+        }
+      },
+      "title": "GetCaptchaResp",
+      "required": [
+        "captch"
+      ]
+    },
+    "GetUserAssetListResp": {
+      "type": "object",
+      "properties": {
+        "asset_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AssetInfo"
+          }
+        }
+      },
+      "title": "GetUserAssetListResp",
+      "required": [
+        "asset_list"
+      ]
+    },
+    "LoginReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "LoginReq",
+      "required": [
+        "username",
+        "password"
+      ]
+    },
+    "LoginResp": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "integer",
+          "format": "int64",
+          "description": "uid"
+        },
+        "username": {
+          "type": "string",
+          "description": "用户名"
+        },
+        "token": {
+          "type": "string",
+          "description": "token"
+        },
+        "expire_time": {
+          "type": "integer",
+          "format": "int64",
+          "description": "到期时间"
+        }
+      },
+      "title": "LoginResp",
+      "required": [
+        "uid",
+        "username",
+        "token",
+        "expire_time"
+      ]
+    },
+    "RegisterReq": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "用户名"
+        },
+        "password": {
+          "type": "string",
+          "description": "密码"
+        },
+        "confirm_password": {
+          "type": "string",
+          "description": "确认密码"
+        },
+        "phone_number": {
+          "type": "integer",
+          "format": "int64",
+          "description": "手机号"
+        },
+        "captcha": {
+          "type": "integer",
+          "format": "int64",
+          "description": "验证"
+        }
+      },
+      "title": "RegisterReq",
+      "required": [
+        "username",
+        "password",
+        "confirm_password"
+      ]
+    },
+    "UserInfo": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      },
+      "title": "UserInfo",
+      "required": [
+        "uid",
+        "username"
+      ]
+    },
+    "ValidateTokenReq": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      },
+      "title": "ValidateTokenReq",
+      "required": [
+        "token"
+      ]
+    },
+    "ValidateTokenResp": {
+      "type": "object",
+      "properties": {
+        "user_info": {
+          "$ref": "#/definitions/UserInfo"
+        }
+      },
+      "title": "ValidateTokenResp",
+      "required": [
+        "user_info"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ]
+}

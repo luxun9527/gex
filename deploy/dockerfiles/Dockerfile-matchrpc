@@ -1,0 +1,5 @@
+FROM debian:stretch-slim
+WORKDIR /app
+COPY ../../bin/matchrpc /app/matchrpc
+COPY ../../app/match/rpc/etc/match.yaml /app/match.yaml
+
