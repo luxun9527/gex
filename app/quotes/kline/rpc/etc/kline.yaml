@@ -1,14 +1,12 @@
-Name: kline.rpc
+Name: kline_rpc
 ListenOn: 0.0.0.0:20009
 Timeout: 0
-Middlewares:
-  Stat: false
 Etcd:
   Hosts:
-   - etcd:2379
-  Key: service_kline.rpc_BTC_USDT
+   - 192.168.2.159:2379
+  Key: service_kline_rpc
 GormConf:
-  ip: mysql
+  ip: 192.168.2.159
   port: 3307
   dbName: trade
   username: root
@@ -28,10 +26,10 @@ WsConf:
   Etcd:
     Key: proxy
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 RedisConf:
-  Host: redis:6379
+  Host: 192.168.2.159:6379
   Type: node
   PingTimeout: 5s
 LoggerConfig:
@@ -40,8 +38,8 @@ LoggerConfig:
   AddCaller: true
   CallerShip: 3
   Mode: console
-  FileName: github.com/luxun9527/gex-match-std.log
-  ErrorFileName: github.com/luxun9527/gex-match-err.log
+  FileName: gex-kline-std.log
+  ErrorFileName: gex-kline-err.log
   MaxSize: 10
   MaxAge: 30
   MaxBackup: 20
@@ -50,4 +48,4 @@ LoggerConfig:
   Compress: true
 PulsarConfig:
   hosts:
-    - pulsar:6650
+    - 192.168.2.159:6650

@@ -18,7 +18,7 @@ import (
 
 var (
 	symbol     = flag.String("s", "BTC_USDT", "symbol 交易对")
-	etcdConfig = flag.String("e", `{"Endpoints":["192.168.2.159:2379"],"DialTimeout":5}`, "symbol 交易对")
+	etcdConfig = flag.String("e", `{"Endpoints":["etcd:2379"],"DialTimeout":5}`, "symbol 交易对")
 )
 
 func main() {

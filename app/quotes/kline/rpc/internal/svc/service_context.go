@@ -13,17 +13,18 @@ import (
 )
 
 type ServiceContext struct {
-	Config        config.Config
+	Config        *config.Config
 	Query         *query.Query
 	RedisClient   *redis.Redis
 	MatchConsumer pulsar.Consumer
 	WsClient      gpushPb.ProxyClient
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c *config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
+	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed", logger.ErrorField(err))

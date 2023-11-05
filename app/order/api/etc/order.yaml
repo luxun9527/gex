@@ -2,32 +2,29 @@ Name: OrderApi
 Host: 0.0.0.0
 Port: 20013
 TimeOut: 3600
-Middlewares:
-  Log: false
-  Trace: false
 OrderRpcConf:
   Etcd:
-    Key: service_order.rpc
+    Key: service_order_rpc
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 MatchRpcConf:
   Etcd:
-    Key: service_match.rpc
+    Key: service_match_rpc
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 AccountRpcConf:
   Etcd:
-    Key: service_account.rpc
+    Key: service_account_rpc
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 WsConf:
   Etcd:
     Key: proxy
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 SymbolListConf:
   BTC_USDT:
@@ -45,8 +42,8 @@ LoggerConfig:
   AddCaller: true
   CallerShip: 3
   Mode: console
-  FileName: github.com/luxun9527/gex-match-std.log
-  ErrorFileName: github.com/luxun9527/gex-match-err.log
+  FileName: gex-order-std.log
+  ErrorFileName: gex-order-err.log
   MaxSize: 10
   MaxAge: 30
   MaxBackup: 20
@@ -54,5 +51,5 @@ LoggerConfig:
   Json: false
   Compress: true
 LanguageEtcdConf:
-  Endpoints: ["etcd:2379"]
+  Endpoints: ["192.168.2.159:2379"]
   DialTimeout: 5

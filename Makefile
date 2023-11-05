@@ -50,6 +50,18 @@ admindoc:
 kline:
 	make klinerpc  && make klinemodel
 
+run:
+	./deploy/scripts/run.sh
+clear:
+	./deploy/scripts/del.sh
+	./deploy/scripts/clear.sh
+	rm -rf deploy/depend/pulsar/data
+
+dep1:
+	docker-compose -f deploy/depend/docker-compose.yaml up
+dep2:
+	docker-compose -f deploy/dockerfiles/docker-compose.yaml up
+
 build:
 	go env -w GOOS=linux
 	go env -w  GOPROXY=https://goproxy.cn,direct

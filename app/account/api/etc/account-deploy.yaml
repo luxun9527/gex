@@ -1,0 +1,28 @@
+Name: AccountApi
+Host: 0.0.0.0
+Port: 20014
+TimeOut: 0
+
+AccountRpcConf:
+  Etcd:
+    Key: service_account_rpc
+    Hosts:
+      - etcd:2379
+  NonBlock: true
+LoggerConfig:
+  Level: debug
+  Stacktrace: true
+  AddCaller: true
+  Mode: console
+  CallerShip: 3
+  FileName: gex-account-std.log
+  ErrorFileName: gex-account-err.log
+  MaxSize: 10
+  MaxAge: 30
+  MaxBackup: 20
+  Async: false
+  Json: false
+  Compress: true
+LanguageEtcdConf:
+  Endpoints: ["etcd:2379"]
+  DialTimeout: 5

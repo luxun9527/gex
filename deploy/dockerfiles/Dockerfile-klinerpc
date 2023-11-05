@@ -1,4 +1,4 @@
 FROM debian:stretch-slim
 WORKDIR /app
 COPY ../../bin/klinerpc /app/klinerpc
-COPY ../../app/quotes/kline/rpc/etc/kline.yaml /app/kline.yaml
+COPY ../../app/quotes/kline/rpc/etc/kline-deploy.yaml /app/kline.yaml

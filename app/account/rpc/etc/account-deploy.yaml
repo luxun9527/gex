@@ -1,0 +1,56 @@
+Name: account.rpc
+ListenOn: 0.0.0.0:20002
+Timeout: 0
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: service_account_rpc
+GormConf:
+  ip: mysql
+  port: 3307
+  dbName: trade
+  username: root
+  password: root
+  maxIdleConns: 10
+  maxOpenConns: 100
+LoggerConfig:
+  Level: debug
+  Stacktrace: true
+  AddCaller: true
+  Mode: console
+  FileName: gex-account-std.log
+  ErrorFileName: gex-account-err.log
+  MaxSize: 10
+  MaxAge: 30
+  MaxBackup: 20
+  Async: false
+  Json: false
+  Compress: true
+  CallerShip: 3
+SymbolListConf:
+  BTC_USDT:
+    SymbolName: BTC_USDT
+    SymbolID: 1
+    BaseCoinID: 1
+    BaseCoinName: BTC
+    QuoteCoinID: 2
+    QuoteCoinName: USDT
+    BaseCoinPrec: 4
+    QuoteCoinPrec: 4
+CoinListConf:
+  BTC:
+    CoinName: BTC
+    CoinID: 1
+    Prec: 4
+  USDT:
+    CoinName: USDT
+    CoinID: 2
+    Prec: 4
+
+PulsarConfig:
+  hosts:
+    - pulsar:6650
+RedisConf:
+  Host: redis:6379
+  Type: node
+  PingTimeout: 5s

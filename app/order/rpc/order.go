@@ -24,7 +24,7 @@ func main() {
 
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	ctx := svc.NewServiceContext(c)
+	ctx := svc.NewServiceContext(&c)
 	consumer.InitConsumer(ctx)
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterOrderServiceServer(grpcServer, server.NewOrderServiceServer(ctx))

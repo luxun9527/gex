@@ -25,16 +25,6 @@ const (
 	Order  ConfigPrefix = "order"
 )
 
-// Interface defines the minimum interface that an option must fulfill
-type Option interface {
-	// Ident returns the "indentity" of this option, a unique identifier that
-	// can be used to differentiate between options
-	Ident() Op
-
-	// Value returns the corresponding value.
-	Value() interface{}
-}
-
 func (c ConfigPrefix) BuildKey(symbol string) string {
 	return Prefix + "/" + string(c) + "/" + symbol
 }
@@ -135,8 +125,9 @@ func MustLoadFromEtcd(key, etcdConfig string, target any, ops ...ConfigCustomFun
 
 }
 func WatchConfig(key string, target any, cli *clientv3.Client, f func(evs []*clientv3.Event, target any)) {
-	rch := cli.Watch(context.Background(), key)
+	rch := cli.Watch(context.Background(), key, clientv3.WithPrefix())
 	for resp := range rch {
+		logx.Sloww("")
 		f(resp.Events, target)
 	}
 }

@@ -1,5 +1,5 @@
 FROM debian:stretch-slim
 WORKDIR /app
 COPY ../../bin/orderapi /app/orderapi
-COPY ../../app/order/api/etc/order.yaml /app/order.yaml
+COPY ../../app/order/api/etc/order-deploy.yaml /app/order.yaml
 

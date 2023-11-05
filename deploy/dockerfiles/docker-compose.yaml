@@ -1,0 +1,103 @@
+version: "3.7"
+services:
+
+  accountapi:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-accountapi
+    container_name: accountapi
+    restart: unless-stopped
+    entrypoint: ["/app/accountapi","-f","/app/account.yaml"]
+    ports: # 映射端口
+      - "20014:20014"
+    networks:
+      - gex
+  accountrpc:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-accountrpc
+    container_name: accountrpc
+    restart: unless-stopped
+    entrypoint: ["/app/accountrpc","-f","/app/account.yaml"]
+    ports: # 映射端口
+      - "20002:20002"
+    networks:
+      - gex
+  matchmq:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-matchmq
+    container_name: matchmq
+    restart: unless-stopped
+    entrypoint: ["/app/matchmq","-f","/app/match.yaml"]
+    networks:
+      - gex
+  matchrpc:
+    build:
+      context: ../../
+      dockerfile:  ./deploy/dockerfiles/Dockerfile-matchrpc
+    container_name: matchrpc
+    restart: unless-stopped
+    entrypoint: ["/app/matchrpc"]
+    ports: # 映射端口
+      - "20003:20003"
+    networks:
+      - gex
+  adminapi:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-adminapi
+    container_name: adminapi
+    restart: unless-stopped
+    entrypoint: ["/app/adminapi","-f","/app/admin.yaml"]
+    ports: # 映射端口
+      - "20015:20015"
+    networks:
+      - gex
+  orderapi:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-orderapi
+    container_name: orderapi
+    restart: unless-stopped
+    entrypoint: ["/app/orderapi","-f","/app/order.yaml"]
+    ports: # 映射端口
+      - "20013:20013"
+    networks:
+      - gex
+  orderrpc:
+    build:
+      context: ../../
+      dockerfile:  ./deploy/dockerfiles/Dockerfile-orderrpc
+    container_name: orderrpc
+    restart: unless-stopped
+    entrypoint: ["/app/orderrpc","-f","/app/order.yaml"]
+    ports: # 映射端口
+      - "20001:20001"
+    networks:
+      - gex
+  quoteapi:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-quoteapi
+    container_name: quoteapi
+    restart: unless-stopped
+    entrypoint: ["/app/quoteapi","-f","/app/quote.yaml"]
+    ports: # 映射端口
+      - "20011:20011"
+    networks:
+      - gex
+  klinerpc:
+    build:
+      context: ../../
+      dockerfile: ./deploy/dockerfiles/Dockerfile-klinerpc
+    container_name: klinerpc
+    restart: unless-stopped
+    entrypoint: ["/app/klinerpc","-f","/app/kline.yaml"]
+    ports: # 映射端口
+      - "20009:20009"
+    networks:
+      - gex
+networks:
+  gex:
+    external: true

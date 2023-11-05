@@ -65,7 +65,9 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 		logx.Errorw("get gid failed", logger.ErrorField(err))
 		return nil, errs.DTMFailed
 	}
+	//l.svcCtx.Config.AccountRpcConf.
 	//gid := stringx.Randn(16)
+	//	l.svcCtx.Config.AccountRpcConf.Target
 	accountTarget, err := l.svcCtx.Config.AccountRpcConf.BuildTarget()
 	if err != nil {
 		logx.Errorw("get account client failed", logger.ErrorField(err))
@@ -76,6 +78,7 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 		logx.Errorw("get order client failed", logger.ErrorField(err))
 		return nil, errs.Internal
 	}
+	//l.svcCtx.Config.OrderRpcConf.Endpoints
 	var (
 		freezeUserAddr    = accountTarget + "/account.AccountService/FreezeUserAsset"
 		unFreezeUserAddr  = accountTarget + "/account.AccountService/UnFreezeUserAsset"

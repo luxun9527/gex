@@ -52,3 +52,8 @@ type UserInfo struct {
 type ValidateTokenResp struct {
 	UserInfo *UserInfo `json:"user_info"`
 }
+
+type AddUserAssetReq struct {
+	CoinName string `json:"coin_name"`
+	Qty      string `json:"qty"`
+}

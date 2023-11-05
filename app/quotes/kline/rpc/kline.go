@@ -23,7 +23,7 @@ func main() {
 	flagx.Parse()
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-	ctx := svc.NewServiceContext(c)
+	ctx := svc.NewServiceContext(&c)
 	logic.InitKlineHandler(ctx)
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterKlineServiceServer(grpcServer, server.NewKlineServiceServer(ctx))

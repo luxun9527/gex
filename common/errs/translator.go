@@ -76,6 +76,7 @@ func InitTranslatorFromEtcd(etcdConfig string) {
 			m.Store(lang, d)
 		}
 	}), confx.WithCustomWatchFunc(func(evs []*clientv3.Event, target any) {
+
 		for _, v := range evs {
 			key := strings.Split(string(v.Kv.Key), "/")
 			if len(key) < 2 {

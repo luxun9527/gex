@@ -1,0 +1,135 @@
+version: "3.7"
+services:
+  pulsar:
+    image: apachepulsar/pulsar:2.9.1
+    command: bin/pulsar standalone
+    container_name: pulsar
+    ports:
+      - "8080:8080"
+      - "6650:6650"
+    restart: unless-stopped
+    volumes:
+      - "./pulsar/conf/:/pulsar/conf"
+      - "./pulsar/data/:/pulsar/data"
+    deploy:
+      resources:
+        limits:
+          cpus: '2.50'
+    networks:
+      - gex
+  #/deploy/depend/pulsar/conf 是相对docker-compose.yaml文件的位置的。
+  dashboard:
+    image: apachepulsar/pulsar-manager:v0.2.0
+    container_name: pulsar_manager
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    depends_on:
+      - pulsar
+    links:
+      - pulsar
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
+    networks:
+      - gex
+  nginx:
+    image: nginx:1.21.1           # 镜像`nginx:1.21.1`
+    container_name: nginx               # 容器名为'nginx'
+    restart: unless-stopped                                       # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
+    volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./nginx/conf/nginx.conf:/etc/nginx/nginx.conf"
+      - "./nginx/conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf"
+      - "./nginx/html:/usr/share/nginx/html"
+      - "./nginx/log:/var/log/nginx"
+    environment: # 设置环境变量,相当于docker run命令中的-e
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+    ports: # 映射端口
+      - "80:80"
+    networks:
+      - gex
+  mysql:
+    image: mysql:8.0  # 原镜像`mysql:8.0`
+    container_name: mysql8                                    # 容器名为'mysql8'
+    restart: unless-stopped                                               # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
+    volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./mysql/conf/my.cnf:/etc/mysql/my.cnf"
+      - "./mysql/data:/var/lib/mysql"
+      - "./mysql/mysql-files:/var/lib/mysql-files"
+      - "./mysql/init:/docker-entrypoint-initdb.d"
+    environment: # 设置环境变量,相当于docker run命令中的-e
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+      MYSQL_ROOT_PASSWORD: root         # 设置root用户密码
+    ports: # 映射端口
+      - "3307:3307"
+    networks:
+      - gex
+  redis:
+    image: redis:7.0.5                    # 镜像'redis:7.0.5'
+    container_name: redis                                                             # 容器名为'redis'
+    restart: unless-stopped                                                                   # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
+    command: redis-server /etc/redis/redis.conf   # 启动redis服务并添加密码为：123456,默认不开启redis-aof方式持久化配置
+    #    command: redis-server --requirepass 123456 --appendonly yes # 启动redis服务并添加密码为：123456,并开启redis持久化配置
+    environment: # 设置环境变量,相当于docker run命令中的-e
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+    volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./redis/data:/data"
+      - "./redis/config/redis.conf:/etc/redis/redis.conf"  # `redis.conf`文件内容`http://download.redis.io/redis-stable/redis.conf`
+    ports: # 映射端口
+      - "6379:6379"
+    networks:
+      - gex
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.7                #https://etcd.io/docs/v2.3/docker_guide/
+    container_name: etcd
+    restart: unless-stopped
+    command: /usr/local/bin/etcd --data-dir=/etcd-data --name node1 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://etcd:2379 --log-level info --logger zap --log-outputs stderr --listen-peer-urls http://0.0.0.0:2380 --initial-advertise-peer-urls http://0.0.0.0:2380  --initial-cluster node1=http://0.0.0.0:2380
+    ports: # 映射端口
+      - "2379:2379"
+      - "2380:2380"
+    networks:
+      - gex
+  proxy:
+    build:
+      dockerfile: ./ws/proxy/Dockerfile
+    container_name: ws_proxy
+    restart: unless-stopped
+    entrypoint: ["/app/proxy","-config","/app/config.toml"]
+    ports: # 映射端口
+    - "10067:10067"
+    - "10068:10068"
+    volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./ws/proxy/config.toml:/app/config.toml"
+    networks:
+      - gex
+  socket:
+    build:
+      dockerfile: ./ws/socket/Dockerfile
+    container_name: ws_socket
+    restart: unless-stopped
+    entrypoint: [ "/app/socket","-config","/app/config.toml" ]
+    ports: # 映射端口
+      - "9992:9992"
+    volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./ws/socket/config.toml:/app/config.toml"
+    networks:
+      - gex
+  dtm:
+    build:
+      dockerfile: ./dtm/Dockerfile
+    container_name: dtm
+    restart: unless-stopped
+    entrypoint: [ "/app/dtm","-c","/app/conf.yml" ]
+    ports: # 映射端口
+      - "36789:36789"
+      - "36790:36790"
+      - "36791:36791"
+    volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./dtm/conf.yml:/app/conf.yml"
+    networks:
+      - gex
+networks:
+  gex:
+    external: true

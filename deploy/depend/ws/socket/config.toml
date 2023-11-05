@@ -1,0 +1,42 @@
+
+
+[server]
+    port="9992"
+
+[bucket]
+    #分区数量
+    BucketCount =512
+    #分发chan的长度
+    DispatchChanSize =100
+[connection]
+  #写频率毫秒
+   WriteRate=500
+  #连接超时时间单位毫秒
+   TimeOut=200000000
+   #是否压缩 使用defalte协议压缩
+   IsCompress=false
+   #写缓存的大小
+   WriteBuf=100
+   #读缓存的大小，最后设置成最大消息的大小
+   ReadBuf=200
+
+[logger]
+    Level ="debug"
+    Stacktrace=true
+    AddCaller =true
+    Model="console"
+    CallerShip=0
+    FileName ="./stdout.ws.json"
+    ErrorFileName ="./stderr.ws.json"
+    MaxSize =100
+    MaxAge =10
+    MaxBackup =10
+    Async =false
+    Compress=true
+[proxyRpc]
+    #etcd服务的地址
+    endpoints=["etcd:2379"]
+    #设置的key前缀
+    keyPrefix="proxy"
+
+

@@ -2,14 +2,12 @@ Name: AccountApi
 Host: 0.0.0.0
 Port: 20014
 TimeOut: 0
-Middlewares:
-  Log: false
-  Trace: false
+
 AccountRpcConf:
-  Etcd:
-    Key: service_account.rpc
+  etcd:
+    Key: service_account_rpc
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 LoggerConfig:
   Level: debug
@@ -17,8 +15,8 @@ LoggerConfig:
   AddCaller: true
   Mode: console
   CallerShip: 3
-  FileName: github.com/luxun9527/gex-account-std.log
-  ErrorFileName: github.com/luxun9527/gex-account-err.log
+  FileName: gex-account-std.log
+  ErrorFileName: gex-account-err.log
   MaxSize: 10
   MaxAge: 30
   MaxBackup: 20
@@ -26,5 +24,5 @@ LoggerConfig:
   Json: false
   Compress: true
 LanguageEtcdConf:
-  Endpoints: ["etcd:2379"]
+  Endpoints: ["192.168.2.159:2379"]
   DialTimeout: 5

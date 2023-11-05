@@ -17,6 +17,34 @@
     "application/json"
   ],
   "paths": {
+    "/account/v1/add_user_asset": {
+      "post": {
+        "summary": "新增用户资产",
+        "operationId": "AddUserAsset",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddUserAssetReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Account"
+        ]
+      }
+    },
     "/account/v1/get_captcha": {
       "post": {
         "summary": "获取验证码",
@@ -139,6 +167,22 @@
     }
   },
   "definitions": {
+    "AddUserAssetReq": {
+      "type": "object",
+      "properties": {
+        "coin_name": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "string"
+        }
+      },
+      "title": "AddUserAssetReq",
+      "required": [
+        "coin_name",
+        "qty"
+      ]
+    },
     "AssetInfo": {
       "type": "object",
       "properties": {

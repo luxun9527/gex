@@ -4,7 +4,7 @@ Port: 20015
 TimeOut: 0
 EtcdConf:
   Endpoints:
-    - etcd:2379
+    - 192.168.2.159:2379
   DialTimeout: 3
 LoggerConfig:
   Level: debug

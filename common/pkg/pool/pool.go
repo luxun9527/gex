@@ -29,21 +29,22 @@ func NewRpcClients(keyPrefix string, endpoints []string) *RpcClients {
 	for _, v := range resp.Kvs {
 		clis.addConn(v)
 	}
+	logx.Infow("init etcd client prefix", logx.Field("prefix", keyPrefix), logx.Field("endpoints", endpoints), logx.Field("data", resp.Kvs), logx.Field("data", clis.Clients))
 	go clis.Watch()
 	return clis
 }
 func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
+	logx.Infow("add conn detail", logx.Field("key", kv.Key), logx.Field("value", kv.Value))
 	d := strings.Split(string(kv.Key), "/")
 	if len(d) != 2 {
 		return
 	}
-	d = strings.Split(d[0], "_")
-	if len(d) != 4 {
+	r1 := strings.Split(d[0], ".")
+	if len(r1) != 2 {
 		return
 	}
-
-	symbol := d[2] + "_" + d[3]
-	conn, err := grpc.Dial(string(kv.Value), grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	symbol := r1[1]
+	conn, err := grpc.Dial(string(kv.Value), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logx.Errorw("connect to client failed", logger.ErrorField(err), logx.Field("addr", string(kv.Value)), logx.Field("key", string(kv.Key)))
 	}
@@ -63,6 +64,7 @@ func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
 func (r *RpcClients) Watch() {
 	rch := r.EtcdClient.Watch(context.Background(), r.KeyPrefix, clientv3.WithPrefix())
 	for resp := range rch {
+		logx.Sloww("before clients  changed", logx.Field("detail", resp), logx.Field("conn", r.Clients))
 		for _, ev := range resp.Events {
 			switch ev.Type {
 			case mvccpb.PUT:
@@ -71,6 +73,8 @@ func (r *RpcClients) Watch() {
 				r.delConn(ev.Kv)
 			}
 		}
+		logx.Sloww("after rpc clients  changed", logx.Field("detail", resp), logx.Field("conn", r.Clients))
+
 	}
 }
 

@@ -1,21 +1,17 @@
 Name: QuotesApi
 Host: 0.0.0.0
-Port: 20011
-TimeOut: 0
-Middlewares:
-  Log: false
-  Trace: false
+Port: 30011
 MatchRpcConf:
   Etcd:
-    Key: service_match.rpc
+    Key: service_match_rpc
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 KlineRpcConf:
   Etcd:
-    Key: service_kline.rpc
+    Key: service_kline_rpc
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 SymbolList:
   - SymbolInfo:
@@ -33,8 +29,8 @@ LoggerConfig:
   AddCaller: true
   CallerShip: 3
   Mode: console
-  FileName: github.com/luxun9527/gex-match-std.log
-  ErrorFileName: github.com/luxun9527/gex-match-err.log
+  FileName: gex-quote-std.log
+  ErrorFileName: gex-quote-err.log
   MaxSize: 10
   MaxAge: 30
   MaxBackup: 20
@@ -42,5 +38,5 @@ LoggerConfig:
   Json: false
   Compress: true
 LanguageEtcdConf:
-  Endpoints: ["etcd:2379"]
+  Endpoints: ["192.168.2.159:2379"]
   DialTimeout: 5

@@ -1,15 +1,14 @@
-
 PulsarConfig:
   hosts:
-    - pulsar:6650
+    - 192.168.2.159:6650
 LoggerConfig:
   Level: debug
   Stacktrace: true
   AddCaller: true
   CallerShip: 3
   Mode: console
-  FileName: github.com/luxun9527/gex-match-std.log
-  ErrorFileName: github.com/luxun9527/gex-match-err.log
+  FileName: gex-match-std.log
+  ErrorFileName: gex-match-err.log
   MaxSize: 10
   MaxAge: 30
   MaxBackup: 20
@@ -27,7 +26,7 @@ SymbolInfo:
   BaseCoinPrec: 4
   QuoteCoinPrec: 4
 GormConf:
-  ip: mysql
+  ip: 192.168.2.159
   port: 3307
   dbName: trade
   username: root
@@ -38,9 +37,9 @@ WsConf:
   Etcd:
     Key: proxy
     Hosts:
-      - etcd:2379
+      - 192.168.2.159:2379
   NonBlock: true
 RedisConf:
-  Host: redis:6379
+  Host: 192.168.2.159:6379
   Type: node
   PingTimeout: 5s

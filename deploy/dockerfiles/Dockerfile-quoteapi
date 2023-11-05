@@ -1,5 +1,5 @@
 FROM debian:stretch-slim
 WORKDIR /app
 COPY ../../bin/quoteapi /app/quoteapi
-COPY ../../app/quotes/api/etc/quote.yaml /app/quote.yaml
+COPY ../../app/quotes/api/etc/quote-deploy.yaml /app/quote.yaml
 

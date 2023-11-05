@@ -3,10 +3,10 @@ ListenOn: 0.0.0.0:20002
 Timeout: 0
 Etcd:
   Hosts:
-    - etcd:2379
-  Key: service_account.rpc
+    - 192.168.2.159:2379
+  Key: service_account_rpc
 GormConf:
-  ip: mysql
+  ip: 192.168.2.159
   port: 3307
   dbName: trade
   username: root
@@ -18,8 +18,8 @@ LoggerConfig:
   Stacktrace: true
   AddCaller: true
   Mode: console
-  FileName: github.com/luxun9527/gex-account-std.log
-  ErrorFileName: github.com/luxun9527/gex-account-err.log
+  FileName: gex-account-std.log
+  ErrorFileName: gex-account-err.log
   MaxSize: 10
   MaxAge: 30
   MaxBackup: 20
@@ -49,8 +49,8 @@ CoinListConf:
 
 PulsarConfig:
   hosts:
-    - pulsar:6650
+    - 192.168.2.159:6650
 RedisConf:
-  Host: redis:6379
+  Host: 192.168.2.159:6379
   Type: node
   PingTimeout: 5s

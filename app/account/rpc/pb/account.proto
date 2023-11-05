@@ -59,8 +59,8 @@ message  DeductUserAssetReq{
 message AddUserAssetReq{
   //用户id
   int64 uid =1;
-  //币种id
-  int32 coin_id=2;
+  //币种
+  string coin_name=2;
   //数量
   string qty=3;
 }

@@ -45,6 +45,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/get_user_asset_list",
 					Handler: GetUserAssetListHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/add_user_asset",
+					Handler: AddUserAssetHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/account/v1"),

@@ -17,7 +17,7 @@ import (
 )
 
 type ServiceContext struct {
-	Config             config.Config
+	Config             *config.Config
 	Query              *query.Query
 	DtmClient          dtmgpb.DtmClient
 	MatchConsumer      pulsar.Consumer
@@ -26,11 +26,12 @@ type ServiceContext struct {
 	WsClient           ws.ProxyClient
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c *config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	writer := logger.NewZapWriter(logger.L)
 	logx.SetWriter(writer)
 	logx.DisableStat()
+	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
 	target, err := c.DtmConf.BuildTarget()
 	if err != nil {
 		logx.Severef("init dtm client failed", logger.ErrorField(err))

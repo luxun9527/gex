@@ -57,7 +57,12 @@ type (
 		UserInfo *UserInfo `json:"user_info"`
 	}
 )
-
+type (
+	AddUserAssetReq {
+		CoinName string `json:"coin_name"`
+		Qty      string `json:"qty"`
+	}
+)
 @server(
 	prefix: /account/v1
 )
@@ -85,4 +90,7 @@ service Account {
 	@doc "获取用户所有资产"
 	@handler GetUserAssetList
 	post /get_user_asset_list returns(GetUserAssetListResp)
+	@doc "新增用户资产"
+	@handler AddUserAsset
+	post /add_user_asset(AddUserAssetReq) returns(Empty)
 }

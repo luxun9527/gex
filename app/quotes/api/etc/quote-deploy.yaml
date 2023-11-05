@@ -1,0 +1,44 @@
+Name: QuotesApi
+Host: 0.0.0.0
+Port: 20011
+TimeOut: 0
+
+MatchRpcConf:
+  Etcd:
+    Key: service_match_rpc
+    Hosts:
+      - etcd:2379
+  NonBlock: true
+KlineRpcConf:
+  Etcd:
+    Key: service_kline_rpc
+    Hosts:
+      - etcd:2379
+  NonBlock: true
+SymbolList:
+  - SymbolInfo:
+    SymbolName: BTC_USDT
+    SymbolID: 1
+    BaseCoinID: 1
+    BaseCoinName: BTC
+    QuoteCoinID: 2
+    QuoteCoinName: USDT
+    BaseCoinPrec: 4
+    QuoteCoinPrec: 4
+LoggerConfig:
+  Level: debug
+  Stacktrace: true
+  AddCaller: true
+  CallerShip: 3
+  Mode: console
+  FileName: gex-quote-std.log
+  ErrorFileName: gex-quote-err.log
+  MaxSize: 10
+  MaxAge: 30
+  MaxBackup: 20
+  Async: false
+  Json: false
+  Compress: true
+LanguageEtcdConf:
+  Endpoints: ["etcd:2379"]
+  DialTimeout: 5

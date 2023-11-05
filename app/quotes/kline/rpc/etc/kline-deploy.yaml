@@ -1,0 +1,51 @@
+Name: kline_rpc
+ListenOn: 0.0.0.0:20009
+Timeout: 0
+Etcd:
+  Hosts:
+   - etcd:2379
+  Key: service_kline_rpc
+GormConf:
+  ip: mysql
+  port: 3307
+  dbName: trade
+  username: root
+  password: root
+  maxIdleConns: 10
+  maxOpenConns: 100
+SymbolInfo:
+  SymbolName: BTC_USDT
+  SymbolID: 1
+  BaseCoinID: 1
+  BaseCoinName: BTC
+  QuoteCoinID: 2
+  QuoteCoinName: USDT
+  BaseCoinPrec: 4
+  QuoteCoinPrec: 4
+WsConf:
+  Etcd:
+    Key: proxy
+    Hosts:
+      - etcd:2379
+  NonBlock: true
+RedisConf:
+  Host: redis:6379
+  Type: node
+  PingTimeout: 5s
+LoggerConfig:
+  Level: debug
+  Stacktrace: true
+  AddCaller: true
+  CallerShip: 3
+  Mode: console
+  FileName: gex-kline-std.log
+  ErrorFileName: gex-kline-err.log
+  MaxSize: 10
+  MaxAge: 30
+  MaxBackup: 20
+  Async: false
+  Json: false
+  Compress: true
+PulsarConfig:
+  hosts:
+    - pulsar:6650

@@ -29,6 +29,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
 	logx.Debugw("load config detail", logx.Field("detail", c))
+	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed err ", err)
