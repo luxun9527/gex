@@ -34,7 +34,7 @@ type Kline struct {
 	Amount    string `json:"a"` //成交量
 	StartTime int64  `json:"st"`
 	EndTime   int64  `json:"et"`
-	Range     string `json:"accountapi"`
+	Range     string `json:"r"`
 	Symbol    string `json:"s"`
 }
 
@@ -45,7 +45,7 @@ type Ticker struct {
 	Low             string `json:"l"`
 	Amount          string `json:"a"`
 	Volume          string `json:"v"`
-	Range           string `json:"accountapi"`
+	Range           string `json:"r"`
 	Symbol          string `json:"s"`
 	Last24HourPrice string `json:"l24p"`
 }
@@ -53,7 +53,7 @@ type Ticker struct {
 // MiniTicker 精简24小时行情
 type MiniTicker struct {
 	LatestPrice string `json:"lp"`
-	Range       string `json:"accountapi"`
+	Range       string `json:"r"`
 	Symbol      string `json:"s"`
 }
 
