@@ -20,8 +20,9 @@
 
 项目依赖的中间件：消息组件pulsar，数据库mysql,redis，分布式事务dtm，websocket推送gpush。
 
-启动项目推荐使用docker启动项目
-
+启动项目推荐使用docker启动项目 
+1、配置一个host 映射 api.gex.com 虚拟机的ip
+2、启动项目
 ```
 root@ubuntu:~/smb# docker-compose -v
 Docker Compose version v2.6.1
@@ -43,7 +44,7 @@ make clear 删除镜像和容器。
  
 ```
 
-
+3、直接访问虚拟机的ip,默认nginx容器使用的是80端口
 
 
 
