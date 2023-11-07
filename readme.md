@@ -1,6 +1,10 @@
 # go-zero 数字货币所demo
 
-基于go-zero 开发一个数字demo,实现了现货交易的一些基本功能，现价单，市价单。
+基于go-zero 开发一个数字demo,实现了现货交易的一些基本功能，
+
+- 现价单，市价单的订单撮合。
+- 基本行情(盘口，k线，tick)实时推送。
+- 个人订单变化实时推送。
 
 核心模块：订单，撮合，账户。
 
@@ -21,8 +25,10 @@
 项目依赖的中间件：消息组件pulsar，数据库mysql,redis，分布式事务dtm，websocket推送gpush。
 
 启动项目推荐使用docker启动项目 
-1、配置一个host 映射 api.gex.com 虚拟机的ip
-2、启动项目
+1、配置一个host 映射 api.gex.com 启动项目的地址。
+
+2、使用docker启动项目，docker版本不能太旧。
+
 ```
 root@ubuntu:~/smb# docker-compose -v
 Docker Compose version v2.6.1
@@ -44,11 +50,15 @@ make clear 删除镜像和容器。
  
 ```
 
-3、直接访问虚拟机的ip,默认nginx容器使用的是80端口
+3、直接访问启动项目机器的ip,默认nginx容器使用的是80端口 如 http://192.168.2.159/#/
 
 
 
 
+
+
+
+如果觉得对您有帮助，帮我点个star呗。
 
 refer https://github.com/michaelliao/warpexchange/
 
