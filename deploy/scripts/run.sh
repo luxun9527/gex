@@ -1,7 +1,13 @@
 #!/bin/bash
 
 
-
+# 检查名为"gex"的网络是否存在
+network_exists=$(docker network ls --format "{{.Name}}" --filter "name=gex")
+# 如果网络不存在，则创建名为"gex"的网络
+if [ -z "$network_exists" ]; then
+    docker network create gex
+    echo "网络 gex 创建成功！"
+fi
 
 lang=$(cat resource/language/zh-CN.yaml)
 

@@ -51,10 +51,13 @@ kline:
 	make klinerpc  && make klinemodel
 
 run:
+	chmod +x ./deploy/scripts/run.sh
 	./deploy/scripts/run.sh
 clear:
-	./deploy/scripts/del.sh
-	./deploy/scripts/clear.sh
+	chmod +x ./deploy/scripts/remove_containers.sh
+	chmod +x ./deploy/scripts/remove_images.sh
+	./deploy/scripts/remove_containers.sh
+	./deploy/scripts/remove_images.sh
 	rm -rf deploy/depend/pulsar/data
 
 dep1:

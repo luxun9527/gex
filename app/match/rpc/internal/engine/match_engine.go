@@ -322,7 +322,7 @@ LOOP:
 				//订单的剩余数量
 				Price:  makerOrder.Price,
 				Qty:    qty,
-				Amount: makerOrder.Amount,
+				Amount: amount,
 			}
 			//将key加入的集合中
 			deletedKeys = append(deletedKeys, iterator.Key().(*Key))
