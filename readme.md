@@ -1,22 +1,22 @@
-# go-zero 数字货币所demo
+# 基于go-zero实现一个数字货币交易所。
 
-基于go-zero 开发一个数字货币所demo,实现了现货交易的一些基本功能，
+基于go-zero 开发一个数字货币交易所demo,实现了交易所现货交易的一些基本功能。
 
-- 现价单，市价单的订单撮合。
-- 基本行情(盘口，k线，tick)实时推送。
-- 个人订单变化实时推送。
+- 现价单，市价单的撮合。
+- 基本行情(盘口，k线，tick)，以及个人订单变化的实时推送。
 
-核心模块：订单，撮合，账户。
+核心模块：订单，撮合，账户，行情。
 
 ## 基本功能
 
-### 现价单
+### 限价单
+![](https://s1.locimg.com/2023/11/08/10dcdafd0ae03.gif)
 
-![](http://g.recordit.co/Hh4Aa60wdd.gif)
+
 
 ### 市价单
 
-![](http://g.recordit.co/JT3sxlpRQX.gif)
+![](https://s1.locimg.com/2023/11/08/5f83f2de9742e.gif)
 
 
 
@@ -24,12 +24,13 @@
 
 项目依赖的中间件：消息组件pulsar，数据库mysql,redis，分布式事务dtm，websocket推送gpush。
 
-启动项目推荐使用docker启动项目 
-1、配置一个host 映射 api.gex.com 启动项目的地址。
 
-2、使用docker启动项目，docker版本不能太旧。
 
-```
+1、配置一个host 映射， api.gex.com:项目地址
+
+2、项目已经整理好docker-compose文件，依赖和程序分别在不同的docker-compose文件，使用docker-compose即可一键启动项目，docker版本不能太旧具体如下。
+
+```shell
 root@ubuntu:~/smb# docker-compose -v
 Docker Compose version v2.6.1
 
@@ -44,22 +45,21 @@ Client: Docker Engine - Community
  Context:           default
  
 执行命令 
+make build 编译项目。
 make run 启动项目。
-make clear 删除镜像和容器。
+make clear 删除镜像和容器（会删除所有的容器和新建的镜像。）
 
  
 ```
 
-3、直接访问启动项目机器的ip,默认nginx容器使用的是80端口 如 http://192.168.2.159/#/
+3、直接访问启动项目机器的ip， 默认nginx配置的是的是80端口。
 
 
 
 
 
+初步完成了一个demo,实现了基本现货交易的一些基本功能，还有很多地方不完善和考虑不周全的地址。
 
+项目地址 https://github.com/luxun9527/gex  如果觉得对您有帮助，您的一个star就是我更新的动力。
 
-如果觉得对您有帮助，帮我点个star呗。
-
-refer https://github.com/michaelliao/warpexchange/
-
-待续。
+参考 https://github.com/michaelliao/warpexchange/
