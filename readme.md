@@ -48,7 +48,8 @@ Client: Docker Engine - Community
 make build 编译项目。
 make run 启动项目。
 make clear 删除镜像和容器（会删除所有的容器和新建的镜像。）
-
+账号zhangsan 密码test
+账号lisi     密码test 
  
 ```
 
