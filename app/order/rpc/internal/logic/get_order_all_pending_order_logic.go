@@ -26,7 +26,6 @@ func NewGetOrderAllPendingOrderLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 // 获取所有订单状态为未成交或部分成交的订单
 func (l *GetOrderAllPendingOrderLogic) GetOrderAllPendingOrder(in *pb.OrderEmpty, stream pb.OrderService_GetOrderAllPendingOrderServer) error {
-	// todo: add your logic here and delete this line
 	entrustOrder := l.svcCtx.Query.EntrustOrder
 	for i := 0; true; i++ {
 		result, _, err := entrustOrder.WithContext(l.ctx).
