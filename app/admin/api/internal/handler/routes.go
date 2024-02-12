@@ -24,8 +24,58 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/upload_template_file",
-				Handler: UploadTemplateFileHandler(serverCtx),
+				Path:    "/login",
+				Handler: LoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/register",
+				Handler: RegisterHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/get_symbol_list",
+				Handler: GetSymbolListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/add_symbol",
+				Handler: AddSymbolHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/update_symbol",
+				Handler: UpdateSymbolHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/add_coin",
+				Handler: AddCoinHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/update_coin",
+				Handler: UpdateCoinHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/get_coin_list",
+				Handler: GetCoinListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/add_error_code",
+				Handler: AddErrorCodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/get_error_code_list",
+				Handler: GetErrorCodeListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/update_error_code",
+				Handler: UpdateErrorCodeHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/admin/v1"),

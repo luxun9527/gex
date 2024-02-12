@@ -37,7 +37,6 @@ const ExpiresTime = time.Second * 60 * 60 * 24 * 10
 
 func NewJWT() *JWT {
 	return &JWT{
-
 		[]byte(singingKey),
 	}
 }
@@ -50,7 +49,7 @@ func (j *JWT) CreateClaims(baseClaims JwtContent) CustomClaims {
 			Audience:  jwt.ClaimStrings{"GVA"},                         // 受众
 			NotBefore: jwt.NewNumericDate(time.Now().Add(-1000)),       // 签名生效时间
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ExpiresTime)), // 过期时间 7天  配置文件
-			Issuer:    "github.com/luxun9527/gex",                      // 签名的发行者
+			Issuer:    "zhangsan",                                      // 签名的发行者
 		},
 		JwtContent: baseClaims,
 	}

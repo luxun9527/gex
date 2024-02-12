@@ -7,7 +7,8 @@ info(
 	email: "12123231@163.com"
 	version: "v1"
 )
-type Empty{}
+type Empty {
+}
 
 type (
 	UpsertServiceConfigReq {
@@ -33,20 +34,189 @@ type (
 	}
 )
 
+type (
+	LoginReq {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		//	Captcha  string `json:"captcha"`
+	}
+	LoginResp {
+		Token  string `json:"token"`
+		Expire int64  `json:"expire"`
+		UserId int64  `json:"user_id"`
+	}
+)
+
+type (
+	RegisterReq {
+		Username        string `json:"username"`
+		Password        string `json:"password"`
+		ConfirmPassword string `json:"comfirm_password"`
+	}
+)
+
+type (
+	GetSymbolListReq {
+		PageNo   int64 `form:"page_no"`
+		PageSize int64 `form:"page_size"`
+	}
+	SymbolInfo {
+		ID            uint32 `json:"id"`
+		SymbolName    string `json:"symbol_name"`
+		BaseCoinID    uint32 `json:"base_coin_id"`
+		BaseCoinName  string `json:"base_coin_name"`
+		BaseCoinPrec  int32  `json:"base_coin_prec"`
+		QuoteCoinID   int32  `json:"quote_coin_id"`
+		QuoteCoinName string `json:"quote_coin_name"`
+		QuotePrec     int32  `json:"quote_prec"`
+	}
+	GetSymbolListResp {
+		List  []*SymbolInfo `json:"list"`
+		Total int64         `json:"total"`
+	}
+)
+
+type (
+	AddSymbolReq {
+		BaseCoinID  uint32 `json:"base_coin_id"`
+		QuoteCoinID int32  `json:"quote_coin_id"`
+	}
+	AddSymbolResp {
+	}
+)
+
+type (
+	AddCoinReq {
+		CoinName string `json:"coin_name"`
+		Prec     int32  `json:"prec"`
+	}
+	AddCoinResp {
+	}
+)
+type (
+	GetCoinListReq {
+		PageNo   int64 `form:"page_no"`
+		PageSize int64 `form:"page_size"`
+	}
+	CoinInfo {
+		ID       uint32 `json:"id"`
+		CoinName string `json:"coin_name"`
+		Prec     int32  `json:"prec"`
+	}
+	GetCoinListResp {
+		List  []*CoinInfo `json:"list"`
+		Total int64       `json:"total"`
+	}
+)
+type (
+	UpdateSymbolReq {
+		SymbolName    string `json:"symbol_name"`
+		BaseCoinID    uint32 `json:"base_coin_id"`
+		BaseCoinName  string `json:"base_coin_name"`
+		BaseCoinPrec  int32  `json:"base_coin_prec"`
+		QuoteCoinID   int32  `json:"quote_coin_id"`
+		QuoteCoinName string `json:"quote_coin_name"`
+		QuotePrec     int32  `json:"quote_prec"`
+	}
+	UpdateSymbolResp {
+	}
+)
+
+type (
+	AddErrorCodeReq {
+		ErrorCodeName string `json:"error_code_name"`
+		ErrorCodeId   int32  `json:"error_code_id"`
+		Language      string `json:"language"`
+	}
+)
+
+type (
+	GetErrorCodeListReq {
+		Language string `form:"language"`
+	}
+)
+type (
+	ErrorCode {
+		Id            uint32 `json:"id"`
+		ErrorCodeName string `json:"error_code_name"`
+		ErrorCodeId   int32  `json:"error_code_id"`
+		Language      string `json:"language"`
+	}
+	GetErrorCodeListResp {
+		List  []*ErrorCode `json:"list"`
+		Total int64        `json:"total"`
+	}
+)
+
+type (
+	UpdateErrorCodeReq {
+		Id            uint32 `json:"id"`
+		ErrorCodeName string `json:"error_code_name"`
+		ErrorCodeId   int32  `json:"error_code_id"`
+		Language      string `json:"language"`
+	}
+)
+
+type (
+	UpdateCoinReq {
+		ID       uint32 `json:"id"`
+		CoinName string `json:"coin_name"`
+		Prec     int32  `json:"prec"`
+	}
+)
 @server(
 	prefix: /admin/v1
 )
 service Admin {
-	
 	@doc "添加/更新服务的配置"
 	@handler UpsertServiceConfig
-	post /upsert_service_config(UpsertServiceConfigReq) returns(Empty)
+	post /upsert_service_config (UpsertServiceConfigReq) returns (Empty)
+	
 	@doc "获取服务配置"
 	@handler GetServiceConfig
-	post /get_service_config(GetServiceConfigReq) returns(GetServiceConfigResp)
+	post /get_service_config (GetServiceConfigReq) returns (GetServiceConfigResp)
 	
-	@doc "上传配置模板文件"
-	@handler UploadTemplateFile
-	post /upload_template_file(UploadTemplateFileReq) returns(Empty)
+	@doc "管理员登录"
+	@handler Login
+	post /login (LoginReq) returns (LoginResp)
 	
+	@doc "管理员注册"
+	@handler Register
+	post /register (RegisterReq) returns (Empty)
+	
+	@doc "获取交易对列表"
+	@handler GetSymbolList
+	get /get_symbol_list (GetSymbolListReq) returns (GetSymbolListResp)
+	
+	@doc "新增交易对"
+	@handler AddSymbol
+	post /add_symbol (AddSymbolReq) returns (AddSymbolResp)
+	
+	@doc "修改交易对"
+	@handler UpdateSymbol
+	post /update_symbol (UpdateSymbolReq) returns (UpdateSymbolResp)
+	
+	@doc "新增币种"
+	@handler AddCoin
+	post /add_coin (AddCoinReq) returns (AddCoinResp)
+	
+	@doc "修改币种"
+	@handler UpdateCoin
+	post /update_coin (UpdateCoinReq) returns (Empty)
+	
+	@doc "币种列表"
+	@handler GetCoinList
+	get /get_coin_list (GetCoinListReq) returns (GetCoinListResp)
+	
+	@doc "新增错误码"
+	@handler AddErrorCode
+	post /add_error_code (AddErrorCodeReq) returns (Empty)
+	
+	@doc "获取错误码列表"
+	@handler GetErrorCodeList
+	get /get_error_code_list (GetErrorCodeListReq) returns (GetErrorCodeListResp)
+	
+	@doc "修改错误码"
+	@handler UpdateErrorCode
+	post /update_error_code (UpdateErrorCodeReq) returns (Empty)
 }

@@ -63,7 +63,7 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 	gid, err := l.svcCtx.DtmClient.NewGid(l.ctx, &emptypb.Empty{})
 	if err != nil {
 		logx.Errorw("get gid failed", logger.ErrorField(err))
-		return nil, errs.DTMFailed
+		return nil, errs.DtmErr
 	}
 	//l.svcCtx.Config.AccountRpcConf.
 	//gid := stringx.Randn(16)
@@ -106,11 +106,11 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 				if err != nil {
 					return nil, errs.Internal
 				}
-				return nil, errs.Code(e).NewError()
+				return nil, errs.Code(e).Error("")
 			}
 
 		}
-		return nil, errs.DTMFailed
+		return nil, errs.DtmErr
 	}
 	return &pb.OrderEmpty{}, nil
 }

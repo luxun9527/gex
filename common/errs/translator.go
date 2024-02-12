@@ -15,7 +15,7 @@ import (
 
 const (
 	DefaultLanguage = "zh-CN"
-	DefaultCode     = internal
+	DefaultCode     = InternalCode
 	EtcdPrefixKey   = "language/"
 )
 

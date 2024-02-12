@@ -74,7 +74,7 @@ func (l *CancelOrderLogic) CancelOrder(in *pb.CancelOrderReq) (*pb.OrderEmpty, e
 	if _, err := l.svcCtx.MatchProducer.Send(l.ctx, &pulsar.ProducerMessage{
 		Payload: data,
 	}); err != nil {
-		return nil, errs.PulsarFailed
+		return nil, errs.PulsarErr
 	}
 	return &pb.OrderEmpty{}, nil
 }

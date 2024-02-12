@@ -27,13 +27,13 @@ func Response(w http.ResponseWriter, r *http.Request, resp interface{}, err erro
 		}
 		body.Code = int(e.Code())
 		code := e.Code()
-		if body.Code < int(errs.Start) {
+		if body.Code < int(errs.CommonCodeInit) {
 			code = codes.Code(errs.DefaultCode)
 		}
 		body.Msg = errs.Code(code).Translate(lang)
 
-		if e.Message() != "" && int(e.Code()) > int(errs.Start) {
-			body.Msg += ":" + e.Message()
+		if e.Message() != "" && int(e.Code()) > int(errs.CommonCodeInit) {
+			body.Msg += e.Message()
 		}
 
 		body.Data = struct{}{}

@@ -20,3 +20,14 @@ LoggerConfig:
   Async: false
   Json: false
   Compress: true
+GormConf:
+  ip: 192.168.2.159
+  port: 3307
+  dbName: admin
+  username: root
+  password: root
+  maxIdleConns: 10
+  maxOpenConns: 100
+LanguageEtcdConf:
+  Endpoints: ["192.168.2.159:2379"]
+  DialTimeout: 5

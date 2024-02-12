@@ -36,7 +36,7 @@ func (l *CreateOrderRevertLogic) CreateOrderRevert(in *pb.CreateOrderReq) (*pb.O
 	barrier, err := dtmgrpc.BarrierFromGrpc(l.ctx)
 	if err != nil {
 		logx.Errorw("BarrierFromGrpc db failed", logger.ErrorField(err))
-		return nil, errs.DTMFailed
+		return nil, errs.DtmErr
 	}
 	entrustOrder := l.svcCtx.Query.EntrustOrder
 	db, err := entrustOrder.WithContext(l.ctx).UnderlyingDB().DB()

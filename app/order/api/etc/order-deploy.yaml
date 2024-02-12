@@ -35,8 +35,8 @@ SymbolListConf:
     BaseCoinName: BTC
     QuoteCoinID: 2
     QuoteCoinName: USDT
-    BaseCoinPrec: 4
-    QuoteCoinPrec: 4
+    BaseCoinPrec: 4 #基础保留多少位小数
+    QuoteCoinPrec: 4 #保留多少位小数
 LoggerConfig:
   Level: debug
   Stacktrace: true

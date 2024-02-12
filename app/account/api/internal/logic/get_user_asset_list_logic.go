@@ -34,7 +34,7 @@ func (l *GetUserAssetListLogic) GetUserAssetList() (resp *types.GetUserAssetList
 	data := make([]*types.AssetInfo, 0, len(result.AssetList))
 	for _, v := range result.AssetList {
 		assetInfo := &types.AssetInfo{
-			Id:           int64(v.Id),
+			Id:           v.Id,
 			CoinName:     v.CoinName,
 			CoinID:       v.CoinId,
 			AvailableQty: v.AvailableQty,

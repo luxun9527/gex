@@ -23,7 +23,7 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 	httpx.SetValidator(validatorx.NewValidator())
 
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(c.RestConf, rest.WithCors())
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)

@@ -37,7 +37,7 @@ func (l *FreezeUserAssetLogic) FreezeUserAsset(in *pb.FreezeUserAssetReq) (*pb.E
 	barrier, err := dtmgrpc.BarrierFromGrpc(l.ctx)
 	if err != nil {
 		logx.Errorw("FreezeUserAsset BarrierFromGrpc db failed", logger.ErrorField(err))
-		return nil, errs.CastToDtmError(errs.DTMFailed)
+		return nil, errs.CastToDtmError(errs.DtmErr)
 	}
 
 	underlyingDB := asset.WithContext(l.ctx).UnderlyingDB()

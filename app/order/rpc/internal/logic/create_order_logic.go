@@ -73,7 +73,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 	barrier, err := dtmgrpc.BarrierFromGrpc(l.ctx)
 	if err != nil {
 		logx.Errorw("CreateOrder BarrierFromGrpc db failed", logger.ErrorField(err))
-		return nil, errs.CastToDtmError(errs.DTMFailed)
+		return nil, errs.CastToDtmError(errs.DtmErr)
 	}
 	entrustOrder := l.svcCtx.Query.EntrustOrder
 	db, err := entrustOrder.WithContext(l.ctx).UnderlyingDB().DB()
@@ -114,7 +114,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 	if _, err := l.svcCtx.MatchProducer.Send(l.ctx, &pulsar.ProducerMessage{
 		Payload: data,
 	}); err != nil {
-		return nil, errs.CastToDtmError(errs.PulsarFailed)
+		return nil, errs.CastToDtmError(errs.PulsarErr)
 	}
 	//发送ws数据
 	wsOrder := &commonWs.Order{

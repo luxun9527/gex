@@ -28,3 +28,7 @@ func (s SymbolCoinConfig[Key, Value]) CastToSyncMap() *sync.Map {
 	}
 	return m
 }
+
+const (
+	EtcdSymbolList = "SymbolList"
+)
