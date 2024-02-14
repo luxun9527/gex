@@ -4,7 +4,7 @@ package errs
 
 const (
 	// UserNotFoundCodeCode  用户不存在
-	UserNotFoundCodeCode = AccountCodeInit + iota + 1
+	UserNotFoundCode = AccountCodeInit + iota + 1
 	// AmountInsufficientCode 用户余额不足
 	AmountInsufficientCode
 	// TokenValidateFailedCode token验证失败
@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	UserNotFoundCode    = UserNotFoundCodeCode.Error("")
+	UserNotFound        = UserNotFoundCode.Error("")
 	AmountInsufficient  = AmountInsufficientCode.Error("")
 	TokenValidateFailed = TokenValidateFailedCode.Error("")
 	TokenExpire         = TokenExpireCode.Error("")

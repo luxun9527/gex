@@ -34,7 +34,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
 	target, err := c.DtmConf.BuildTarget()
 	if err != nil {
-		logx.Severef("init dtm client failed", logger.ErrorField(err))
+		logx.Severef("init dtm client failed %v", err)
 		return nil
 	}
 

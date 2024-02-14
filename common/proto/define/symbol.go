@@ -1,16 +1,56 @@
 package define
 
-import "sync"
+import (
+	"github.com/luxun9527/gex/common/pkg/confx"
+	"github.com/luxun9527/gex/common/pkg/etcd"
+	"github.com/zeromicro/go-zero/core/logx"
+	"go.etcd.io/etcd/api/v3/mvccpb"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"go.uber.org/atomic"
+	"gopkg.in/yaml.v3"
+	"sync"
+)
+
+const (
+	EtcdSymbolPrefix = "Symbol/"
+)
+
+func InitSymbolConfig(symbol string, etcdConfig etcd.EtcdConfig, symbolInfo *SymbolInfo) {
+	confx.MustLoadFromEtcd(EtcdSymbolPrefix+symbol, etcdConfig, symbolInfo, confx.WithCustomInitLoadFunc(func(kvs []*mvccpb.KeyValue, target any) {
+		for _, v := range kvs {
+			if err := yaml.Unmarshal(v.Value, symbolInfo); err != nil {
+				logx.Severef("get symbol config failed symbolInfo =%v", EtcdSymbolPrefix+symbol)
+			}
+			symbolInfo.QuoteCoinPrec.Store(symbolInfo.QuoteCoinPrecValue)
+			symbolInfo.BaseCoinPrec.Store(symbolInfo.BaseCoinPrecValue)
+		}
+	}), confx.WithCustomWatchFunc(func(evs []*clientv3.Event, target any) {
+		for _, v := range evs {
+			switch v.Type {
+			case mvccpb.PUT: //修改或者新增
+				if err := yaml.Unmarshal(v.Kv.Value, symbolInfo); err != nil {
+					logx.Severef("get symbol config failed symbolInfo =%v", EtcdSymbolPrefix+symbol)
+				}
+				symbolInfo.QuoteCoinPrec.Store(symbolInfo.QuoteCoinPrecValue)
+				symbolInfo.BaseCoinPrec.Store(symbolInfo.BaseCoinPrecValue)
+			case mvccpb.DELETE: //删除
+			}
+
+		}
+	}))
+}
 
 type SymbolInfo struct {
-	SymbolName    string
-	SymbolID      int32
-	BaseCoinName  string
-	BaseCoinID    int32
-	QuoteCoinName string
-	QuoteCoinID   int32
-	BaseCoinPrec  int32
-	QuoteCoinPrec int32
+	SymbolName         string
+	SymbolID           int32
+	BaseCoinName       string
+	BaseCoinID         int32
+	QuoteCoinName      string
+	QuoteCoinID        int32
+	BaseCoinPrecValue  int32        `yaml:"baseCoinPrec"`
+	QuoteCoinPrecValue int32        `yaml:"quoteCoinPrec"`
+	BaseCoinPrec       atomic.Int32 `yaml:"-"`
+	QuoteCoinPrec      atomic.Int32 `yaml:"-"`
 }
 
 type CoinInfo struct {
@@ -28,7 +68,3 @@ func (s SymbolCoinConfig[Key, Value]) CastToSyncMap() *sync.Map {
 	}
 	return m
 }
-
-const (
-	EtcdSymbolList = "SymbolList"
-)

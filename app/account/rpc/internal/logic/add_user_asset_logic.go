@@ -35,7 +35,6 @@ func NewAddUserAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddU
 
 // 增加用户资产
 func (l *AddUserAssetLogic) AddUserAsset(in *pb.AddUserAssetReq) (*pb.Empty, error) {
-	// todo: add your logic here and delete this line
 	asset := l.svcCtx.Query.Asset
 
 	c, ok := l.svcCtx.Coins.Load(in.CoinName)

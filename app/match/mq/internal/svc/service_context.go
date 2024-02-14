@@ -30,7 +30,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	logx.DisableStat()
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
-		logx.Severef("init pulsar client failed err ", err)
+		logx.Severef("init pulsar client failed err %v", err)
 	}
 	topic := pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
@@ -43,7 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Type:             pulsar.Shared,
 	})
 	if err != nil {
-		logx.Severef("init pulsar consumer failed", logger.ErrorField(err))
+		logx.Severef("init pulsar consumer failed %v", logger.ErrorField(err))
 	}
 	sc := &ServiceContext{
 		MatchConsumer: consumer,

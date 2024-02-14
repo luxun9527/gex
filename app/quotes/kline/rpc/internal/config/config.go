@@ -1,20 +1,22 @@
 package config
 
 import (
+	"github.com/luxun9527/gex/common/pkg/etcd"
 	commongorm "github.com/luxun9527/gex/common/pkg/gorm"
 	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/luxun9527/gex/common/pkg/pulsar"
-	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	GormConf     commongorm.GormConf
-	RedisConf    redis.RedisConf
-	WsConf       zrpc.RpcClientConf
-	SymbolInfo   define.SymbolInfo
+	GormConf  commongorm.GormConf
+	RedisConf redis.RedisConf
+	WsConf    zrpc.RpcClientConf
+
 	PulsarConfig pulsar.PulsarConfig
 	LoggerConfig logger.Config
+	Symbol       string
+	EtcdConfig   etcd.EtcdConfig
 }

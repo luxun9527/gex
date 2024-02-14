@@ -2,6 +2,7 @@ package errs
 
 import (
 	"github.com/luxun9527/gex/common/pkg/confx"
+	"github.com/luxun9527/gex/common/pkg/etcd"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
@@ -60,7 +61,7 @@ func InitTranslator(path string) {
 	translator = &t
 }
 
-func InitTranslatorFromEtcd(etcdConfig string) {
+func InitTranslatorFromEtcd(etcdConfig etcd.EtcdConfig) {
 	m := &sync.Map{}
 	confx.MustLoadFromEtcd(EtcdPrefixKey, etcdConfig, m, confx.WithCustomInitLoadFunc(func(kvs []*mvccpb.KeyValue, target any) {
 		for _, v := range kvs {

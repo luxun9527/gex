@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"encoding/json"
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
 	"github.com/luxun9527/gex/app/order/api/internal/config"
@@ -35,15 +34,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
-	d, _ := json.Marshal(c.LanguageEtcdConf)
-	errs.InitTranslatorFromEtcd(string(d))
+	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
 
 	accountRpcClient := accountservice.NewAccountService(zrpc.MustNewClient(c.AccountRpcConf))
 	return &ServiceContext{
 		Config:           c,
 		Auth:             middleware.NewAuthMiddleware(accountRpcClient).Handle,
-		OrderClients:     pool.NewRpcClients(c.OrderRpcConf.Etcd.Key, c.OrderRpcConf.Etcd.Hosts),
-		MatchClients:     pool.NewRpcClients(c.MatchRpcConf.Etcd.Key, c.MatchRpcConf.Etcd.Hosts),
+		OrderClients:     pool.NewRpcClients(c.OrderRpcConf.Etcd),
+		MatchClients:     pool.NewRpcClients(c.MatchRpcConf.Etcd),
 		GetOrderClient:   orderpb.NewOrderServiceClient,
 		GetMatchClient:   matchpb.NewMatchServiceClient,
 		AccountRpcClient: accountRpcClient,

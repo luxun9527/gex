@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"encoding/json"
 	"github.com/luxun9527/gex/app/admin/api/internal/config"
 	"github.com/luxun9527/gex/app/admin/api/internal/dao/query"
 	"github.com/luxun9527/gex/common/errs"
@@ -23,9 +22,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
 	cli, err := c.EtcdConf.NewEtcdClient()
-	d, _ := json.Marshal(c.LanguageEtcdConf)
-	errs.InitTranslatorFromEtcd(string(d))
-
+	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
 	if err != nil {
 		logx.Severef("init etcd client failed %v", err)
 	}

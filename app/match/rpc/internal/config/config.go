@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/luxun9527/gex/common/pkg/etcd"
 	commongorm "github.com/luxun9527/gex/common/pkg/gorm"
 	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/luxun9527/gex/common/pkg/pulsar"
@@ -15,7 +16,9 @@ type Config struct {
 	LoggerConfig logger.Config
 	GormConf     commongorm.GormConf
 	WsConf       zrpc.RpcClientConf
-	SymbolInfo   define.SymbolInfo
+	Symbol       string
 	OrderRpcConf zrpc.RpcClientConf
 	RedisConf    redis.RedisConf
+	SymbolInfo   define.SymbolInfo `json:",optional"`
+	EtcdConfig   etcd.EtcdConfig
 }

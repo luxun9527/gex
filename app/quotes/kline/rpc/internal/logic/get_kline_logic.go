@@ -29,7 +29,7 @@ func NewGetKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetKline
 func (l *GetKlineLogic) GetKline(in *pb.GetKlineReq) (*pb.GetKlineResp, error) {
 	kline := l.svcCtx.Query.Kline
 	klineList, err := kline.WithContext(l.ctx).
-		Where(kline.Symbol.Eq(l.svcCtx.Config.SymbolInfo.SymbolName), kline.KlineType.Eq(int32(in.KlineType)), kline.StartTime.Between(in.StartTime, in.EntTime)).
+		Where(kline.Symbol.Eq(l.svcCtx.SymbolInfo.SymbolName), kline.KlineType.Eq(int32(in.KlineType)), kline.StartTime.Between(in.StartTime, in.EntTime)).
 		Limit(300).
 		Order(kline.StartTime.Desc()).
 		Find()
@@ -43,12 +43,12 @@ func (l *GetKlineLogic) GetKline(in *pb.GetKlineReq) (*pb.GetKlineResp, error) {
 			StartTime: klineList[i].StartTime,
 			EndTime:   klineList[i].EndTime,
 			Symbol:    klineList[i].Symbol,
-			Open:      utils.PrecCut(klineList[i].Open, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
-			High:      utils.PrecCut(klineList[i].High, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
-			Low:       utils.PrecCut(klineList[i].Low, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
-			Close:     utils.PrecCut(klineList[i].Close, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
-			Volume:    utils.PrecCut(klineList[i].Volume, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
-			Amount:    utils.PrecCut(klineList[i].Amount, l.svcCtx.Config.SymbolInfo.BaseCoinPrec),
+			Open:      utils.PrecCut(klineList[i].Open, l.svcCtx.SymbolInfo.QuoteCoinPrec.Load()),
+			High:      utils.PrecCut(klineList[i].High, l.svcCtx.SymbolInfo.QuoteCoinPrec.Load()),
+			Low:       utils.PrecCut(klineList[i].Low, l.svcCtx.SymbolInfo.QuoteCoinPrec.Load()),
+			Close:     utils.PrecCut(klineList[i].Close, l.svcCtx.SymbolInfo.QuoteCoinPrec.Load()),
+			Volume:    utils.PrecCut(klineList[i].Volume, l.svcCtx.SymbolInfo.QuoteCoinPrec.Load()),
+			Amount:    utils.PrecCut(klineList[i].Amount, l.svcCtx.SymbolInfo.BaseCoinPrec.Load()),
 			Range:     klineList[i].Range,
 		}
 		klineResp = append(klineResp, d)

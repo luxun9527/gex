@@ -39,40 +39,43 @@ func (l *UpdateCoinLogic) UpdateCoin(req *types.UpdateCoinReq) (resp *types.Empt
 		if _, err := tx.WithContext(l.ctx).Coin.Updates(c); err != nil {
 			return err
 		}
+		//更新交易对中的配置
 		if _, err := tx.WithContext(l.ctx).Symbol.
 			Where(symbol.BaseCoinID.Eq(req.ID)).
 			UpdateColumnSimple(symbol.BaseCoinPrec.Value(req.Prec)); err != nil {
 			return err
 		}
+
 		if _, err := tx.WithContext(l.ctx).Symbol.
 			Where(symbol.QuoteCoinID.Eq(req.ID)).
 			UpdateColumnSimple(symbol.QuoteCoinPrec.Value(req.Prec)); err != nil {
 			return err
 		}
-		symbols, err := tx.Symbol.WithContext(l.ctx).Find()
+
+		symbols, err := tx.Symbol.WithContext(l.ctx).Where(symbol.BaseCoinID.Eq(req.ID)).Or(symbol.QuoteCoinID.Eq(req.ID)).Find()
 		if err != nil {
 			return err
 		}
-		m := make(map[string]*define.SymbolInfo, len(symbols))
 		for _, v := range symbols {
-			m[v.SymbolName] = &define.SymbolInfo{
-				SymbolName:    v.SymbolName,
-				SymbolID:      int32(v.ID),
-				BaseCoinName:  v.BaseCoinName,
-				BaseCoinID:    int32(v.BaseCoinID),
-				QuoteCoinName: v.QuoteCoinName,
-				QuoteCoinID:   int32(v.QuoteCoinID),
-				BaseCoinPrec:  v.BaseCoinPrec,
-				QuoteCoinPrec: v.QuoteCoinPrec,
+			symbolInfo := &define.SymbolInfo{
+				SymbolName:         v.SymbolName,
+				SymbolID:           int32(v.ID),
+				BaseCoinName:       v.BaseCoinName,
+				BaseCoinID:         int32(v.BaseCoinID),
+				QuoteCoinName:      v.QuoteCoinName,
+				QuoteCoinID:        int32(v.QuoteCoinID),
+				BaseCoinPrecValue:  v.BaseCoinPrec,
+				QuoteCoinPrecValue: v.QuoteCoinPrec,
 			}
-		}
-		data, err := yaml.Marshal(m)
-		if err != nil {
-			return err
-		}
-		if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdSymbolList, string(data)); err != nil {
-			logx.Errorw("put config to etcd failed", logx.Field("err", err))
-			return err
+			data, err := yaml.Marshal(symbolInfo)
+			if err != nil {
+				return err
+			}
+			if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdSymbolPrefix+v.SymbolName, string(data)); err != nil {
+				logx.Errorw("put config to etcd failed", logx.Field("err", err))
+				return err
+			}
+
 		}
 		return nil
 	}); err != nil {

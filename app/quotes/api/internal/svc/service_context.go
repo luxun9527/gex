@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"encoding/json"
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
 	"github.com/luxun9527/gex/app/quotes/api/internal/config"
 	klinepb "github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
@@ -28,12 +27,11 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.L))
-	d, _ := json.Marshal(c.LanguageEtcdConf)
-	errs.InitTranslatorFromEtcd(string(d))
+	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
 	sc := &ServiceContext{
 		Config:         c,
-		KlineClients:   pool.NewRpcClients(c.KlineRpcConf.Etcd.Key, c.KlineRpcConf.Etcd.Hosts),
-		MatchClients:   pool.NewRpcClients(c.MatchRpcConf.Etcd.Key, c.MatchRpcConf.Etcd.Hosts),
+		KlineClients:   pool.NewRpcClients(c.KlineRpcConf.Etcd),
+		MatchClients:   pool.NewRpcClients(c.MatchRpcConf.Etcd),
 		GetKlineClient: klinepb.NewKlineServiceClient,
 		GetMatchClient: matchpb.NewMatchServiceClient,
 	}

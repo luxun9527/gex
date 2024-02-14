@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"encoding/json"
 	"github.com/luxun9527/gex/app/account/api/internal/config"
 	"github.com/luxun9527/gex/app/account/api/internal/middleware"
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
@@ -27,8 +26,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Auth:             middleware.NewAuthMiddleware(accountservice.NewAccountService(zrpc.MustNewClient(c.AccountRpcConf))).Handle,
 		AccountRpcClient: accountservice.NewAccountService(zrpc.MustNewClient(c.AccountRpcConf)),
 	}
-	d, _ := json.Marshal(c.LanguageEtcdConf)
-	errs.InitTranslatorFromEtcd(string(d))
+	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
 
 	return sc
 }

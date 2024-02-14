@@ -2,7 +2,6 @@ package confx
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/luxun9527/gex/common/pkg/etcd"
 	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/zeromicro/go-zero/core/conf"
@@ -86,12 +85,9 @@ var (
 )
 
 // MustLoadFromEtcd 从etcd中加载配置，有状态的服务从etcd中获取
-func MustLoadFromEtcd(key, etcdConfig string, target any, ops ...ConfigCustomFuncOption) {
-	e := &etcd.EtcdConfig{}
-	if err := json.Unmarshal([]byte(etcdConfig), e); err != nil {
-		log.Panicf("unmarshal etcd config failed err %v", err)
-	}
-	client, err := e.NewEtcdClient()
+func MustLoadFromEtcd(key string, etcdConfig etcd.EtcdConfig, target any, ops ...ConfigCustomFuncOption) {
+
+	client, err := etcdConfig.NewEtcdClient()
 	if err != nil {
 		log.Panicf("init etcd client failed err %v", err)
 	}
@@ -127,7 +123,7 @@ func MustLoadFromEtcd(key, etcdConfig string, target any, ops ...ConfigCustomFun
 func WatchConfig(key string, target any, cli *clientv3.Client, f func(evs []*clientv3.Event, target any)) {
 	rch := cli.Watch(context.Background(), key, clientv3.WithPrefix())
 	for resp := range rch {
-		logx.Sloww("")
+		logx.Sloww("config changed", logx.Field("key", key), logx.Field("data", resp.Events))
 		f(resp.Events, target)
 	}
 }

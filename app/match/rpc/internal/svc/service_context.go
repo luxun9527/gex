@@ -29,10 +29,13 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
 	logx.Debugw("load config detail", logx.Field("detail", c))
+
+	//todo 从etcd加载交易对的配置。
+
 	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
-		logx.Severef("init pulsar client failed err ", err)
+		logx.Severef("init pulsar client failed err %v", err)
 	}
 	topic := pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
@@ -45,7 +48,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		DisableBatching: true,
 	})
 	if err != nil {
-		logx.Severef("init pulsar producer failed", logger.ErrorField(err))
+		logx.Severef("init pulsar producer failed %v", logger.ErrorField(err))
 	}
 	topic = pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
@@ -58,7 +61,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		Type:             pulsar.Shared,
 	})
 	if err != nil {
-		logx.Severef("init pulsar consumer failed", logger.ErrorField(err))
+		logx.Severef("init pulsar consumer failed %v", logger.ErrorField(err))
 	}
 	sc := &ServiceContext{
 		MatchConsumer: consumer,
