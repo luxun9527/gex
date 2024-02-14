@@ -31,15 +31,15 @@ func NewGetTickerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTick
 
 // 获取ticker
 func (l *GetTickerLogic) GetTicker(in *pb.GetTickerReq) (*pb.GetTickerResp, error) {
-	quoteCoinPrec := l.svcCtx.Config.SymbolInfo.QuoteCoinPrec
-	baseCoinPrec := l.svcCtx.Config.SymbolInfo.BaseCoinPrec
+	quoteCoinPrec := l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()
+	baseCoinPrec := l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()
 	resp := &pb.GetTickerResp{}
 	if in.Symbol == "" {
 		data, err := l.svcCtx.RedisClient.Hgetall(string(define.Ticker))
 		respData := make([]*pb.GetTickerResp_Ticker, 0, len(data))
 		if err != nil {
 			logx.Errorw("query from redis failed", logger.ErrorField(err))
-			return nil, errs.RedisFailed
+			return nil, errs.RedisErr
 		}
 		for _, v := range data {
 			var tickerRedisData model.TickerRedisData
@@ -64,7 +64,7 @@ func (l *GetTickerLogic) GetTicker(in *pb.GetTickerReq) (*pb.GetTickerResp, erro
 		data, err := l.svcCtx.RedisClient.Hget(string(define.Ticker), in.Symbol)
 		if err != nil {
 			logx.Errorw("query from redis failed", logger.ErrorField(err))
-			return nil, errs.RedisFailed
+			return nil, errs.RedisErr
 		}
 		respData := make([]*pb.GetTickerResp_Ticker, 0, len(data))
 		if err := json.Unmarshal([]byte(data), &tickerRedisData); err != nil {

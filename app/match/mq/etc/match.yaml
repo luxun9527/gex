@@ -1,3 +1,9 @@
+Symbol: BTC_USDT
+SymbolEtcdConfig:
+  Endpoints:
+    - 192.168.2.159:2379
+  DialTimeout: 5
+
 PulsarConfig:
   hosts:
     - 192.168.2.159:6650
@@ -16,15 +22,7 @@ LoggerConfig:
   Json: false
   Compress: true
 
-SymbolInfo:
-  SymbolName: BTC_USDT
-  SymbolID: 1
-  BaseCoinID: 1
-  BaseCoinName: BTC
-  QuoteCoinID: 2
-  QuoteCoinName: USDT
-  BaseCoinPrec: 4
-  QuoteCoinPrec: 4
+
 GormConf:
   ip: 192.168.2.159
   port: 3307

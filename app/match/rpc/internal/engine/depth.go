@@ -154,11 +154,11 @@ func (d *DepthHandler) handeUpdateDepth() {
 			}
 			d.plock.Unlock()
 			if par.side == enum.Side_Buy && changedPosition != nil {
-				d.bidsChangedPosition[par.p.price.String()] = changedPosition.castToPosition(d.c.SymbolInfo.BaseCoinPrec, d.c.SymbolInfo.QuoteCoinPrec)
+				d.bidsChangedPosition[par.p.price.String()] = changedPosition.castToPosition(d.c.SymbolInfo.BaseCoinPrec.Load(), d.c.SymbolInfo.QuoteCoinPrec.Load())
 			}
 
 			if par.side == enum.Side_Sell && changedPosition != nil {
-				d.asksChangedPosition[par.p.price.String()] = changedPosition.castToPosition(d.c.SymbolInfo.BaseCoinPrec, d.c.SymbolInfo.QuoteCoinPrec)
+				d.asksChangedPosition[par.p.price.String()] = changedPosition.castToPosition(d.c.SymbolInfo.BaseCoinPrec.Load(), d.c.SymbolInfo.QuoteCoinPrec.Load())
 			}
 			d.currentVersion = par.version
 		case <-d.t.C:
@@ -203,7 +203,7 @@ func (d *DepthHandler) updateDepth(p *position, side enum.Side, op opType, versi
 		op:      op,
 		version: version,
 	}
-	logx.Debugf("updateDepth %+v op=%v side=%v", p.castToPosition(d.c.SymbolInfo.BaseCoinPrec, d.c.SymbolInfo.QuoteCoinPrec), op, side)
+	logx.Debugf("updateDepth %+v op=%v side=%v", p.castToPosition(d.c.SymbolInfo.BaseCoinPrec.Load(), d.c.SymbolInfo.QuoteCoinPrec.Load()), op, side)
 	d.paramChan <- par
 }
 
@@ -220,7 +220,7 @@ func (d *DepthHandler) getDepth(level int32) DepthData {
 			break
 		}
 		p := asksIter.Value().(*position)
-		a = append(a, p.castToPosition(d.c.SymbolInfo.BaseCoinPrec, d.c.SymbolInfo.QuoteCoinPrec))
+		a = append(a, p.castToPosition(d.c.SymbolInfo.BaseCoinPrec.Load(), d.c.SymbolInfo.QuoteCoinPrec.Load()))
 
 	}
 	bidsIter := d.bids.Iterator()
@@ -229,7 +229,7 @@ func (d *DepthHandler) getDepth(level int32) DepthData {
 			break
 		}
 		p := bidsIter.Value().(*position)
-		b = append(b, p.castToPosition(d.c.SymbolInfo.BaseCoinPrec, d.c.SymbolInfo.QuoteCoinPrec))
+		b = append(b, p.castToPosition(d.c.SymbolInfo.BaseCoinPrec.Load(), d.c.SymbolInfo.QuoteCoinPrec.Load()))
 	}
 	depthData.Bids = b
 	depthData.Asks = a

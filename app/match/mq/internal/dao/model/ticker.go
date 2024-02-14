@@ -19,7 +19,7 @@ type Ticker struct {
 	PriceDelta decimal.Decimal //变化数量
 }
 
-func (t *Ticker) CastToTickerRedisData(symbolInfo define.SymbolInfo) TickerRedisData {
+func (t *Ticker) CastToTickerRedisData(symbolInfo *define.SymbolInfo) TickerRedisData {
 	return TickerRedisData{
 		Volume:     t.Volume.String(),
 		TimeUnix:   t.TimeUnix,
@@ -33,15 +33,15 @@ func (t *Ticker) CastToTickerRedisData(symbolInfo define.SymbolInfo) TickerRedis
 		Range:      t.Range.Mul(utils.NewFromStringMaxPrec("100")).StringFixedBank(3),
 	}
 }
-func (t *Ticker) CastToTickerWsData(symbolInfo define.SymbolInfo) ws.Ticker {
+func (t *Ticker) CastToTickerWsData(symbolInfo *define.SymbolInfo) ws.Ticker {
 	return ws.Ticker{
-		Price:           t.Price.StringFixedBank(symbolInfo.QuoteCoinPrec),
-		High:            t.High.StringFixedBank(symbolInfo.QuoteCoinPrec),
-		Low:             t.Low.StringFixedBank(symbolInfo.QuoteCoinPrec),
-		Amount:          t.Amount.StringFixedBank(symbolInfo.BaseCoinPrec),
-		Volume:          t.Volume.StringFixedBank(symbolInfo.QuoteCoinPrec),
+		Price:           t.Price.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		High:            t.High.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		Low:             t.Low.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		Amount:          t.Amount.StringFixedBank(symbolInfo.BaseCoinPrec.Load()),
+		Volume:          t.Volume.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		Range:           t.Range.Mul(utils.NewFromStringMaxPrec("100")).StringFixedBank(3),
-		Last24HourPrice: t.Last24.StringFixedBank(symbolInfo.QuoteCoinPrec),
+		Last24HourPrice: t.Last24.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		Symbol:          symbolInfo.SymbolName,
 	}
 }

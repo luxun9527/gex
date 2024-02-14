@@ -8,6 +8,7 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/orderservice"
 	"github.com/luxun9527/gex/common/pkg/logger"
 	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
+	"github.com/luxun9527/gex/common/proto/define"
 	ws "github.com/luxun9527/gpush/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -28,11 +29,11 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
-	logx.Debugw("load config detail", logx.Field("detail", c))
 
-	//todo 从etcd加载交易对的配置。
-
-	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
+	var symbolInfo define.SymbolInfo
+	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
+	c.SymbolInfo = &symbolInfo
+	c.Etcd.Key += "." + c.Symbol
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed err %v", err)
@@ -40,7 +41,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	topic := pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
 		Namespace: pulsarConfig.GexNamespace,
-		Topic:     pulsarConfig.MatchResultTopic + "_" + c.SymbolInfo.SymbolName,
+		Topic:     pulsarConfig.MatchResultTopic + "_" + c.Symbol,
 	}
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
 		Topic:           topic.BuildTopic(),
@@ -53,7 +54,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	topic = pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
 		Namespace: pulsarConfig.GexNamespace,
-		Topic:     pulsarConfig.MatchSourceTopic + "_" + c.SymbolInfo.SymbolName,
+		Topic:     pulsarConfig.MatchSourceTopic + "_" + c.Symbol,
 	}
 	consumer, err := client.Subscribe(pulsar.ConsumerOptions{
 		Topic:            topic.BuildTopic(),

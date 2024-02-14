@@ -76,9 +76,9 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 			}
 			wsOrder := &commonWs.Order{
 				Id:           cast.ToString(order.ID),
-				FilledQty:    utils.PrecCut(order.FilledQty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec),
+				FilledQty:    utils.PrecCut(order.FilledQty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
 				Status:       int8(order.Status),
-				FilledAmount: utils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
+				FilledAmount: utils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
 				Uid:          cast.ToString(order.UserID),
 			}
 			l.oc <- wsOrder
@@ -100,9 +100,9 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 		}
 		wsOrder := &commonWs.Order{
 			Id:           cast.ToString(order.ID),
-			FilledQty:    utils.PrecCut(order.FilledQty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec),
+			FilledQty:    utils.PrecCut(order.FilledQty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
 			Status:       int8(order.Status),
-			FilledAmount: utils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
+			FilledAmount: utils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
 			Uid:          cast.ToString(order.UserID),
 		}
 		l.oc <- wsOrder

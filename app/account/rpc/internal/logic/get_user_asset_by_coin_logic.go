@@ -34,7 +34,7 @@ func (l *GetUserAssetByCoinLogic) GetUserAssetByCoin(in *pb.GetUserAssetReq) (*p
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errs.RecordNotFound
+			return nil, errs.RecordNotFoundErr
 		}
 		return nil, errs.ExecSqlFailed
 	}

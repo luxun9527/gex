@@ -29,7 +29,7 @@ type Kline struct {
 	Range     string          //涨跌幅
 }
 
-func (k *Kline) CastToMysqlData(symbolInfo define.SymbolInfo) *model.Kline {
+func (k *Kline) CastToMysqlData(symbolInfo *define.SymbolInfo) *model.Kline {
 	return &model.Kline{
 		StartTime: k.StartTime,
 		EndTime:   k.EndTime,
@@ -45,7 +45,7 @@ func (k *Kline) CastToMysqlData(symbolInfo define.SymbolInfo) *model.Kline {
 		Range:     k.Range,
 	}
 }
-func (k *Kline) CastToWsData(symbolInfo define.SymbolInfo) commonWs.Kline {
+func (k *Kline) CastToWsData(symbolInfo *define.SymbolInfo) commonWs.Kline {
 	return commonWs.Kline{
 		StartTime: k.StartTime,
 		EndTime:   k.EndTime,

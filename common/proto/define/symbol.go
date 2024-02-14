@@ -13,31 +13,38 @@ import (
 
 const (
 	EtcdSymbolPrefix = "Symbol/"
+	EtcdCoinPrefix   = "Coin/"
 )
 
-func InitSymbolConfig(symbol string, etcdConfig etcd.EtcdConfig, symbolInfo *SymbolInfo) {
-	confx.MustLoadFromEtcd(EtcdSymbolPrefix+symbol, etcdConfig, symbolInfo, confx.WithCustomInitLoadFunc(func(kvs []*mvccpb.KeyValue, target any) {
+func InitSymbolConfig(key string, etcdConfig etcd.EtcdConfig, symbolInfo *SymbolInfo) {
+	confx.MustLoadFromEtcd(key, etcdConfig, symbolInfo, confx.WithCustomInitLoadFunc(func(kvs []*mvccpb.KeyValue, target any) {
 		for _, v := range kvs {
 			if err := yaml.Unmarshal(v.Value, symbolInfo); err != nil {
-				logx.Severef("get symbol config failed symbolInfo =%v", EtcdSymbolPrefix+symbol)
+				logx.Severef("get symbol config failed symbolInfo = %v", key)
 			}
-			symbolInfo.QuoteCoinPrec.Store(symbolInfo.QuoteCoinPrecValue)
 			symbolInfo.BaseCoinPrec.Store(symbolInfo.BaseCoinPrecValue)
+			symbolInfo.QuoteCoinPrec.Store(symbolInfo.QuoteCoinPrecValue)
+
 		}
 	}), confx.WithCustomWatchFunc(func(evs []*clientv3.Event, target any) {
 		for _, v := range evs {
 			switch v.Type {
 			case mvccpb.PUT: //修改或者新增
 				if err := yaml.Unmarshal(v.Kv.Value, symbolInfo); err != nil {
-					logx.Severef("get symbol config failed symbolInfo =%v", EtcdSymbolPrefix+symbol)
+					logx.Errorf("get symbol config failed symbolInfo =%v", key)
 				}
 				symbolInfo.QuoteCoinPrec.Store(symbolInfo.QuoteCoinPrecValue)
 				symbolInfo.BaseCoinPrec.Store(symbolInfo.BaseCoinPrecValue)
 			case mvccpb.DELETE: //删除
+				logx.Sloww("warn symbol config deleted")
 			}
 
 		}
 	}))
+}
+
+func InitSymbolConfigList(key string, etcdConfig etcd.EtcdConfig, symbolInfoList *sync.Map) {
+
 }
 
 type SymbolInfo struct {

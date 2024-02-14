@@ -351,7 +351,7 @@ LOOP:
 			//taker金额比maker的金额要小，匹配结束
 			//按照taker的金额购买的话能买多少，小于最小的单位则结束。
 			qty := takerOrder.UnfilledAmount.Div(makerOrder.Price)
-			baseCoinMinUnit := utils.NewFromStringMaxPrec(cast.ToString(math.Pow10(int(-m.c.SymbolInfo.BaseCoinPrec))))
+			baseCoinMinUnit := utils.NewFromStringMaxPrec(cast.ToString(math.Pow10(int(-m.c.SymbolInfo.BaseCoinPrec.Load()))))
 			if qty.LessThan(baseCoinMinUnit) {
 				break LOOP
 			}
@@ -882,9 +882,9 @@ func (m *MatchEngine) sendTick() {
 	for matchResult := range m.tick {
 		for _, v := range matchResult.MatchedRecords {
 			tick := commonWs.Tick{
-				Price:        v.Price.StringFixedBank(m.c.SymbolInfo.QuoteCoinPrec),
-				Qty:          v.Qty.StringFixedBank(m.c.SymbolInfo.BaseCoinPrec),
-				Amount:       v.Amount.StringFixedBank(m.c.SymbolInfo.QuoteCoinPrec),
+				Price:        v.Price.StringFixedBank(m.c.SymbolInfo.QuoteCoinPrec.Load()),
+				Qty:          v.Qty.StringFixedBank(m.c.SymbolInfo.BaseCoinPrec.Load()),
+				Amount:       v.Amount.StringFixedBank(m.c.SymbolInfo.QuoteCoinPrec.Load()),
 				TimeStamp:    matchResult.MatchTime / 1e9,
 				TakerIsBuyer: matchResult.TakerIsBuy,
 			}

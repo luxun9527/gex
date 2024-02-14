@@ -7,8 +7,8 @@ import (
 	"github.com/luxun9527/gex/app/match/rpc/internal/server"
 	"github.com/luxun9527/gex/app/match/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/match/rpc/pb"
-	"github.com/luxun9527/gex/common/pkg/confx"
 	"github.com/luxun9527/gex/common/pkg/logger"
+	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -16,17 +16,14 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var (
-	symbol     = flag.String("s", "BTC_USDT", "symbol 交易对")
-	etcdConfig = flag.String("e", `{"Endpoints":["etcd:2379"],"DialTimeout":5}`, "symbol 交易对")
-)
+var configFile = flag.String("f", "app/match/rpc/etc/match.yaml", "the config file")
 
 func main() {
 	flag.Parse()
 
 	var c config.Config
+	conf.MustLoad(*configFile, &c)
 	//初始化配置
-	confx.MustLoadFromEtcd(confx.Match.BuildKey(*symbol), *etcdConfig, &c, confx.WithDefaultInitLoadFunc())
 	ctx := svc.NewServiceContext(&c)
 	//初始化
 	bootstrap.Start(ctx)

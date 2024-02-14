@@ -75,7 +75,20 @@ func (l *UpdateCoinLogic) UpdateCoin(req *types.UpdateCoinReq) (resp *types.Empt
 				logx.Errorw("put config to etcd failed", logx.Field("err", err))
 				return err
 			}
+		}
 
+		coinInfo := define.CoinInfo{
+			CoinID:   int32(req.ID),
+			CoinName: req.CoinName,
+			Prec:     req.Prec,
+		}
+		data, err := yaml.Marshal(coinInfo)
+		if err != nil {
+			return err
+		}
+		if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdSymbolPrefix+req.CoinName, string(data)); err != nil {
+			logx.Errorw("put config to etcd failed", logx.Field("err", err))
+			return err
 		}
 		return nil
 	}); err != nil {

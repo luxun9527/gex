@@ -68,7 +68,7 @@ func (kl *KlineHandler) readInitData() {
 	k := kl.svcCtx.Query.Kline
 	for _, v := range model.KlineTypes {
 		d, err := k.WithContext(context.Background()).
-			Where(k.KlineType.Eq(int32(v)), k.SymbolID.Eq(kl.svcCtx.SymbolInfo.SymbolID)).
+			Where(k.KlineType.Eq(int32(v)), k.SymbolID.Eq(kl.svcCtx.Config.SymbolInfo.SymbolID)).
 			Order(k.StartTime.Desc()).
 			Take()
 		if err != nil {
@@ -134,7 +134,7 @@ func (kl *KlineHandler) store() {
 		if klineData.IsHistory {
 			err := kl.svcCtx.Query.Transaction(func(tx *query.Query) error {
 				for _, v := range klineData.Klines {
-					mysqlData := v.CastToMysqlData(kl.svcCtx.SymbolInfo)
+					mysqlData := v.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)
 					logx.Infow("store history kline data", logx.Field("data", mysqlData))
 					if err := kl.svcCtx.Query.Kline.WithContext(context.Background()).
 						Clauses(clause.Insert{Modifier: "IGNORE"}).
@@ -159,10 +159,10 @@ func (kl *KlineHandler) store() {
 			if err := kl.svcCtx.Query.Transaction(func(tx *query.Query) error {
 				for _, v := range klineData.Klines {
 
-					mysqlData := v.CastToMysqlData(kl.svcCtx.SymbolInfo)
+					mysqlData := v.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)
 					_, err := kl.svcCtx.Query.Kline.
 						WithContext(context.Background()).Omit(k.SymbolID, k.ID, k.Symbol).
-						Where(k.Symbol.Eq(kl.svcCtx.SymbolInfo.SymbolName), k.KlineType.Eq(int32(v.KlineType)), k.StartTime.Eq(v.StartTime)).
+						Where(k.Symbol.Eq(kl.svcCtx.Config.SymbolInfo.SymbolName), k.KlineType.Eq(int32(v.KlineType)), k.StartTime.Eq(v.StartTime)).
 						Updates(&mysqlData)
 					if err != nil {
 						logx.Errorw("update last kline failed", logger.ErrorField(err))
@@ -205,12 +205,12 @@ func (kl *KlineHandler) snapshot() {
 func (kl *KlineHandler) send() {
 	for data := range kl.sendChan {
 		msg := commonWs.Message[commonWs.Kline]{
-			Topic:   commonWs.KlinePrefix.WithParam(kl.svcCtx.SymbolInfo.SymbolName) + "@" + data.KlineType.String(),
-			Payload: data.CastToWsData(kl.svcCtx.SymbolInfo),
+			Topic:   commonWs.KlinePrefix.WithParam(kl.svcCtx.Config.SymbolInfo.SymbolName) + "@" + data.KlineType.String(),
+			Payload: data.CastToWsData(kl.svcCtx.Config.SymbolInfo),
 		}
 		if _, err := kl.svcCtx.WsClient.PushData(context.Background(), &gpush.Data{
 			Uid:   "",
-			Topic: commonWs.KlinePrefix.WithParam(kl.svcCtx.SymbolInfo.SymbolName) + "@" + data.KlineType.String(),
+			Topic: commonWs.KlinePrefix.WithParam(kl.svcCtx.Config.SymbolInfo.SymbolName) + "@" + data.KlineType.String(),
 			Data:  msg.ToBytes(),
 		}); err != nil {
 			logx.Errorw("push kline websocket data failed", logger.ErrorField(err), logx.Field("data", msg))
@@ -222,7 +222,7 @@ func (kl *KlineHandler) send() {
 func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isMock bool) {
 	logx.Infow("receive match data ", logx.Field("data", data))
 	for _, klineData := range kl.Klines {
-		logx.Infow("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.SymbolInfo)))
+		logx.Infow("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 		//如果是mock撮合用最新的价格计算
 		if isMock {
 			//价格为零不计算
@@ -312,7 +312,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isMock bool) {
 			klineData.Range = data.EndPrice.Sub(klineData.Open).Div(klineData.Open).Mul(utils.NewFromStringMaxPrec("100")).StringFixedBank(3)
 		}
 		klineData.Close = data.EndPrice
-		logx.Infow("after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.SymbolInfo)))
+		logx.Infow("after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 
 	}
 }

@@ -7,6 +7,10 @@ Etcd:
     - 192.168.2.159:2379
   Key: service_match_rpc
 
+SymbolEtcdConfig:
+  Endpoints:
+    - 192.168.2.159:2379
+  DialTimeout: 5
 EtcdConfig:
   Endpoints:
     - 192.168.2.159:2379

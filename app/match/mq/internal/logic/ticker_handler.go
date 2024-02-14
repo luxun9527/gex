@@ -105,7 +105,7 @@ func (th *TickerHandler) initTickList() {
 	mo := th.svcCtx.Query.MatchedOrder
 	data, err := mo.WithContext(context.Background()).
 		Select(mo.ID, mo.Price, mo.Qty, mo.Amount, mo.MatchTime).
-		Where(mo.SymbolID.Eq(th.svcCtx.Config.SymbolInfo.SymbolID)).
+		Where(mo.SymbolID.Eq(th.svcCtx.SymbolInfo.SymbolID)).
 		Where(mo.MatchTime.Between(yesterday, now)).
 		Find()
 	if err != nil {
@@ -166,14 +166,14 @@ func (th *TickerHandler) updateTickerData(matchData *model.MatchData) {
 }
 func (th *TickerHandler) send() {
 	for data := range th.sendChan {
-		wsTicker := data.CastToTickerWsData(th.svcCtx.Config.SymbolInfo)
+		wsTicker := data.CastToTickerWsData(th.svcCtx.SymbolInfo)
 		msg1 := ws.Message[ws.Ticker]{
-			Topic:   commonWs.TickerPrefix.WithParam(th.svcCtx.Config.SymbolInfo.SymbolName),
-			Payload: data.CastToTickerWsData(th.svcCtx.Config.SymbolInfo),
+			Topic:   commonWs.TickerPrefix.WithParam(th.svcCtx.SymbolInfo.SymbolName),
+			Payload: data.CastToTickerWsData(th.svcCtx.SymbolInfo),
 		}
 		if _, err := th.svcCtx.WsClient.PushData(context.Background(), &gpush.Data{
 			Uid:   "",
-			Topic: commonWs.TickerPrefix.WithParam(th.svcCtx.Config.SymbolInfo.SymbolName),
+			Topic: commonWs.TickerPrefix.WithParam(th.svcCtx.SymbolInfo.SymbolName),
 			Data:  msg1.ToBytes(),
 		}); err != nil {
 			logx.Errorw("push ticker websocket data failed", logger.ErrorField(err), logx.Field("data", wsTicker))
@@ -185,12 +185,12 @@ func (th *TickerHandler) send() {
 			Symbol:      wsTicker.Symbol,
 		}
 		msg2 := ws.Message[ws.MiniTicker]{
-			Topic:   commonWs.MiniTickerPrefix.WithParam(th.svcCtx.Config.SymbolInfo.SymbolName),
+			Topic:   commonWs.MiniTickerPrefix.WithParam(th.svcCtx.SymbolInfo.SymbolName),
 			Payload: miniTicker,
 		}
 		if _, err := th.svcCtx.WsClient.PushData(context.Background(), &gpush.Data{
 			Uid:   "",
-			Topic: commonWs.MiniTickerPrefix.WithParam(th.svcCtx.Config.SymbolInfo.SymbolName),
+			Topic: commonWs.MiniTickerPrefix.WithParam(th.svcCtx.SymbolInfo.SymbolName),
 			Data:  msg2.ToBytes(),
 		}); err != nil {
 			logx.Errorw("push kline websocket data failed", logger.ErrorField(err), logx.Field("data", wsTicker))
@@ -202,10 +202,10 @@ func (th *TickerHandler) send() {
 func (th *TickerHandler) store() {
 
 	for tickerData := range th.writeChan {
-		d, _ := json.Marshal(tickerData.CastToTickerRedisData(th.svcCtx.Config.SymbolInfo))
+		d, _ := json.Marshal(tickerData.CastToTickerRedisData(th.svcCtx.SymbolInfo))
 		var err error
 		for i := 0; i < 3; i++ {
-			if err = th.svcCtx.RedisClient.Hset(string(define.Ticker), th.svcCtx.Config.SymbolInfo.SymbolName, string(d)); err != nil {
+			if err = th.svcCtx.RedisClient.Hset(string(define.Ticker), th.svcCtx.SymbolInfo.SymbolName, string(d)); err != nil {
 				time.Sleep(time.Second * 3)
 				continue
 			}

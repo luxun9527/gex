@@ -7,7 +7,7 @@ Etcd:
    - 192.168.2.159:2379
   Key: service_kline_rpc
 
-EtcdConfig:
+SymbolEtcdConfig:
   Endpoints:
     - 192.168.2.159:2379
   DialTimeout: 5

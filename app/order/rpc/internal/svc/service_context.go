@@ -8,6 +8,7 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/query"
 	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/luxun9527/gex/common/pkg/snowflake"
+	"github.com/luxun9527/gex/common/proto/define"
 	ws "github.com/luxun9527/gpush/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -31,6 +32,11 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	writer := logger.NewZapWriter(logger.L)
 	logx.SetWriter(writer)
 	logx.DisableStat()
+
+	var symbolInfo define.SymbolInfo
+	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
+	c.SymbolInfo = &symbolInfo
+
 	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
 	target, err := c.DtmConf.BuildTarget()
 	if err != nil {
@@ -38,13 +44,14 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		return nil
 	}
 
+	c.SymbolInfo = &symbolInfo
 	s, err := snowflake.NewWorker(c.SnowFlakeWorkID)
 	if err != nil {
-		logx.Severef("init snowflake fail", logger.ErrorField(err))
+		logx.Severef("init snowflake fail %v", err)
 	}
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
-		logx.Severef("init pulsar client failed", logger.ErrorField(err))
+		logx.Severef("init pulsar client failed %v", err)
 	}
 	topic := pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
@@ -57,7 +64,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		DisableBatching: true,
 	})
 	if err != nil {
-		logx.Severef("init pulsar producer failed", logger.ErrorField(err))
+		logx.Severef("init pulsar producer failed %v", err)
 	}
 	topic = pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
@@ -70,7 +77,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		Type:             pulsar.Shared,
 	})
 	if err != nil {
-		logx.Severef("init pulsar consumer failed", logger.ErrorField(err))
+		logx.Severef("init pulsar consumer failed %v", err)
 	}
 
 	sc := &ServiceContext{

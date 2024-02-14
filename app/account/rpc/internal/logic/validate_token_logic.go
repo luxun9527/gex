@@ -38,7 +38,7 @@ func (l *ValidateTokenLogic) ValidateToken(in *pb.ValidateTokenReq) (*pb.Validat
 	result, err := l.svcCtx.RedisClient.Get(key)
 	if err != nil {
 		logx.Errorw("get redis key failed", logger.ErrorField(err), logx.Field("key", key))
-		return nil, errs.RedisFailed
+		return nil, errs.RedisErr
 	}
 	if result != "" {
 		return nil, errs.TokenValidateFailed

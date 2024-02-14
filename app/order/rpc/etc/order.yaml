@@ -57,12 +57,8 @@ GormConf:
   password: root
   maxIdleConns: 10
   maxOpenConns: 100
-SymbolInfo:
-  SymbolName: BTC_USDT
-  SymbolID: 1
-  BaseCoinID: 1
-  BaseCoinName: BTC
-  QuoteCoinID: 2
-  QuoteCoinName: USDT
-  BaseCoinPrec: 4
-  QuoteCoinPrec: 4
+Symbol: BTC_USDT
+SymbolEtcdConfig:
+  Endpoints:
+    - 192.168.2.159:2379
+  DialTimeout: 5

@@ -27,7 +27,6 @@ func NewGetTickLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTickLo
 
 // 获取tick实时成交
 func (l *GetTickLogic) GetTick(in *pb.GetTickReq) (*pb.GetTickResp, error) {
-	// todo: add your logic here and delete this line
 	if in.Limit == 0 {
 		in.Limit = 40
 	}
@@ -47,9 +46,9 @@ func (l *GetTickLogic) GetTick(in *pb.GetTickReq) (*pb.GetTickResp, error) {
 			f = true
 		}
 		tick := &pb.GetTickResp_Tick{
-			Price:        utils.PrecCut(v.Price, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
-			Qty:          utils.PrecCut(v.Qty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec),
-			Amount:       utils.PrecCut(v.Price, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec),
+			Price:        utils.PrecCut(v.Price, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
+			Qty:          utils.PrecCut(v.Qty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
+			Amount:       utils.PrecCut(v.Price, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
 			Timestamp:    v.MatchTime,
 			Symbol:       v.SymbolName,
 			TakerIsBuyer: f,

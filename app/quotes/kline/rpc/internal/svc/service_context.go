@@ -11,8 +11,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
-	"log"
-	"time"
 )
 
 type ServiceContext struct {
@@ -21,25 +19,19 @@ type ServiceContext struct {
 	RedisClient   *redis.Redis
 	MatchConsumer pulsar.Consumer
 	WsClient      gpushPb.ProxyClient
-	SymbolInfo    define.SymbolInfo
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
+
 	var symbolInfo define.SymbolInfo
+	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
+	c.SymbolInfo = &symbolInfo
 
 	c.Etcd.Key += "." + c.Symbol
 
-	//todo 从etcd中取交易对的配置
-	define.InitSymbolConfig(c.Symbol, c.EtcdConfig, &symbolInfo)
-	go func() {
-		for {
-			time.Sleep(time.Second)
-			log.Println(symbolInfo)
-		}
-	}()
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed %v", err)

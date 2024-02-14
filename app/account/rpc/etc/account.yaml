@@ -5,6 +5,13 @@ Etcd:
   Hosts:
     - 192.168.2.159:2379
   Key: service_account_rpc
+
+SymbolEtcdConfig:
+  Endpoints:
+    - 192.168.2.159:2379
+  DialTimeout: 5
+
+
 GormConf:
   ip: 192.168.2.159
   port: 3307

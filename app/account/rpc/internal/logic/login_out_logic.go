@@ -39,7 +39,7 @@ func (l *LoginOutLogic) LoginOut(in *pb.LoginOutReq) (*pb.Empty, error) {
 	remain := token.ExpiresAt.Sub(time.Now()) / 1e9
 	if _, err := l.svcCtx.RedisClient.SetnxEx(key, t, int(remain)); err != nil {
 		logx.Errorw("set redis failed", logger.ErrorField(err))
-		return nil, errs.RedisFailed
+		return nil, errs.RedisErr
 	}
 	return &pb.Empty{}, nil
 }

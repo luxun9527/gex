@@ -35,11 +35,11 @@ func (t *Ticker) CastToTickerRedisData(symbolInfo define.SymbolInfo) TickerRedis
 }
 func (t *Ticker) CastToTickerWsData(symbolInfo define.SymbolInfo) ws.Ticker {
 	return ws.Ticker{
-		Price:  t.Last24.StringFixedBank(symbolInfo.QuoteCoinPrec),
-		High:   t.High.StringFixedBank(symbolInfo.QuoteCoinPrec),
-		Low:    t.Low.StringFixedBank(symbolInfo.QuoteCoinPrec),
-		Amount: t.Volume.StringFixedBank(symbolInfo.BaseCoinPrec),
-		Volume: t.Turnover.StringFixedBank(symbolInfo.QuoteCoinPrec),
+		Price:  t.Last24.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		High:   t.High.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		Low:    t.Low.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		Amount: t.Volume.StringFixedBank(symbolInfo.BaseCoinPrec.Load()),
+		Volume: t.Turnover.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		Range:  t.Range.StringFixedBank(3),
 		Symbol: symbolInfo.SymbolName,
 	}

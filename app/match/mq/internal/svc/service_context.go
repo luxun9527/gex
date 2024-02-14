@@ -8,6 +8,7 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/orderservice"
 	"github.com/luxun9527/gex/common/pkg/logger"
 	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
+	"github.com/luxun9527/gex/common/proto/define"
 	gpushPb "github.com/luxun9527/gpush/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -22,12 +23,17 @@ type ServiceContext struct {
 	RedisClient   *redis.Redis
 	WsClient      gpushPb.ProxyClient
 	MatchDataChan chan *model.MatchData
+	SymbolInfo    *define.SymbolInfo
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	logger.InitLogger(c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.L))
 	logx.DisableStat()
+
+	var symbolInfo define.SymbolInfo
+	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
+
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed err %v", err)
@@ -35,7 +41,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	topic := pulsarConfig.Topic{
 		Tenant:    pulsarConfig.PublicTenant,
 		Namespace: pulsarConfig.GexNamespace,
-		Topic:     pulsarConfig.MatchResultTopic + "_" + c.SymbolInfo.SymbolName,
+		Topic:     pulsarConfig.MatchResultTopic + "_" + c.Symbol,
 	}
 	consumer, err := client.Subscribe(pulsar.ConsumerOptions{
 		Topic:            topic.BuildTopic(),
@@ -52,6 +58,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		WsClient:      gpushPb.NewProxyClient(zrpc.MustNewClient(c.WsConf).Conn()),
 		RedisClient:   redis.MustNewRedis(c.RedisConf),
 		MatchDataChan: make(chan *model.MatchData),
+		SymbolInfo:    &symbolInfo,
 	}
 	return sc
 }

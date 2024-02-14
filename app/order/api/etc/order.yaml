@@ -26,16 +26,8 @@ WsConf:
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
-SymbolListConf:
-  BTC_USDT:
-    SymbolName: BTC_USDT
-    SymbolID: 1
-    BaseCoinID: 1
-    BaseCoinName: BTC
-    QuoteCoinID: 2
-    QuoteCoinName: USDT
-    BaseCoinPrec: 4
-    QuoteCoinPrec: 4
+
+
 LoggerConfig:
   Level: debug
   Stacktrace: true
@@ -51,5 +43,6 @@ LoggerConfig:
   Json: false
   Compress: true
 LanguageEtcdConf:
-  Endpoints: ["192.168.2.159:2379"]
+  Endpoints:
+    - 192.168.2.159:2379
   DialTimeout: 5

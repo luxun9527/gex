@@ -12,13 +12,13 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	PulsarConfig pulsar.PulsarConfig
-	LoggerConfig logger.Config
-	GormConf     commongorm.GormConf
-	WsConf       zrpc.RpcClientConf
-	Symbol       string
-	OrderRpcConf zrpc.RpcClientConf
-	RedisConf    redis.RedisConf
-	SymbolInfo   define.SymbolInfo `json:",optional"`
-	EtcdConfig   etcd.EtcdConfig
+	PulsarConfig     pulsar.PulsarConfig
+	LoggerConfig     logger.Config
+	GormConf         commongorm.GormConf
+	WsConf           zrpc.RpcClientConf
+	Symbol           string
+	OrderRpcConf     zrpc.RpcClientConf
+	RedisConf        redis.RedisConf
+	SymbolEtcdConfig etcd.EtcdConfig
+	SymbolInfo       *define.SymbolInfo `json:",optional"`
 }
