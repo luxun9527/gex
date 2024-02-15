@@ -11,6 +11,10 @@
 
 核心模块：订单，撮合，账户，行情。
 
+## 基本架构
+
+![](https://cdn.learnku.com/uploads/images/202402/15/51993/bBrX3MgAl6.png!large)
+
 ## 基本功能
 
 ### 限价单

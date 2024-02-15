@@ -29,5 +29,6 @@ GormConf:
   maxIdleConns: 10
   maxOpenConns: 100
 LanguageEtcdConf:
-  Endpoints: ["192.168.2.159:2379"]
+  Endpoints:
+    - 192.168.2.159:2379
   DialTimeout: 5

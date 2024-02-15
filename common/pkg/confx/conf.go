@@ -89,17 +89,17 @@ func MustLoadFromEtcd(key string, etcdConfig etcd.EtcdConfig, target any, ops ..
 
 	client, err := etcdConfig.NewEtcdClient()
 	if err != nil {
-		log.Panicf("init etcd client failed err %v", err)
+		logx.Severef("init etcd client failed err %v", err)
 	}
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 	response, err := client.Get(ctx, key, clientv3.WithPrefix())
 	if err != nil {
-		log.Panicf("get service  config failed err %v", err)
+		logx.Severef("get service  config failed err %v", err)
 	}
-	if len(response.Kvs) == 0 {
-		log.Panicf("init etcd config failed err =%v", err)
-	}
+	//if len(response.Kvs) == 0 {
+	//	log.Panicf("get config failed err =%v", err)
+	//}
 	var (
 		initLoadFunc        = DefaultLoadFunc
 		watchOnConfigChange func(evs []*clientv3.Event, target any)
