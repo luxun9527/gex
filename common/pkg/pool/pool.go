@@ -2,7 +2,6 @@ package pool
 
 import (
 	"context"
-	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/zeromicro/go-zero/core/discov"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -37,7 +36,9 @@ func NewRpcClients(etcdConf discov.EtcdConf) *RpcClients {
 	return clis
 }
 func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
+
 	logx.Infow("add conn detail", logx.Field("key", kv.Key), logx.Field("value", kv.Value))
+
 	//注册后的key service_order_rpc.BTC_USDT/78232932937927000的格式。
 	d := strings.Split(string(kv.Key), "/")
 	if len(d) != 2 {
@@ -52,7 +53,8 @@ func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
 
 	//etcd的配置。
 	etcdConfig := r.etcdConf
-	etcdConfig.Key = string(kv.Key)
+	//key为 service_order_rpc.BTC_USDT这个key
+	etcdConfig.Key = d[0]
 	rpcConfig := zrpc.RpcClientConf{
 		Etcd:     etcdConfig,
 		NonBlock: true,
@@ -111,7 +113,7 @@ func mustNewEtcdClient(endpoints []string) *clientv3.Client {
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
-		logx.Severef("init etcd client failed", logger.ErrorField(err))
+		logx.Severef("init etcd client failed %v", err)
 	}
 	return cli
 }
