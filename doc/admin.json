@@ -667,16 +667,15 @@
           "type": "integer",
           "format": "int64"
         },
-        "user_id": {
-          "type": "integer",
-          "format": "int64"
+        "user_info": {
+          "$ref": "#/definitions/UserInfo"
         }
       },
       "title": "LoginResp",
       "required": [
         "token",
         "expire",
-        "user_id"
+        "user_info"
       ]
     },
     "RegisterReq": {
@@ -870,6 +869,23 @@
       "required": [
         "key",
         "config_data"
+      ]
+    },
+    "UserInfo": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "UserInfo",
+      "required": [
+        "username",
+        "user_id"
       ]
     }
   },

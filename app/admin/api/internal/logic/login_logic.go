@@ -32,8 +32,9 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	user := l.svcCtx.Query.User
 
 	u, err := user.WithContext(l.ctx).
+		Select(user.Username, user.ID, user.Password).
 		Where(user.Username.Eq(req.Username)).
-		First()
+		Take()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errs.LoginFailed
@@ -57,6 +58,9 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	return &types.LoginResp{
 		Token:  token,
 		Expire: 0,
-		UserId: int64(u.ID),
+		UserInfo: &types.UserInfo{
+			Username: req.Username,
+			UserId:   u.ID,
+		},
 	}, nil
 }

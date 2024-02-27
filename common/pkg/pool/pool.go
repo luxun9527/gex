@@ -21,6 +21,7 @@ type RpcClients struct {
 	etcdConf   discov.EtcdConf
 }
 
+// NewRpcClients 传入service_order_rpc这种格式
 func NewRpcClients(etcdConf discov.EtcdConf) *RpcClients {
 	cli := mustNewEtcdClient(etcdConf.Hosts)
 	resp, err := cli.Get(context.Background(), etcdConf.Key, clientv3.WithPrefix())
@@ -52,7 +53,7 @@ func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
 
 	//etcd的配置。
 	etcdConfig := r.etcdConf
-	etcdConfig.Key = string(kv.Key)
+	etcdConfig.Key = d[0]
 	rpcConfig := zrpc.RpcClientConf{
 		Etcd:     etcdConfig,
 		NonBlock: true,

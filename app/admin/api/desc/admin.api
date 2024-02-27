@@ -40,10 +40,14 @@ type (
 		Password string `json:"password"`
 		//	Captcha  string `json:"captcha"`
 	}
+	UserInfo {
+		Username string `json:"username"`
+		UserId   uint32 `json:"user_id"`
+	}
 	LoginResp {
-		Token  string `json:"token"`
-		Expire int64  `json:"expire"`
-		UserId int64  `json:"user_id"`
+		Token    string    `json:"token"`
+		Expire   int64     `json:"expire"`
+		UserInfo *UserInfo `json:"user_info"`
 	}
 )
 

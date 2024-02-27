@@ -43,10 +43,6 @@ func InitSymbolConfig(key string, etcdConfig etcd.EtcdConfig, symbolInfo *Symbol
 	}))
 }
 
-func InitSymbolConfigList(key string, etcdConfig etcd.EtcdConfig, symbolInfoList *sync.Map) {
-
-}
-
 type SymbolInfo struct {
 	SymbolName         string
 	SymbolID           int32

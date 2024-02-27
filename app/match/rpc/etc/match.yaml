@@ -18,7 +18,7 @@ EtcdConfig:
 
 PulsarConfig:
   hosts:
-    - pulsar:6650
+    - 192.168.2.159:6650
 LoggerConfig:
   Level: debug
   Stacktrace: true
@@ -45,15 +45,7 @@ WsConf:
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
-#SymbolInfo:
-#    SymbolName: BTC_USDT
-#    SymbolID: 1
-#    BaseCoinID: 1
-#    BaseCoinName: BTC
-#    QuoteCoinID: 2
-#    QuoteCoinName: USDT
-#    BaseCoinPrec: 4
-#    QuoteCoinPrec: 4
+
 GormConf:
   ip: 192.168.2.159
   port: 3307

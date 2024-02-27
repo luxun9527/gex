@@ -27,10 +27,15 @@ type LoginReq struct {
 	Password string `json:"password"`
 }
 
+type UserInfo struct {
+	Username string `json:"username"`
+	UserId   uint32 `json:"user_id"`
+}
+
 type LoginResp struct {
-	Token  string `json:"token"`
-	Expire int64  `json:"expire"`
-	UserId int64  `json:"user_id"`
+	Token    string    `json:"token"`
+	Expire   int64     `json:"expire"`
+	UserInfo *UserInfo `json:"user_info"`
 }
 
 type RegisterReq struct {

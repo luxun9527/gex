@@ -6,7 +6,6 @@ import (
 	"github.com/luxun9527/gex/app/match/rpc/internal/engine"
 	"github.com/luxun9527/gex/app/match/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/order/rpc/orderservice"
-	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/luxun9527/gex/common/proto/enum"
 	"github.com/luxun9527/gex/common/utils"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -19,7 +18,7 @@ func Start(sc *svc.ServiceContext) {
 func loadOrder(sc *svc.ServiceContext) {
 	stream, err := sc.OrderClient.GetOrderAllPendingOrder(context.Background(), &orderservice.OrderEmpty{})
 	if err != nil {
-		logx.Severef("call GetOrderAllPendingOrder failed", logger.ErrorField(err))
+		logx.Severef("call GetOrderAllPendingOrder failed %v", err)
 	}
 	for {
 		order, err := stream.Recv()
