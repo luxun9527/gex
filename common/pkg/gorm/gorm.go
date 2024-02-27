@@ -27,7 +27,7 @@ func (gc *GormConf) dns() string {
 }
 func (gc *GormConf) MustNewGormClient() *gorm.DB {
 	if db, err := gorm.Open(mysql.Open(gc.dns()), gc.gormConfig()); err != nil {
-		logx.Severef("init gorm failed", logger.ErrorField(err))
+		logx.Severef("init gorm failed %v", err)
 		return nil
 	} else {
 		sqlDB, _ := db.DB()
