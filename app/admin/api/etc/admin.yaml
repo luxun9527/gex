@@ -1,10 +1,10 @@
 Name: AdminApi
 Host: 0.0.0.0
 Port: 20015
-TimeOut: 0
+TimeOut: 1000000
 EtcdConf:
   Endpoints:
-    - 192.168.11.185:2379
+    - 192.168.2.159:2379
   DialTimeout: 3
 LoggerConfig:
   Level: debug
@@ -21,8 +21,8 @@ LoggerConfig:
   Json: false
   Compress: true
 GormConf:
-  ip: 192.168.11.185
-  port: 3309
+  ip: 192.168.2.159
+  port: 3307
   dbName: admin
   username: root
   password: root
@@ -30,5 +30,5 @@ GormConf:
   maxOpenConns: 100
 LanguageEtcdConf:
   Endpoints:
-    - 192.168.11.185:2379
+    - 192.168.2.159:2379
   DialTimeout: 5

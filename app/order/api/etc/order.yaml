@@ -1,32 +1,35 @@
 Name: OrderApi
 Host: 0.0.0.0
 Port: 20013
-TimeOut: 3600
+TimeOut: 100000
 OrderRpcConf:
   Etcd:
     Key: service_order_rpc
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
+  TimeOut: 100000
 MatchRpcConf:
   Etcd:
     Key: service_match_rpc
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
+  TimeOut: 100000
 AccountRpcConf:
   Etcd:
     Key: service_account_rpc
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
+  TimeOut: 100000
 WsConf:
   Etcd:
     Key: proxy
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
-
+  TimeOut: 100000
 
 LoggerConfig:
   Level: debug
@@ -43,6 +46,10 @@ LoggerConfig:
   Json: false
   Compress: true
 LanguageEtcdConf:
+  Endpoints:
+    - 192.168.2.159:2379
+  DialTimeout: 5
+SymbolEtcdConfig:
   Endpoints:
     - 192.168.2.159:2379
   DialTimeout: 5

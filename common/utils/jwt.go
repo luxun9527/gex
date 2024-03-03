@@ -12,10 +12,6 @@ type JwtContent struct {
 	NickName string
 }
 
-const (
-	TokenRedisKey = "jwt_black_list_"
-)
-
 type CustomClaims struct {
 	JwtContent
 	jwt.RegisteredClaims
@@ -40,9 +36,7 @@ func NewJWT() *JWT {
 		[]byte(singingKey),
 	}
 }
-func GenerateKey(token string) string {
-	return TokenRedisKey + MD5(token)
-}
+
 func (j *JWT) CreateClaims(baseClaims JwtContent) CustomClaims {
 	claims := CustomClaims{
 		RegisteredClaims: jwt.RegisteredClaims{

@@ -26,7 +26,7 @@ func NewRpcClients(etcdConf discov.EtcdConf) *RpcClients {
 	if err != nil {
 		logx.Severef("etcd get key failed %v", err)
 	}
-	clis := &RpcClients{Clients: &sync.Map{}, KeyPrefix: etcdConf.Key, EtcdClient: cli}
+	clis := &RpcClients{Clients: &sync.Map{}, KeyPrefix: etcdConf.Key, EtcdClient: cli, etcdConf: etcdConf}
 	for _, v := range resp.Kvs {
 		clis.addConn(v)
 	}

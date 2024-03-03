@@ -44,7 +44,7 @@ func (l *AddCoinLogic) AddCoin(req *types.AddCoinReq) (resp *types.AddCoinResp, 
 	}
 
 	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
-		if tx.Coin.WithContext(l.ctx).Create(c).Error(); err != nil {
+		if err := tx.Coin.WithContext(l.ctx).Create(c); err != nil {
 			logx.Errorw("create coin failed", logx.Field("err", err))
 			return err
 		}

@@ -1,7 +1,7 @@
 Name: AccountApi
 Host: 0.0.0.0
 Port: 20014
-TimeOut: 0
+TimeOut: 10000
 
 AccountRpcConf:
   etcd:

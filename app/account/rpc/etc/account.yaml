@@ -1,6 +1,6 @@
 Name: account.rpc
 ListenOn: 0.0.0.0:20002
-Timeout: 0
+Timeout: 1000000
 Etcd:
   Hosts:
     - 192.168.2.159:2379

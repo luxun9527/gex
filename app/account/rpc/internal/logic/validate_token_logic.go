@@ -2,9 +2,10 @@ package logic
 
 import (
 	"context"
+	"github.com/gookit/goutil/strutil"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/pkg/logger"
-	"github.com/luxun9527/gex/common/utils"
+	"github.com/luxun9527/gex/common/proto/define"
 
 	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/account/rpc/pb"
@@ -34,13 +35,13 @@ func (l *ValidateTokenLogic) ValidateToken(in *pb.ValidateTokenReq) (*pb.Validat
 		return nil, errs.Internal
 	}
 
-	key := utils.GenerateKey(in.Token)
-	result, err := l.svcCtx.RedisClient.Get(key)
+	tokenMd5 := strutil.Md5(in.Token)
+	existed, err := l.svcCtx.RedisClient.ExistsCtx(l.ctx, define.AccountToken.WithParams(tokenMd5))
 	if err != nil {
-		logx.Errorw("get redis key failed", logger.ErrorField(err), logx.Field("key", key))
+		logx.Errorw("get redis key failed", logger.ErrorField(err))
 		return nil, errs.RedisErr
 	}
-	if result != "" {
+	if !existed {
 		return nil, errs.TokenValidateFailed
 	}
 	return &pb.ValidateTokenResp{

@@ -33,6 +33,7 @@ func (l *GetTickerListLogic) GetTickerList(req *types.GetTickerListReq) (resp *t
 	client := l.svcCtx.GetMatchClient(conn)
 	tickerResp, err := client.GetTicker(l.ctx, &pb.GetTickerReq{Symbol: req.Symbol})
 	if err != nil {
+		logx.Errorw("GetTickerList error", logx.Field("symbol", req.Symbol), logx.Field("err", err))
 		return nil, err
 	}
 	tickerList := make([]*types.Ticker, 0, len(tickerResp.TickerList))
