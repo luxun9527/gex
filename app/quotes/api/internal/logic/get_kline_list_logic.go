@@ -56,6 +56,6 @@ func (l *GetKlineListLogic) GetKlineList(req *types.KlineListReq) (resp *types.K
 		klines = append(klines, k)
 	}
 	resp = &types.KlineListResp{}
-	resp.KineList = klines
+	resp.KlineList = klines
 	return
 }

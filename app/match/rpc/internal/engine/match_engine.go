@@ -880,6 +880,7 @@ func (m *MatchEngine) SendMatchResult(matchResult *MatchResult) {
 
 func (m *MatchEngine) sendTick() {
 	for matchResult := range m.tick {
+		log.Println("111111121313213")
 		for _, v := range matchResult.MatchedRecords {
 			tick := commonWs.Tick{
 				Price:        v.Price.StringFixedBank(m.c.SymbolInfo.QuoteCoinPrec.Load()),

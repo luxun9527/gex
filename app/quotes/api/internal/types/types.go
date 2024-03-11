@@ -22,7 +22,7 @@ type Kline struct {
 }
 
 type KlineListResp struct {
-	KineList []*Kline `json:"kine_list"`
+	KlineList []*Kline `json:"kline_list"`
 }
 
 type GetDepthListReq struct {

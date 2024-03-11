@@ -28,6 +28,7 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 
 // GetOrderList 获取用户订单列表
 func (l *GetOrderListLogic) GetOrderList(in *pb.GetOrderListByUserReq) (*pb.GetOrderListByUserResp, error) {
+
 	entrustOrder := l.svcCtx.Query.EntrustOrder
 	statusCond := make([]int32, 0, len(in.StatusList))
 	for _, v := range in.StatusList {
@@ -35,10 +36,17 @@ func (l *GetOrderListLogic) GetOrderList(in *pb.GetOrderListByUserReq) (*pb.GetO
 	}
 	result, err := entrustOrder.WithContext(l.ctx).
 		Omit(entrustOrder.UpdatedAt).
-		Where(entrustOrder.UserID.Eq(in.UserId)).
+		Where(entrustOrder.UserID.Eq(in.UserId), entrustOrder.ID.Gt(in.Id)).
 		Where(entrustOrder.Status.In(statusCond...)).
+		Limit(int(in.PageSize)).
 		Order(entrustOrder.ID.Desc()).
 		Find()
+
+	count, err := entrustOrder.WithContext(l.ctx).Where(entrustOrder.UserID.Eq(in.UserId), entrustOrder.ID.Gt(in.Id)).
+		Where(entrustOrder.Status.In(statusCond...)).Count()
+	if err != nil {
+		return nil, errs.ExecSqlFailed
+	}
 	if err != nil {
 		logx.Errorw("GetOrderList query user order list failed", logger.Error(err))
 		return nil, errs.ExecSqlFailed
@@ -65,5 +73,5 @@ func (l *GetOrderListLogic) GetOrderList(in *pb.GetOrderListByUserReq) (*pb.GetO
 		}
 		orders = append(orders, order)
 	}
-	return &pb.GetOrderListByUserResp{OrderList: orders}, nil
+	return &pb.GetOrderListByUserResp{OrderList: orders, Total: count}, nil
 }

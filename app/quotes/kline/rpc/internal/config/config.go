@@ -12,10 +12,9 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	GormConf  commongorm.GormConf
-	RedisConf redis.RedisConf
-	WsConf    zrpc.RpcClientConf
-
+	GormConf         commongorm.GormConf
+	RedisConf        redis.RedisConf
+	WsConf           zrpc.RpcClientConf
 	PulsarConfig     pulsar.PulsarConfig
 	LoggerConfig     logger.Config
 	Symbol           string

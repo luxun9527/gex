@@ -43,6 +43,8 @@ func (l *GetOrderListLogic) GetOrderList(req *types.GetOrderListReq) (resp *type
 	orderList, err := client.GetOrderList(l.ctx, &orderpb.GetOrderListByUserReq{
 		UserId:     cast.ToInt64(uid),
 		StatusList: statusList,
+		PageSize:   req.PageSize,
+		Id:         cast.ToInt64(req.Id),
 	})
 	if err != nil {
 		return nil, err
@@ -67,6 +69,6 @@ func (l *GetOrderListLogic) GetOrderList(req *types.GetOrderListReq) (resp *type
 		}
 		orderInfoList = append(orderInfoList, orderInfo)
 	}
-	resp = &types.GetOrderListResp{OrderList: orderInfoList}
+	resp = &types.GetOrderListResp{OrderList: orderInfoList, Total: orderList.Total}
 	return
 }

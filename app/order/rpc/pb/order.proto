@@ -32,6 +32,11 @@ message GetOrderListByUserReq {
   int64 user_id=1;
   //订单类型
   repeated commonEnum.OrderStatus status_list=2;
+  //分页数据主键ID
+  int64 id=3;
+  //分页数据偏移量
+  int64 page_size=4;
+
 }
 // 订单实体
 message Order {
@@ -72,6 +77,7 @@ message Order {
 
 message GetOrderListByUserResp{
   repeated Order order_list =1;
+  int64 total=2;
 }
 
 message FreezeUserAssetResp{}

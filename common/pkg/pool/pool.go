@@ -71,7 +71,10 @@ func (r *RpcClients) Watch() {
 		for _, ev := range resp.Events {
 			switch ev.Type {
 			case mvccpb.PUT:
+				logx.Sloww("add conn", logx.Field("detail", ev), logx.Field("conn", r.Clients))
 				r.addConn(ev.Kv)
+				logx.Sloww("del conn", logx.Field("detail", ev), logx.Field("conn", r.Clients))
+
 			case mvccpb.DELETE:
 				r.delConn(ev.Kv)
 			}

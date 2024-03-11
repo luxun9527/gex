@@ -180,12 +180,22 @@
         "symbol_name": {
           "type": "string",
           "description": "状态"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64",
+          "description": "分页偏远量"
+        },
+        "id": {
+          "type": "string"
         }
       },
       "title": "GetOrderListReq",
       "required": [
         "status_list",
-        "symbol_name"
+        "symbol_name",
+        "page_size",
+        "id"
       ]
     },
     "GetOrderListResp": {
@@ -196,11 +206,16 @@
           "items": {
             "$ref": "#/definitions/OrderInfo"
           }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "title": "GetOrderListResp",
       "required": [
-        "order_list"
+        "order_list",
+        "total"
       ]
     },
     "OrderInfo": {

@@ -49,7 +49,7 @@ func NewKlineHandler(svcCtx *svc.ServiceContext) *KlineHandler {
 
 	wrapCron, err := utils.NewWrapCron("1 * * * * ?")
 	if err != nil {
-		logx.Severef("init cron failed", logger.ErrorField(err))
+		logx.Severef("init cron failed %v", err)
 	}
 	klineHandler.cron = wrapCron
 	return klineHandler

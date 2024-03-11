@@ -21,6 +21,8 @@ type CancelOrderReq struct {
 type GetOrderListReq struct {
 	Status     []int32 `json:"status_list"` //状态
 	SymbolName string  `json:"symbol_name"` //状态
+	PageSize   int64   `json:"page_size"`   //分页偏远量
+	Id         string  `json:"id"`
 }
 
 type OrderInfo struct {
@@ -42,4 +44,5 @@ type OrderInfo struct {
 
 type GetOrderListResp struct {
 	OrderList []*OrderInfo `json:"order_list"`
+	Total     int64        `json:"total"`
 }

@@ -25,6 +25,8 @@ type CancelOrderReq {
 type GetOrderListReq {
 	Status     []int32 `json:"status_list"` //状态
 	SymbolName string  `json:"symbol_name"` //状态
+	PageSize   int64   `json:"page_size"`   //分页偏远量
+	Id         string  `json:"id"`
 }
 
 type (
@@ -46,6 +48,7 @@ type (
 	}
 	GetOrderListResp {
 		OrderList []*OrderInfo `json:"order_list"`
+		Total     int64        `json:"total"`
 	}
 )
 

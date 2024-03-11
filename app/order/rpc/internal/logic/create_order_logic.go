@@ -141,6 +141,7 @@ func (l *CreateOrderLogic) pushWsData(order *commonWs.Order) {
 		Topic:   commonWs.OrderPrefix.WithParam(l.svcCtx.Config.SymbolInfo.SymbolName),
 		Payload: *order,
 	}
+	logx.Infow("push ws data", logx.Field("msg", msg))
 	_, err := l.svcCtx.WsClient.PushData(context.Background(), &gpush.Data{
 		Uid:   order.Uid,
 		Topic: msg.Topic,

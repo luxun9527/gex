@@ -39,7 +39,7 @@ type (
 		Symbol string `json:"symbol"` //交易对
 	}
 	KlineListResp {
-		KineList []*Kline `json:"kine_list"`
+		KlineList []*Kline `json:"kline_list"`
 	}
 )
 
