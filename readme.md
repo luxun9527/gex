@@ -34,6 +34,10 @@
 
 
 
+
+
+
+
 1、配置一个host 映射， api.gex.com:项目地址
 
 2、项目已经整理好docker-compose文件，依赖和程序分别在不同的docker-compose文件，使用docker-compose即可一键启动项目，docker版本不能太旧具体如下。
@@ -72,6 +76,14 @@ make clear 删除镜像和容器（会删除所有的容器和新建的镜像。
 项目地址 https://github.com/luxun9527/gex  如果觉得对您有帮助，您的一个star就是我更新的动力。
 
 参考 https://github.com/michaelliao/warpexchange/
+
+## go 实践
+
+### 日志上报到im工具企业微信，lark,tg等工具
+
+### dtm saga处理分布式事务
+
+### ast语法树 自制工具生成错误码，完善gen的软删除
 
 
 
