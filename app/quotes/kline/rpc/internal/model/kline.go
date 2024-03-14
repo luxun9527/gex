@@ -89,21 +89,6 @@ var KlineTypes = []KlineType{
 	Month1,
 }
 
-type KlineRedisData struct {
-	StartTime int64  `json:"start_time"`
-	EndTime   int64  ` json:"end_time"`
-	KlineType int32  ` json:"kline_type"`
-	Open      string `json:"open"`
-	High      string `json:"high"`
-	Low       string `json:"low"`
-	Close     string ` json:"close"`
-	Volume    string `json:"volume"`
-	Amount    string ` json:"turnover"`
-	Range     string ` json:"range"`
-	Symbol    string `json:"symbol"`
-	SymbolID  int32  `json:"symbol_id"`
-}
-
 func (kt KlineType) String() string {
 	return pb.KlineType(kt).String()
 }

@@ -9,7 +9,7 @@ import (
 
 type Ticker struct {
 	TimeUnix   int64           //最近的一笔的数据
-	Turnover   decimal.Decimal //成交额 计价币数量
+	amount     decimal.Decimal //成交额 计价币数量
 	High       decimal.Decimal //最高价
 	Low        decimal.Decimal //最低价
 	Last24     decimal.Decimal //24小时之前
@@ -19,27 +19,14 @@ type Ticker struct {
 	PriceDelta decimal.Decimal //变化数量
 }
 
-func (t *Ticker) CastToTickerRedisData(symbolInfo define.SymbolInfo) TickerRedisData {
-	return TickerRedisData{
-		Turnover:   t.Turnover.String(),
-		TimeUnix:   t.TimeUnix,
-		High:       t.High.String(),
-		Low:        t.Low.String(),
-		Last24:     t.Last24.String(),
-		Price:      t.Price.String(),
-		Volume:     t.Volume.String(),
-		PriceDelta: t.PriceDelta.String(),
-		Symbol:     symbolInfo.SymbolName,
-		Range:      t.Range.StringFixedBank(3),
-	}
-}
+
 func (t *Ticker) CastToTickerWsData(symbolInfo define.SymbolInfo) ws.Ticker {
 	return ws.Ticker{
 		Price:  t.Last24.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		High:   t.High.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		Low:    t.Low.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		Amount: t.Volume.StringFixedBank(symbolInfo.BaseCoinPrec.Load()),
-		Volume: t.Turnover.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
+		Volume: t.amount.StringFixedBank(symbolInfo.QuoteCoinPrec.Load()),
 		Range:  t.Range.StringFixedBank(3),
 		Symbol: symbolInfo.SymbolName,
 	}
@@ -53,7 +40,7 @@ type TickerRedisData struct {
 	Low        string `json:"low"`         //最低价
 	Last24     string `json:"last24price"` //24小时之前
 	Price      string `json:"price"`       //当前
-	Turnover   string `json:"turnover"`    //成交额
+	Amount     string `json:"amount"`      //成交额
 	Range      string `json:"range"`       //涨跌幅
 	Symbol     string `json:"symbol"`
 	PriceDelta string `json:"priceDelta"` //变化数量
@@ -62,7 +49,7 @@ type TickerRedisData struct {
 func (t TickerRedisData) CastToTicker() Ticker {
 	return Ticker{
 		TimeUnix:   t.TimeUnix,
-		Turnover:   utils.NewFromStringMaxPrec(t.Turnover),
+		amount:     utils.NewFromStringMaxPrec(t.Amount),
 		High:       utils.NewFromStringMaxPrec(t.High),
 		Low:        utils.NewFromStringMaxPrec(t.Low),
 		Last24:     utils.NewFromStringMaxPrec(t.Last24),

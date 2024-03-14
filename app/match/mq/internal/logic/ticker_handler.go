@@ -37,7 +37,7 @@ type TickerHandler struct {
 
 func (th *TickerHandler) initTickerData() {
 	high, low := utils.DecimalZeroMaxPrec, utils.DecimalZeroMaxPrec
-	volume, turnover := utils.DecimalZeroMaxPrec, utils.DecimalZeroMaxPrec
+	amount, volume := utils.DecimalZeroMaxPrec, utils.DecimalZeroMaxPrec
 
 	if th.list.Empty() {
 		th.tickerData = model.Ticker{
@@ -61,18 +61,18 @@ func (th *TickerHandler) initTickerData() {
 		if h.Value.StartPrice.LessThan(low) {
 			low = h.Value.StartPrice
 		}
-		volume.Add(h.Value.Amount)
-		turnover.Add(h.Value.Volume)
+		amount.Add(h.Value.Amount)
+		volume.Add(h.Value.Volume)
 	}
 
 	l, _ := th.list.Get(th.list.Size() - 1)
 	th.tickerData = model.Ticker{
-		Volume: turnover,
+		Volume: volume,
 		High:   high,
 		Low:    low,
 		Last24: head.Value.StartPrice,
 		Price:  l.Value.StartPrice,
-		Amount: volume,
+		Amount: amount,
 	}
 	th.tickerData.Range = th.tickerData.Price.Sub(th.tickerData.Last24).Div(th.tickerData.Last24)
 	th.tickerData.PriceDelta = th.tickerData.Price.Sub(th.tickerData.Last24)

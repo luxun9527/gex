@@ -673,11 +673,7 @@ func (m *MatchEngine) matchLimitOrderSell(takerOrder *Order) {
 
 }
 func (m *MatchEngine) HandleOrder(order *Order) {
-	//if m.currentSeqId >= order.SequenceId {
-	//	return
-	//}
-	log.Println(m.asks.orderBook)
-	log.Println(m.bids.orderBook)
+
 	//从接收输入的第一个订单开始，以后每次操作版本号加一
 	if m.currentSeqId != 0 {
 		m.currentSeqId = order.SequenceId

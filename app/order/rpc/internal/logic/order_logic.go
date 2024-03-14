@@ -73,6 +73,7 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 		logx.Errorw("get account client failed", logger.ErrorField(err))
 		return nil, errs.Internal
 	}
+	//配置的key加上symbol
 	orderTarget, err := l.svcCtx.Config.OrderRpcConf.BuildTarget()
 	if err != nil {
 		logx.Errorw("get order client failed", logger.ErrorField(err))
