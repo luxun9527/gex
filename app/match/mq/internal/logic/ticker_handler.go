@@ -9,11 +9,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 
-	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/luxun9527/gex/common/proto/ws"
 	commonWs "github.com/luxun9527/gex/common/proto/ws"
 	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zaplog"
 )
 
 type TickerHandler struct {

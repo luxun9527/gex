@@ -8,14 +8,14 @@ import (
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/dao/query"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/model"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	commonWs "github.com/luxun9527/gex/common/proto/ws"
-	"github.com/luxun9527/gex/common/utils"
-	gpush "github.com/luxun9527/gpush/proto"
-	"github.com/zeromicro/go-zero/core/logx"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
-	"time"
+	logger "github.com/luxun9527/zaplog"
+commonWs "github.com/luxun9527/gex/common/proto/ws"
+"github.com/luxun9527/gex/common/utils"
+gpush "github.com/luxun9527/gpush/proto"
+"github.com/zeromicro/go-zero/core/logx"
+"gorm.io/gorm"
+"gorm.io/gorm/clause"
+"time"
 )
 
 // KlineHandler 基于utc时间

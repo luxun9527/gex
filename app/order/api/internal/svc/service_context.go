@@ -8,9 +8,9 @@ import (
 	orderpb "github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/pkg/confx"
-	"github.com/luxun9527/gex/common/pkg/logger"
 	"github.com/luxun9527/gex/common/pkg/pool"
 	"github.com/luxun9527/gex/common/proto/define"
+	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -36,8 +36,8 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitLogger(c.LoggerConfig)
-	logx.SetWriter(logger.NewZapWriter(logger.L))
+	logger.InitZapLogger(&c.LoggerConfig)
+	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
 
@@ -72,7 +72,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 				symbolConfig.Delete(s.SymbolName)
 				logx.Sloww("warn symbol config deleted")
 			}
-
 		}
 	}))
 

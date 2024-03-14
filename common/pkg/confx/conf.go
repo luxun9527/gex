@@ -3,13 +3,13 @@ package confx
 import (
 	"context"
 	"github.com/luxun9527/gex/common/pkg/etcd"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/core/logx"
-	"go.etcd.io/etcd/api/v3/mvccpb"
-	clientv3 "go.etcd.io/etcd/client/v3"
-	"log"
-	"time"
+	logger "github.com/luxun9527/zaplog"
+"github.com/zeromicro/go-zero/core/conf"
+"github.com/zeromicro/go-zero/core/logx"
+"go.etcd.io/etcd/api/v3/mvccpb"
+clientv3 "go.etcd.io/etcd/client/v3"
+"log"
+"time"
 )
 
 //考虑到以后的运维使用动态配置。

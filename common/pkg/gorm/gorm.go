@@ -1,16 +1,15 @@
 package config
 
 import (
-	"github.com/luxun9527/gex/common/pkg/logger"
-	"github.com/spf13/cast"
-	"github.com/zeromicro/go-zero/core/logx"
-	"go.uber.org/zap"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
-	"moul.io/zapgorm2"
+	logger "github.com/luxun9527/zaplog"
+"github.com/spf13/cast"
+"github.com/zeromicro/go-zero/core/logx"
+"go.uber.org/zap"
+"gorm.io/driver/mysql"
+"gorm.io/gorm"
+gormlogger "gorm.io/gorm/logger"
+"moul.io/zapgorm2"
 )
-
 type GormConf struct {
 	Ip           string        `json:"ip"`
 	Port         int32         `json:"port"`

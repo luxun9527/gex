@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/luxun9527/gex/app/order/rpc/internal/logic"
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/proto"
+	logger "github.com/luxun9527/zaplog"
+matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+"github.com/zeromicro/go-zero/core/logx"
+"google.golang.org/protobuf/proto"
 )
 
 func InitConsumer(sc *svc.ServiceContext) {

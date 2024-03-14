@@ -5,16 +5,15 @@ import (
 	"errors"
 	"github.com/luxun9527/gex/app/account/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	"github.com/luxun9527/gex/common/proto/define"
-	"github.com/luxun9527/gex/common/utils"
-	"gorm.io/gorm"
+	logger "github.com/luxun9527/zaplog"
+"github.com/luxun9527/gex/common/proto/define"
+"github.com/luxun9527/gex/common/utils"
+"gorm.io/gorm"
 
-	"github.com/gookit/goutil/strutil"
-	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
-	"github.com/zeromicro/go-zero/core/logx"
+"github.com/gookit/goutil/strutil"
+"github.com/luxun9527/gex/app/account/rpc/internal/svc"
+"github.com/zeromicro/go-zero/core/logx"
 )
-
 type LoginLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

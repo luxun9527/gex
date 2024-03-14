@@ -6,19 +6,18 @@ import (
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
 	orderpb "github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	"github.com/luxun9527/gex/common/proto/define"
-	enum "github.com/luxun9527/gex/common/proto/enum"
-	"github.com/luxun9527/gex/common/utils"
-	"github.com/shopspring/decimal"
-	"github.com/spf13/cast"
+	logger "github.com/luxun9527/zaplog"
+"github.com/luxun9527/gex/common/proto/define"
+enum "github.com/luxun9527/gex/common/proto/enum"
+"github.com/luxun9527/gex/common/utils"
+"github.com/shopspring/decimal"
+"github.com/spf13/cast"
 
-	"github.com/luxun9527/gex/app/order/api/internal/svc"
-	"github.com/luxun9527/gex/app/order/api/internal/types"
+"github.com/luxun9527/gex/app/order/api/internal/svc"
+"github.com/luxun9527/gex/app/order/api/internal/types"
 
-	"github.com/zeromicro/go-zero/core/logx"
+"github.com/zeromicro/go-zero/core/logx"
 )
-
 type CreateOrderLogic struct {
 	logx.Logger
 	ctx    context.Context
