@@ -2,14 +2,15 @@ package config
 
 import (
 	logger "github.com/luxun9527/zaplog"
-"github.com/spf13/cast"
-"github.com/zeromicro/go-zero/core/logx"
-"go.uber.org/zap"
-"gorm.io/driver/mysql"
-"gorm.io/gorm"
-gormlogger "gorm.io/gorm/logger"
-"moul.io/zapgorm2"
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
+	"go.uber.org/zap"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
+	"moul.io/zapgorm2"
 )
+
 type GormConf struct {
 	Ip           string        `json:"ip"`
 	Port         int32         `json:"port"`
@@ -42,7 +43,7 @@ func (gc *GormConf) gormConfig() *gorm.Config {
 
 	var l zap.Logger
 	if gc.Logger.Mode == "" {
-		l = *logger.L
+		l = *logger.GetZapLogger()
 	} else {
 		l = *gc.Logger.Build()
 	}
