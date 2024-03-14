@@ -67,6 +67,9 @@ func NewFromString(s string, prec int32) decimal.Decimal {
 // 535.1234 -1 530
 // 535.1234 6 535.123400
 func PrecCut(v string, prec int32) string {
+	if v == "" {
+		return v
+	}
 	pos := strings.IndexByte(v, '.')
 	d := []byte(v)
 	var result []byte

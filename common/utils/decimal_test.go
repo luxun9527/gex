@@ -38,11 +38,13 @@ func TestPrecCut(t *testing.T) {
 	result3 := PrecCut("89", 6)
 	result4 := PrecCut("891", -2)
 	result5 := PrecCut("891.23232", -2)
+	result6 := PrecCut("", 2)
 	log.Println(result1)
 	log.Println(result2)
 	log.Println(result3)
 	log.Println(result4)
 	log.Println(result5)
+	log.Println(result6)
 }
 func TestExp(t *testing.T) {
 	d := decimal.New(1, 18)
