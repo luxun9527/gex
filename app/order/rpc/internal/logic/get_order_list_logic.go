@@ -5,13 +5,12 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	enum "github.com/luxun9527/gex/common/proto/enum"
-	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zaplog"
+enum "github.com/luxun9527/gex/common/proto/enum"
+"github.com/luxun9527/gex/common/utils"
 
-	"github.com/zeromicro/go-zero/core/logx"
+"github.com/zeromicro/go-zero/core/logx"
 )
-
 type GetOrderListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

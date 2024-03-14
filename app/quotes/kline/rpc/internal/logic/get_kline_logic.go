@@ -5,12 +5,11 @@ import (
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zaplog"
+"github.com/luxun9527/gex/common/utils"
 
-	"github.com/zeromicro/go-zero/core/logx"
+"github.com/zeromicro/go-zero/core/logx"
 )
-
 type GetKlineLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/luxun9527/gex/common/pkg/logger"
+	logger "github.com/luxun9527/zaplog"
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.uber.org/zap"
@@ -43,7 +43,7 @@ func (gc *GormConf) gormConfig() *gorm.Config {
 
 	var l zap.Logger
 	if gc.Logger.Mode == "" {
-		l = *logger.L
+		l = *logger.GetZapLogger()
 	} else {
 		l = *gc.Logger.Build()
 	}

@@ -5,12 +5,11 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/luxun9527/gex/app/account/rpc/internal/logic"
 	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/proto"
+	logger "github.com/luxun9527/zaplog"
+matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+"github.com/zeromicro/go-zero/core/logx"
+"google.golang.org/protobuf/proto"
 )
-
 type MatchResultConsumer struct {
 	sc *svc.ServiceContext
 }

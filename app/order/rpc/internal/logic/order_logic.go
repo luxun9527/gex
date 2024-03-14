@@ -7,17 +7,16 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	enum "github.com/luxun9527/gex/common/proto/enum"
-	"github.com/luxun9527/gex/common/utils"
-	"github.com/spf13/cast"
-	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"strings"
+	logger "github.com/luxun9527/zaplog"
+enum "github.com/luxun9527/gex/common/proto/enum"
+"github.com/luxun9527/gex/common/utils"
+"github.com/spf13/cast"
+"github.com/zeromicro/go-zero/core/logx"
+"google.golang.org/grpc/codes"
+"google.golang.org/grpc/status"
+"google.golang.org/protobuf/types/known/emptypb"
+"strings"
 )
-
 type OrderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

@@ -5,9 +5,9 @@ import (
 	"github.com/luxun9527/gex/app/account/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/app/account/rpc/internal/dao/query"
 	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
-	"github.com/luxun9527/gex/common/pkg/logger"
 	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
 	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm/clause"
 )

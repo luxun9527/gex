@@ -8,7 +8,7 @@ import (
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
 	"github.com/luxun9527/gex/common/pkg/flagx"
-	"github.com/luxun9527/gex/common/pkg/logger"
+	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
@@ -33,7 +33,7 @@ func main() {
 	})
 	defer s.Stop()
 	// mustNewServer会将全局的logx的writer重新设置
-	logx.SetWriter(logger.NewZapWriter(logger.L))
+	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

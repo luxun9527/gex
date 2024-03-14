@@ -5,12 +5,11 @@ import (
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/pkg/logger"
-	"gopkg.in/yaml.v3"
+	logger "github.com/luxun9527/zaplog"
+"gopkg.in/yaml.v3"
 
-	"github.com/zeromicro/go-zero/core/logx"
+"github.com/zeromicro/go-zero/core/logx"
 )
-
 type GetServiceConfigLogic struct {
 	logx.Logger
 	ctx    context.Context

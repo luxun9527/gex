@@ -5,10 +5,10 @@ import (
 	"github.com/luxun9527/gex/app/account/rpc/internal/config"
 	"github.com/luxun9527/gex/app/account/rpc/internal/dao/query"
 	"github.com/luxun9527/gex/common/pkg/confx"
-	"github.com/luxun9527/gex/common/pkg/logger"
 	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
 	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"go.etcd.io/etcd/api/v3/mvccpb"
@@ -27,8 +27,8 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitLogger(c.LoggerConfig)
-	logx.SetWriter(logger.NewZapWriter(logger.L))
+	logger.InitZapLogger(&c.LoggerConfig)
+	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	var symbolConfig sync.Map
 	// 从etcd中取出交易对配置。
