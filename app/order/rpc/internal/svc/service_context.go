@@ -6,16 +6,17 @@ import (
 	"github.com/dtm-labs/client/dtmgrpc/dtmgpb"
 	"github.com/luxun9527/gex/app/order/rpc/internal/config"
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/query"
+	"github.com/luxun9527/gex/common/pkg/snowflake"
+	"github.com/luxun9527/gex/common/proto/define"
+	ws "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/pkg/snowflake"
-"github.com/luxun9527/gex/common/proto/define"
-ws "github.com/luxun9527/gpush/proto"
-"github.com/zeromicro/go-zero/core/logx"
-"github.com/zeromicro/go-zero/zrpc"
-"time"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/zrpc"
+	"time"
 
-pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
+	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
 )
+
 type ServiceContext struct {
 	Config             *config.Config
 	Query              *query.Query
@@ -27,8 +28,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
-	logger.InitLogger(c.LoggerConfig)
-	writer := logger.NewZapWriter(logger.L)
+	logger.InitZapLogger(&c.LoggerConfig)
+
+	writer := logger.NewZapWriter(logger.GetZapLogger())
 	logx.SetWriter(writer)
 	logx.DisableStat()
 

@@ -8,13 +8,13 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/order/rpc/pb"
 	logger "github.com/luxun9527/zaplog"
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 
-"github.com/zeromicro/go-zero/core/conf"
-"github.com/zeromicro/go-zero/core/service"
-"github.com/zeromicro/go-zero/zrpc"
-"google.golang.org/grpc"
-"google.golang.org/grpc/reflection"
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/service"
+	"github.com/zeromicro/go-zero/zrpc"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 var configFile = flag.String("f", "app/order/rpc/etc/order.yaml", "the config file")
@@ -34,7 +34,7 @@ func main() {
 		}
 	})
 	defer s.Stop()
-	logx.SetWriter(logger.NewZapWriter(logger.L))
+	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }
