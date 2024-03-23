@@ -4,11 +4,12 @@ import (
 	"github.com/luxun9527/gex/app/admin/api/internal/config"
 	"github.com/luxun9527/gex/app/admin/api/internal/dao/query"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/utils"
-"github.com/zeromicro/go-zero/core/logx"
-clientv3 "go.etcd.io/etcd/client/v3"
+	"github.com/zeromicro/go-zero/core/logx"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
+
 type ServiceContext struct {
 	Config    config.Config
 	EtcdCli   *clientv3.Client
@@ -17,8 +18,8 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitLogger(c.LoggerConfig)
-	logx.SetWriter(logger.NewZapWriter(logger.L))
+	logger.InitZapLogger(&c.LoggerConfig)
+	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	cli, err := c.EtcdConf.NewEtcdClient()
 	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
