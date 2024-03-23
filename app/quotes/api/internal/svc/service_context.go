@@ -5,11 +5,12 @@ import (
 	"github.com/luxun9527/gex/app/quotes/api/internal/config"
 	klinepb "github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/pkg/pool"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/pkg/pool"
-"github.com/zeromicro/go-zero/core/logx"
-"google.golang.org/grpc"
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc"
 )
+
 type (
 	GetKlineClientFunc func(cc grpc.ClientConnInterface) klinepb.KlineServiceClient
 	GetMatchClientFunc func(cc grpc.ClientConnInterface) matchpb.MatchServiceClient
@@ -24,8 +25,8 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitLogger(c.LoggerConfig)
-	logx.SetWriter(logger.NewZapWriter(logger.L))
+	logger.InitZapLogger(&c.LoggerConfig)
+	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
 	sc := &ServiceContext{
 		Config:         c,
