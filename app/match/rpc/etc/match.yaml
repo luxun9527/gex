@@ -39,7 +39,7 @@ LoggerConfig:
   IsReport: false  #默认为false 是否上报到im工具,开启上报的话，需要在程序结束执行sync
   ReportConfig: # 上报配置 warn级别以上报到im工具
     Type: lark # 可选 lark(飞书也是这个) wx tg
-    Token: https://open.feishu.cn/open-apis/bot/v2/hook/71f86ea61212-ab9a23-464512-b40b-1be001212ffe910a # lark 飞书填群机器人webhook tg填token wx填key   这个示例地址无效。
+    Token:  # lark 飞书填群机器人webhook tg填token wx填key   这个示例地址无效。
     ChatID: 0 # tg填chatID 其他不用填
     FlushSec: 3 # 刷新间隔单位为秒 开发测试调小一点，生产环境调大一点
     MaxCount: 20 #  最大缓存数量 达到刷新间隔或最大记录数 触发发送  开发测试调小一点，生产环境调大一点
