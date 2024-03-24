@@ -14,6 +14,8 @@ const (
 	NotBidsCode
 	// NotAsksCode 订单簿没有卖单
 	NotAsksCode
+
+	ErrPrecCode
 )
 
 var (
@@ -22,4 +24,5 @@ var (
 	LoOrderCancelFailed = LoOrderCancelFailedCode.Error("")
 	NotBids             = NotBidsCode.Error("")
 	NotAsks             = NotAsksCode.Error("")
+	ErrPrec             = ErrPrecCode.Error("")
 )

@@ -5,20 +5,20 @@ import (
 	"fmt"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/luxun9527/gex/app/match/rpc/internal/config"
+	enum "github.com/luxun9527/gex/common/proto/enum"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	commonWs "github.com/luxun9527/gex/common/proto/ws"
+	"github.com/luxun9527/gex/common/utils"
+	ws "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
-enum "github.com/luxun9527/gex/common/proto/enum"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-commonWs "github.com/luxun9527/gex/common/proto/ws"
-"github.com/luxun9527/gex/common/utils"
-ws "github.com/luxun9527/gpush/proto"
-"github.com/shopspring/decimal"
-"github.com/spf13/cast"
-"github.com/zeromicro/go-zero/core/logx"
-"github.com/zeromicro/go-zero/core/stringx"
-"google.golang.org/protobuf/proto"
-"log"
-"math"
-"time"
+	"github.com/shopspring/decimal"
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stringx"
+	"google.golang.org/protobuf/proto"
+	"log"
+	"math"
+	"time"
 )
 
 // MatchEngine 撮合引擎
@@ -402,7 +402,9 @@ LOOP:
 	}
 	matchedResult.MatchTime = time.Now().UnixNano()
 	//m.Next <- matchedResult
-	m.SendMatchResult(matchedResult)
+	if len(matchedResult.MatchedRecords) > 0 {
+		m.SendMatchResult(matchedResult)
+	}
 
 	if takerOrder.OrderStatus != enum.OrderStatus_ALLFilled {
 		r := &MatchResult{

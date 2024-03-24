@@ -6,18 +6,20 @@ import (
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
 	orderpb "github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/define"
+	enum "github.com/luxun9527/gex/common/proto/enum"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/define"
-enum "github.com/luxun9527/gex/common/proto/enum"
-"github.com/luxun9527/gex/common/utils"
-"github.com/shopspring/decimal"
-"github.com/spf13/cast"
+	"github.com/shopspring/decimal"
+	"github.com/spf13/cast"
+	"strings"
 
-"github.com/luxun9527/gex/app/order/api/internal/svc"
-"github.com/luxun9527/gex/app/order/api/internal/types"
+	"github.com/luxun9527/gex/app/order/api/internal/svc"
+	"github.com/luxun9527/gex/app/order/api/internal/types"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type CreateOrderLogic struct {
 	logx.Logger
 	ctx    context.Context
@@ -65,13 +67,24 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 	if _, ok := enum.OrderType_name[req.OrderType]; !ok {
 		return nil, errs.WarpMessage(errs.ParamValidateFailed, "order type must is 1 or 2")
 	}
-	zero := decimal.NewFromInt32(0)
+	zero, basePrec, quotePrec := decimal.NewFromInt32(0), 0, 0
 	switch {
 	case enum.OrderType(req.OrderType) == enum.OrderType_MO && enum.Side(req.Side) == enum.Side_Sell:
 		qty, err := decimal.NewFromString(req.Qty)
 		if err != nil || qty.Equal(zero) {
 			return nil, errs.WarpMessage(errs.ParamValidateFailed, "qty must is a number")
 		}
+		//价格精度
+		q := strings.Split(req.Qty, ".")
+		if len(q) == 2 {
+			basePrec = len(q[1])
+		}
+
+		//价格精度
+		if int(symbolInfo.BaseCoinPrec.Load()) < basePrec {
+			return nil, errs.ErrPrec
+		}
+
 		//验证用户金额
 		if err := l.validateUserBalance(cast.ToInt64(uid), symbolInfo.BaseCoinID, req.Qty); err != nil {
 			return nil, err
@@ -100,6 +113,20 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 		amount, err := decimal.NewFromString(req.Amount)
 		if err != nil || amount.Equal(zero) {
 			return nil, errs.WarpMessage(errs.ParamValidateFailed, "amount must is a number")
+		}
+		//价格精度
+		a := strings.Split(req.Qty, ".")
+		if len(a) == 2 {
+			quotePrec = len(a[1])
+		}
+		//价格精度
+		if int(symbolInfo.QuoteCoinPrec.Load()) < quotePrec {
+			return nil, errs.ErrPrec
+		}
+
+		//验证用户金额
+		if err := l.validateUserBalance(cast.ToInt64(uid), symbolInfo.BaseCoinID, req.Qty); err != nil {
+			return nil, err
 		}
 
 		//验证用户金额
@@ -136,6 +163,23 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 		}
 		req.Amount = utils.NewFromStringMaxPrec(req.Qty).Mul(utils.NewFromStringMaxPrec(req.Price)).String()
 		//判断用户是否拥有足够的币
+		//价格精度
+		price := strings.Split(req.Price, ".")
+		if len(price) == 2 {
+			quotePrec = len(price[1])
+		}
+		//价格精度
+		if int(symbolInfo.QuoteCoinPrec.Load()) < quotePrec {
+			return nil, errs.ErrPrec
+		}
+		q := strings.Split(req.Qty, ".")
+		if len(q) == 2 {
+			basePrec = len(q[1])
+		}
+		//价格精度
+		if int(symbolInfo.QuoteCoinPrec.Load()) < basePrec {
+			return nil, errs.ErrPrec
+		}
 
 		if enum.Side(req.Side) == enum.Side_Buy {
 			if err := l.validateUserBalance(cast.ToInt64(uid), symbolInfo.QuoteCoinID, req.Amount); err != nil {
