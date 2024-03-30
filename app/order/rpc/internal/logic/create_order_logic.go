@@ -58,7 +58,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 	if in.OrderType == enum.OrderType_LO {
 		orderId = "lo"
 	}
-	orderId = fmt.Sprintf("%v%v%v", orderId, in.Side, idgen.NextId())
+	orderId = fmt.Sprintf("%v%v%v", orderId, int32(in.Side), idgen.NextId())
 
 	or := &model.EntrustOrder{
 		ID:             idgen.NextId(),
