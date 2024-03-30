@@ -13,8 +13,8 @@ import (
 	logger "github.com/luxun9527/zaplog"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cast"
+	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stringx"
 	"google.golang.org/protobuf/proto"
 	"log"
 	"math"
@@ -234,7 +234,7 @@ func (m *MatchEngine) matchMarketOrderSell(takerOrder *Order) {
 		}
 		matchedRecord.Taker = *takerOrder
 		matchedRecord.Maker = *makerOrder
-		matchedRecord.MatchedRecordID = stringx.Randn(32)
+		matchedRecord.MatchedRecordID = cast.ToString(idgen.NextId())
 		matchedResult.MatchedRecords = append(matchedResult.MatchedRecords, matchedRecord)
 		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
 		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled {
@@ -258,7 +258,7 @@ func (m *MatchEngine) matchMarketOrderSell(takerOrder *Order) {
 		m.depthHandler.updateDepth(p, enum.Side_Buy, Delete, m.currentSeqId)
 	}
 	matchedResult.MatchTime = time.Now().UnixNano()
-	matchedResult.MatchID = stringx.Randn(16)
+	matchedResult.MatchID = cast.ToString(idgen.NextId())
 	m.SendMatchResult(matchedResult)
 
 	if takerOrder.OrderStatus != enum.OrderStatus_ALLFilled {
@@ -381,10 +381,10 @@ LOOP:
 		}
 		matchedRecord.Taker = *takerOrder
 		matchedRecord.Maker = *makerOrder
-		matchedRecord.MatchedRecordID = stringx.Randn(32)
+		matchedRecord.MatchedRecordID = cast.ToString(idgen.NextId())
 		matchedResult.MatchedRecords = append(matchedResult.MatchedRecords, matchedRecord)
 	}
-	matchedResult.MatchID = stringx.Randn(16)
+	matchedResult.MatchID = cast.ToString(idgen.NextId())
 	//删除买盘中的被匹配完的订单，同时更新卖一价
 	if len(deletedKeys) > 0 {
 		for _, v := range deletedKeys {
@@ -508,7 +508,7 @@ func (m *MatchEngine) matchLimitOrderBuy(takerOrder *Order) {
 		//加入到匹配的结果中
 		matchedRecord.Taker = *takerOrder
 		matchedRecord.Maker = *makerOrder
-		matchedRecord.MatchedRecordID = stringx.Randn(32)
+		matchedRecord.MatchedRecordID = cast.ToString(idgen.NextId())
 		matchedResult.MatchedRecords = append(matchedResult.MatchedRecords, matchedRecord)
 		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
 		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled || makerOrder.Price.GreaterThan(takerOrder.Price) {
@@ -542,7 +542,7 @@ func (m *MatchEngine) matchLimitOrderBuy(takerOrder *Order) {
 
 	}
 	matchedResult.MatchTime = time.Now().UnixNano()
-	matchedResult.MatchID = stringx.Randn(16)
+	matchedResult.MatchID = cast.ToString(idgen.NextId())
 	//发送撮合结果
 	m.SendMatchResult(matchedResult)
 
@@ -633,7 +633,7 @@ func (m *MatchEngine) matchLimitOrderSell(takerOrder *Order) {
 		}
 		matchedRecord.Taker = *takerOrder
 		matchedRecord.Maker = *makerOrder
-		matchedRecord.MatchedRecordID = stringx.Randn(32)
+		matchedRecord.MatchedRecordID = cast.ToString(idgen.NextId())
 		matchedResult.MatchedRecords = append(matchedResult.MatchedRecords, matchedRecord)
 		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
 		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled || takerOrder.Price.GreaterThan(makerOrder.Price) {
@@ -669,7 +669,7 @@ func (m *MatchEngine) matchLimitOrderSell(takerOrder *Order) {
 		m.depthHandler.updateDepth(p, enum.Side_Buy, Delete, m.currentSeqId)
 	}
 	matchedResult.MatchTime = time.Now().UnixNano()
-	matchedResult.MatchID = stringx.Randn(16)
+	matchedResult.MatchID = cast.ToString(idgen.NextId())
 	//m.Next <- matchedResult
 	m.SendMatchResult(matchedResult)
 

@@ -33,6 +33,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
+
 	defer s.Stop()
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.Infof("Starting rpc server at %s...", c.ListenOn)

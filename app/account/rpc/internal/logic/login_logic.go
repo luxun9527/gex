@@ -5,15 +5,16 @@ import (
 	"errors"
 	"github.com/luxun9527/gex/app/account/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/define"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/define"
-"github.com/luxun9527/gex/common/utils"
-"gorm.io/gorm"
+	"gorm.io/gorm"
 
-"github.com/gookit/goutil/strutil"
-"github.com/luxun9527/gex/app/account/rpc/internal/svc"
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/gookit/goutil/strutil"
+	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type LoginLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -30,7 +31,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 // 登录
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
-	// todo: add your logic here and delete this line
 	user := l.svcCtx.Query.User
 
 	result, err := user.WithContext(l.ctx).

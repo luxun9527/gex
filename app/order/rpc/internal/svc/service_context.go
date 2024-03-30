@@ -6,10 +6,10 @@ import (
 	"github.com/dtm-labs/client/dtmgrpc/dtmgpb"
 	"github.com/luxun9527/gex/app/order/rpc/internal/config"
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/query"
-	"github.com/luxun9527/gex/common/pkg/snowflake"
 	"github.com/luxun9527/gex/common/proto/define"
 	ws "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
+	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"time"
@@ -18,13 +18,12 @@ import (
 )
 
 type ServiceContext struct {
-	Config             *config.Config
-	Query              *query.Query
-	DtmClient          dtmgpb.DtmClient
-	MatchConsumer      pulsar.Consumer
-	MatchProducer      pulsar.Producer
-	SnowflakeGenerator *snowflake.Worker
-	WsClient           ws.ProxyClient
+	Config        *config.Config
+	Query         *query.Query
+	DtmClient     dtmgpb.DtmClient
+	MatchConsumer pulsar.Consumer
+	MatchProducer pulsar.Producer
+	WsClient      ws.ProxyClient
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
@@ -43,12 +42,11 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		logx.Severef("init dtm client failed %v", err)
 		return nil
 	}
+	//使用交易对的Id作为workid
+	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID))
+	idgen.SetIdGenerator(options)
 
 	c.SymbolInfo = &symbolInfo
-	s, err := snowflake.NewWorker(c.SnowFlakeWorkID)
-	if err != nil {
-		logx.Severef("init snowflake fail %v", err)
-	}
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed %v", err)
@@ -81,13 +79,12 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	}
 
 	sc := &ServiceContext{
-		Config:             c,
-		Query:              query.Use(c.GormConf.MustNewGormClient()),
-		DtmClient:          dtmgimp.MustGetDtmClient(target),
-		MatchConsumer:      consumer,
-		MatchProducer:      producer,
-		SnowflakeGenerator: s,
-		WsClient:           ws.NewProxyClient(zrpc.MustNewClient(c.WsConf).Conn()),
+		Config:        c,
+		Query:         query.Use(c.GormConf.MustNewGormClient()),
+		DtmClient:     dtmgimp.MustGetDtmClient(target),
+		MatchConsumer: consumer,
+		MatchProducer: producer,
+		WsClient:      ws.NewProxyClient(zrpc.MustNewClient(c.WsConf).Conn()),
 	}
 	return sc
 }

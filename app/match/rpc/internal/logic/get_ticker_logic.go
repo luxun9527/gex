@@ -6,14 +6,15 @@ import (
 	"github.com/luxun9527/gex/app/match/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/app/match/rpc/internal/svc"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/define"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/define"
-"github.com/luxun9527/gex/common/utils"
 
-"github.com/luxun9527/gex/app/match/rpc/pb"
+	"github.com/luxun9527/gex/app/match/rpc/pb"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type GetTickerLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -73,7 +74,7 @@ func (l *GetTickerLogic) GetTicker(in *pb.GetTickerReq) (*pb.GetTickerResp, erro
 			LatestPrice: utils.PrecCut(tickerRedisData.Price, quoteCoinPrec),
 			High:        utils.PrecCut(tickerRedisData.High, quoteCoinPrec),
 			Low:         utils.PrecCut(tickerRedisData.Low, quoteCoinPrec),
-			Volume:      utils.PrecCut(tickerRedisData.Price, quoteCoinPrec),
+			Volume:      utils.PrecCut(tickerRedisData.Volume-a, quoteCoinPrec),
 			Amount:      utils.PrecCut(tickerRedisData.Amount, baseCoinPrec),
 			Last24Price: utils.PrecCut(tickerRedisData.Last24, quoteCoinPrec),
 			PriceRange:  tickerRedisData.Range,

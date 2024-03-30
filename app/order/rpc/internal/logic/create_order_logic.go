@@ -3,26 +3,28 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/dtm-labs/client/dtmgrpc"
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/common/errs"
+	enum "github.com/luxun9527/gex/common/proto/enum"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	commonWs "github.com/luxun9527/gex/common/proto/ws"
+	gpush "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
-enum "github.com/luxun9527/gex/common/proto/enum"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-commonWs "github.com/luxun9527/gex/common/proto/ws"
-gpush "github.com/luxun9527/gpush/proto"
-"github.com/spf13/cast"
-"github.com/zeromicro/go-zero/core/utils"
-"google.golang.org/protobuf/proto"
-"gorm.io/gorm"
-"time"
+	"github.com/spf13/cast"
+	"github.com/yitter/idgenerator-go/idgen"
+	"google.golang.org/protobuf/proto"
+	"gorm.io/gorm"
+	"time"
 
-"github.com/luxun9527/gex/app/order/rpc/internal/svc"
-"github.com/luxun9527/gex/app/order/rpc/pb"
-commonUtils "github.com/luxun9527/gex/common/utils"
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
+	"github.com/luxun9527/gex/app/order/rpc/pb"
+	commonUtils "github.com/luxun9527/gex/common/utils"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type CreateOrderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -48,10 +50,19 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 			in.Amount = "0"
 		}
 	}
+	//订单Id的规则
+	//市价单MO
+	//限价单LO
+	//买1 卖 2
+	orderId := "mo"
+	if in.OrderType == enum.OrderType_LO {
+		orderId = "lo"
+	}
+	orderId = fmt.Sprintf("%v%v%v", orderId, in.Side, idgen.NextId())
 
 	or := &model.EntrustOrder{
-		ID:             l.svcCtx.SnowflakeGenerator.GetId(),
-		OrderID:        utils.NewUuid(),
+		ID:             idgen.NextId(),
+		OrderID:        orderId,
 		UserID:         in.UserId,
 		SymbolID:       in.SymbolId,
 		SymbolName:     in.SymbolName,

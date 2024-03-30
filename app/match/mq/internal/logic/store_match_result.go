@@ -19,7 +19,6 @@ func NewStoreMatchResultLogic(svcCtx *svc.ServiceContext) *StoreMatchResultLogic
 	}
 }
 
-// 增加用户资产
 func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_MatchResult) error {
 	// todo: add your logic here and delete this line
 	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {

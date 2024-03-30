@@ -4,18 +4,19 @@ import (
 	"context"
 	rbt "github.com/emirpasic/gods/trees/redblacktree"
 	"github.com/luxun9527/gex/app/match/rpc/internal/config"
+	"github.com/luxun9527/gex/common/proto/enum"
+	commonWs "github.com/luxun9527/gex/common/proto/ws"
+	"github.com/luxun9527/gex/common/utils"
+	gpush "github.com/luxun9527/gpush/proto"
+	ws "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/enum"
-commonWs "github.com/luxun9527/gex/common/proto/ws"
-"github.com/luxun9527/gex/common/utils"
-gpush "github.com/luxun9527/gpush/proto"
-ws "github.com/luxun9527/gpush/proto"
-"github.com/shopspring/decimal"
-"github.com/spf13/cast"
-"github.com/zeromicro/go-zero/core/logx"
-"sync"
-"time"
+	"github.com/shopspring/decimal"
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
+	"sync"
+	"time"
 )
+
 type DepthHandler struct {
 	asks                *rbt.Tree
 	bids                *rbt.Tree
@@ -27,7 +28,7 @@ type DepthHandler struct {
 	paramChan           chan *param
 	proxyClient         ws.ProxyClient
 	c                   *config.Config
-	currentVersion, //当前版本
+	currentVersion,     //当前版本
 	lastVersion int64 //上一个版本
 }
 

@@ -10,6 +10,7 @@ import (
 	"github.com/luxun9527/gex/common/proto/define"
 	ws "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
+	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -64,6 +65,9 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	if err != nil {
 		logx.Severef("init pulsar consumer failed %v", logger.ErrorField(err))
 	}
+	//使用交易对的Id作为workid
+	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID))
+	idgen.SetIdGenerator(options)
 	sc := &ServiceContext{
 		MatchConsumer: consumer,
 		Config:        c,

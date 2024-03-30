@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/luxun9527/gex/common/pkg/etcd"
 	logger "github.com/luxun9527/zaplog"
-"github.com/zeromicro/go-zero/core/conf"
-"github.com/zeromicro/go-zero/core/logx"
-"go.etcd.io/etcd/api/v3/mvccpb"
-clientv3 "go.etcd.io/etcd/client/v3"
-"log"
-"time"
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
+	"go.etcd.io/etcd/api/v3/mvccpb"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"log"
+	"time"
 )
 
 //考虑到以后的运维使用动态配置。
@@ -97,9 +97,6 @@ func MustLoadFromEtcd(key string, etcdConfig etcd.EtcdConfig, target any, ops ..
 	if err != nil {
 		logx.Severef("get service  config failed err %v", err)
 	}
-	//if len(response.Kvs) == 0 {
-	//	log.Panicf("get config failed err =%v", err)
-	//}
 	var (
 		initLoadFunc        = DefaultLoadFunc
 		watchOnConfigChange func(evs []*clientv3.Event, target any)

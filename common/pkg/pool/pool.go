@@ -14,10 +14,11 @@ import (
 )
 
 type RpcClients struct {
-	Clients    *sync.Map
-	KeyPrefix  string
-	EtcdClient *clientv3.Client
-	etcdConf   discov.EtcdConf
+	Clients     *sync.Map
+	ClientCount *sync.Map
+	KeyPrefix   string
+	EtcdClient  *clientv3.Client
+	etcdConf    discov.EtcdConf
 }
 
 func NewRpcClients(etcdConf discov.EtcdConf) *RpcClients {
@@ -26,7 +27,7 @@ func NewRpcClients(etcdConf discov.EtcdConf) *RpcClients {
 	if err != nil {
 		logx.Severef("etcd get key failed %v", err)
 	}
-	clis := &RpcClients{Clients: &sync.Map{}, KeyPrefix: etcdConf.Key, EtcdClient: cli, etcdConf: etcdConf}
+	clis := &RpcClients{Clients: &sync.Map{}, ClientCount: &sync.Map{}, KeyPrefix: etcdConf.Key, EtcdClient: cli, etcdConf: etcdConf}
 	for _, v := range resp.Kvs {
 		clis.addConn(v)
 	}
@@ -60,9 +61,20 @@ func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
 		NonBlock: true,
 	}
 	//通过etcd创建连接有负载均衡的作用。
-	conn := zrpc.MustNewClient(rpcConfig).Conn()
+	conn, err := zrpc.NewClient(rpcConfig)
+	if err != nil {
+		logx.Errorw("rpc client conn failed", logx.Field("key", kv.Key), logx.Field("value", kv.Value), logx.Field("err", err))
+		return
+	}
 
-	r.Clients.Store(symbol, conn)
+	r.Clients.Store(symbol, conn.Conn())
+	v, ok := r.ClientCount.Load(symbol)
+	count := 1
+	if ok {
+		count = v.(int)
+		count++
+	}
+	r.ClientCount.Store(symbol, count)
 }
 func (r *RpcClients) Watch() {
 	rch := r.EtcdClient.Watch(context.Background(), r.KeyPrefix, clientv3.WithPrefix())
@@ -71,11 +83,11 @@ func (r *RpcClients) Watch() {
 		for _, ev := range resp.Events {
 			switch ev.Type {
 			case mvccpb.PUT:
-				logx.Sloww("add conn", logx.Field("detail", ev), logx.Field("conn", r.Clients))
+				logx.Sloww("add conn", logx.Field("value", string(ev.Kv.Value)), logx.Field("conn", r.Clients))
 				r.addConn(ev.Kv)
-				logx.Sloww("del conn", logx.Field("detail", ev), logx.Field("conn", r.Clients))
 
 			case mvccpb.DELETE:
+				logx.Sloww("del conn", logx.Field("value", string(ev.Kv.Value)), logx.Field("conn", r.Clients))
 				r.delConn(ev.Kv)
 			}
 		}
@@ -95,11 +107,18 @@ func (r *RpcClients) delConn(kv *mvccpb.KeyValue) {
 		return
 	}
 	symbol := r1[1]
-	_, ok := r.Clients.Load(symbol)
+	count, ok := r.ClientCount.Load(symbol)
 	if !ok {
 		return
 	}
-	r.Clients.Delete(symbol)
+	c := count.(int)
+	c--
+	if c == 0 {
+		r.Clients.Delete(symbol)
+
+	}
+	r.ClientCount.Store(symbol, c)
+
 }
 
 func (r *RpcClients) GetConn(symbol string) (*grpc.ClientConn, bool) {

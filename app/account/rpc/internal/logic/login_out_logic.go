@@ -6,11 +6,12 @@ import (
 	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/account/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/define"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/define"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type LoginOutLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -25,7 +26,7 @@ func NewLoginOutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginOut
 	}
 }
 
-// 登出 使用黑名单的策略
+// 登出
 func (l *LoginOutLogic) LoginOut(in *pb.LoginOutReq) (*pb.Empty, error) {
 	_, err := l.svcCtx.JwtClient.ParseToken(in.Token)
 	if err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/go-resty/resty/v2"
 	"github.com/gorilla/websocket"
@@ -100,6 +101,7 @@ func getDepthLevel() (int, int, error) {
 		log.Printf("获取深度失败 %v", err)
 		return 0, 0, err
 	}
+
 	code, ok := result["code"]
 	if !ok || cast.ToInt64(code) != 0 {
 		log.Printf("获取深度失败 %v", result)
@@ -111,6 +113,7 @@ func getDepthLevel() (int, int, error) {
 	return len(asks), len(bids), nil
 }
 func login() {
+	context.WithCancel(context.Background())
 	cli := resty.New()
 	var result = map[string]interface{}{}
 	_, err := cli.R().
@@ -130,7 +133,6 @@ func login() {
 	}
 	data := result["data"].(map[string]interface{})
 	token = cast.ToString(data["token"])
-
 }
 
 type PriceData struct {

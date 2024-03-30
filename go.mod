@@ -21,6 +21,7 @@ require (
 	github.com/shopspring/decimal v1.3.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cast v1.6.0
+	github.com/yitter/idgenerator-go v1.3.3
 	github.com/zeromicro/go-zero v1.6.1
 	go.etcd.io/etcd/api/v3 v3.5.11
 	go.etcd.io/etcd/client/v3 v3.5.11
