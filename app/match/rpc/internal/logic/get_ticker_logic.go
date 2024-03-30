@@ -74,7 +74,7 @@ func (l *GetTickerLogic) GetTicker(in *pb.GetTickerReq) (*pb.GetTickerResp, erro
 			LatestPrice: utils.PrecCut(tickerRedisData.Price, quoteCoinPrec),
 			High:        utils.PrecCut(tickerRedisData.High, quoteCoinPrec),
 			Low:         utils.PrecCut(tickerRedisData.Low, quoteCoinPrec),
-			Volume:      utils.PrecCut(tickerRedisData.Volume-a, quoteCoinPrec),
+			Volume:      utils.PrecCut(tickerRedisData.Volume, quoteCoinPrec),
 			Amount:      utils.PrecCut(tickerRedisData.Amount, baseCoinPrec),
 			Last24Price: utils.PrecCut(tickerRedisData.Last24, quoteCoinPrec),
 			PriceRange:  tickerRedisData.Range,
