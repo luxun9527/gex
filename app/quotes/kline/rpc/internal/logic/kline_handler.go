@@ -2,20 +2,22 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/consumer"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/dao/query"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/model"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
+	"github.com/luxun9527/gex/common/proto/define"
+	commonWs "github.com/luxun9527/gex/common/proto/ws"
+	"github.com/luxun9527/gex/common/utils"
+	gpush "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
-commonWs "github.com/luxun9527/gex/common/proto/ws"
-"github.com/luxun9527/gex/common/utils"
-gpush "github.com/luxun9527/gpush/proto"
-"github.com/zeromicro/go-zero/core/logx"
-"gorm.io/gorm"
-"gorm.io/gorm/clause"
-"time"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"gorm.io/gorm/clause"
+	"time"
 )
 
 // KlineHandler 基于utc时间
@@ -26,17 +28,16 @@ type KlineHandler struct {
 	storeLatestKline chan model.StoreKline
 	//发送
 	sendChan chan model.Kline
-	history  chan model.Kline
 	//定时写入和发送的定时器
 	ticker *time.Ticker
 	//是否改变
 	changed bool
 	//提交方式
-	//定时mock
-	cron             *utils.WrapCron
-	svcCtx           *svc.ServiceContext
-	latestMessageID  pulsar.MessageID
-	lastAckMessageID pulsar.MessageID
+
+	cron            *utils.WrapCron
+	svcCtx          *svc.ServiceContext
+	latestMessageID pulsar.MessageID
+	latestMatchId   int64
 }
 
 func NewKlineHandler(svcCtx *svc.ServiceContext) *KlineHandler {
@@ -65,14 +66,12 @@ func InitKlineHandler(svcCtx *svc.ServiceContext) {
 }
 func (kl *KlineHandler) readInitData() {
 	klines := make([]*model.Kline, 0, len(model.KlineTypes))
-	k := kl.svcCtx.Query.Kline
+
 	for _, v := range model.KlineTypes {
-		d, err := k.WithContext(context.Background()).
-			Where(k.KlineType.Eq(int32(v)), k.SymbolID.Eq(kl.svcCtx.Config.SymbolInfo.SymbolID)).
-			Order(k.StartTime.Desc()).
-			Take()
+
+		data, err := kl.svcCtx.RedisClient.Hget(define.Kline.WithParams(), kl.svcCtx.Config.SymbolInfo.SymbolName+"_"+v.String())
 		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
+			if errors.Is(err, redis.Nil) {
 				kline := &model.Kline{
 					StartTime: 0,
 					EndTime:   0,
@@ -89,6 +88,10 @@ func (kl *KlineHandler) readInitData() {
 				continue
 			}
 			logx.Severef("read init kline data failed err=%v", err)
+		}
+		var d model.RedisModel
+		if err := json.Unmarshal([]byte(data), &d); err != nil {
+			logx.Severef("unmarshal kline data failed err=%v", err)
 		}
 
 		kline := &model.Kline{
@@ -115,6 +118,7 @@ func (kl *KlineHandler) update(matchData <-chan *model.MatchData) {
 			kl.updateLatestKline(md, false)
 			kl.changed = true
 			kl.latestMessageID = md.MessageID
+			kl.latestMatchId = md.MatchID
 		case <-kl.ticker.C:
 			if kl.changed {
 				kl.snapshot()
@@ -129,8 +133,8 @@ func (kl *KlineHandler) update(matchData <-chan *model.MatchData) {
 
 // 存储历史k线和最新的k线
 func (kl *KlineHandler) store() {
-	k := kl.svcCtx.Query.Kline
 	for klineData := range kl.storeLatestKline {
+		//存储历史k线
 		if klineData.IsHistory {
 			err := kl.svcCtx.Query.Transaction(func(tx *query.Query) error {
 				for _, v := range klineData.Klines {
@@ -143,12 +147,6 @@ func (kl *KlineHandler) store() {
 					}
 				}
 
-				if klineData.MessageID != nil {
-					if err := kl.svcCtx.MatchConsumer.AckIDCumulative(kl.latestMessageID); err != nil {
-						logx.Errorw("consumer message failed", logger.ErrorField(err), logx.Field("messageID", kl.latestMessageID))
-						return err
-					}
-				}
 				return nil
 			})
 			if err != nil {
@@ -158,20 +156,14 @@ func (kl *KlineHandler) store() {
 		} else {
 			if err := kl.svcCtx.Query.Transaction(func(tx *query.Query) error {
 				for _, v := range klineData.Klines {
-
-					mysqlData := v.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)
-					_, err := kl.svcCtx.Query.Kline.
-						WithContext(context.Background()).Omit(k.SymbolID, k.ID, k.Symbol).
-						Where(k.Symbol.Eq(kl.svcCtx.Config.SymbolInfo.SymbolName), k.KlineType.Eq(int32(v.KlineType)), k.StartTime.Eq(v.StartTime)).
-						Updates(&mysqlData)
-					if err != nil {
+					data := v.CastToRedisModelData(kl.svcCtx.Config.SymbolInfo, klineData.MatchID)
+					d, _ := json.Marshal(data)
+					if err := kl.svcCtx.RedisClient.Hset(define.Kline.WithParams(), data.Symbol+"_"+v.KlineType.String(), string(d)); err != nil {
 						logx.Errorw("update last kline failed", logger.ErrorField(err))
 						return err
 					}
-					if err != nil {
-						return err
-					}
 				}
+
 				if klineData.MessageID != nil {
 					if err := kl.svcCtx.MatchConsumer.AckIDCumulative(kl.latestMessageID); err != nil {
 						logx.Errorw("consumer message failed", logger.ErrorField(err), logx.Field("messageID", kl.latestMessageID))
@@ -196,9 +188,11 @@ func (kl *KlineHandler) snapshot() {
 		latestKline = append(latestKline, &t)
 
 	}
+	//定时存储最新的一根k线
 	l := model.StoreKline{
 		Klines:    latestKline,
 		MessageID: kl.latestMessageID,
+		MatchID:   kl.latestMatchId,
 	}
 	kl.storeLatestKline <- l
 }
@@ -219,12 +213,12 @@ func (kl *KlineHandler) send() {
 }
 
 // 更新最新的k线
-func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isMock bool) {
+func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 	logx.Infow("receive match data ", logx.Field("data", data))
 	for _, klineData := range kl.Klines {
 		logx.Infow("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 		//如果是mock撮合用最新的价格计算
-		if isMock {
+		if isBegin {
 			//价格为零不计算
 			if klineData.Close.Equal(utils.DecimalZeroMaxPrec) {
 				return
@@ -268,7 +262,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isMock bool) {
 			klineData.Volume = data.Volume
 			klineData.Range = "0"
 		}
-		//新k线
+		//如果k线在一个新的周期
 		if startTime > klineData.StartTime && startTime > 0 {
 			//存储历史k线
 			//发送到发送和写的chan
@@ -287,6 +281,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isMock bool) {
 				klineData.Range = data.EndPrice.Sub(klineData.Open).Div(klineData.Open).Mul(utils.NewFromStringMaxPrec("100")).StringFixedBank(3)
 			}
 			newKline := *klineData
+			//k线
 			sk := model.StoreKline{
 				Klines:    []*model.Kline{&historyKline, &newKline},
 				MessageID: data.MessageID,
@@ -312,7 +307,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isMock bool) {
 			klineData.Range = data.EndPrice.Sub(klineData.Open).Div(klineData.Open).Mul(utils.NewFromStringMaxPrec("100")).StringFixedBank(3)
 		}
 		klineData.Close = data.EndPrice
-		logx.Infow("after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
+		logx.Debugw("after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 
 	}
 }

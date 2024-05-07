@@ -14,6 +14,7 @@ type StoreKline struct {
 	Klines    []*Kline
 	MessageID pulsar.MessageID
 	IsHistory bool
+	MatchID   int64
 }
 
 type Kline struct {
@@ -45,6 +46,26 @@ func (k *Kline) CastToMysqlData(symbolInfo *define.SymbolInfo) *model.Kline {
 		Range:     k.Range,
 	}
 }
+func (k *Kline) CastToRedisModelData(symbolInfo *define.SymbolInfo, matchID int64) *RedisModel {
+	return &RedisModel{
+		Kline: model.Kline{
+			StartTime: k.StartTime,
+			EndTime:   k.EndTime,
+			Symbol:    symbolInfo.SymbolName,
+			SymbolID:  symbolInfo.SymbolID,
+			KlineType: int32(k.KlineType),
+			Open:      k.Open.String(),
+			High:      k.High.String(),
+			Low:       k.Low.String(),
+			Close:     k.Close.String(),
+			Volume:    k.Volume.String(),
+			Amount:    k.Amount.String(),
+			Range:     k.Range,
+		},
+		MatchID: matchID,
+	}
+}
+
 func (k *Kline) CastToWsData(symbolInfo *define.SymbolInfo) commonWs.Kline {
 	return commonWs.Kline{
 		StartTime: k.StartTime,

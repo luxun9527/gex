@@ -5,11 +5,11 @@ import (
 	"github.com/luxun9527/gex/app/match/mq/internal/dao/model"
 	"github.com/luxun9527/gex/app/match/mq/internal/logic"
 	"github.com/luxun9527/gex/app/match/mq/internal/svc"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-"github.com/luxun9527/gex/common/utils"
-"github.com/zeromicro/go-zero/core/logx"
-"google.golang.org/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 func InitConsumer(sc *svc.ServiceContext) {
@@ -28,7 +28,7 @@ func InitConsumer(sc *svc.ServiceContext) {
 				}
 				continue
 			}
-			//todo 防重复提交校验。
+
 			switch r := m.Resp.(type) {
 			case *matchMq.MatchResp_MatchResult:
 				logx.Infow("receive match result data ", logx.Field("data", r))

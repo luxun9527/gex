@@ -4,11 +4,12 @@ import (
 	"context"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/model"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-"github.com/luxun9527/gex/common/utils"
-"github.com/zeromicro/go-zero/core/logx"
-"google.golang.org/protobuf/proto"
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 func InitConsumer(sc *svc.ServiceContext) <-chan *model.MatchData {
@@ -28,12 +29,12 @@ func InitConsumer(sc *svc.ServiceContext) <-chan *model.MatchData {
 				}
 				continue
 			}
-			//todo 防重复提交校验。
 			switch r := m.Resp.(type) {
 			case *matchMq.MatchResp_MatchResult:
 				logx.Infow("receive match result data ", logx.Field("data", r))
 				matchData := &model.MatchData{
 					MessageID:  message.ID(),
+					MatchID:    cast.ToInt64(r.MatchResult.MatchId),
 					MatchTime:  r.MatchResult.MatchTime / 1e9,
 					Volume:     utils.NewFromStringMaxPrec(r.MatchResult.Amount).Mul(utils.NewFromStringMaxPrec("2")),
 					Amount:     utils.NewFromStringMaxPrec(r.MatchResult.Qty).Mul(utils.NewFromStringMaxPrec("2")),
@@ -44,11 +45,7 @@ func InitConsumer(sc *svc.ServiceContext) <-chan *model.MatchData {
 				}
 				md <- matchData
 			}
-			//message.ID()
-			//sc.MatchConsumer.AckIDCumulative()
-			//if err := sc.MatchConsumer.Ack(message); err != nil {
-			//	logx.Errorw("ack message failed", logger.ErrorField(err))
-			//}
+
 		}
 
 	}()
