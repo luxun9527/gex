@@ -66,23 +66,23 @@ func InitKlineHandler(svcCtx *svc.ServiceContext) {
 }
 func (kl *KlineHandler) readInitData() {
 	klines := make([]*model.Kline, 0, len(model.KlineTypes))
-
 	for _, v := range model.KlineTypes {
 
 		data, err := kl.svcCtx.RedisClient.Hget(define.Kline.WithParams(), kl.svcCtx.Config.SymbolInfo.SymbolName+"_"+v.String())
 		if err != nil {
 			if errors.Is(err, redis.Nil) {
 				kline := &model.Kline{
-					StartTime: 0,
-					EndTime:   0,
-					KlineType: v,
-					Amount:    utils.DecimalZeroMaxPrec,
-					Volume:    utils.DecimalZeroMaxPrec,
-					Open:      utils.DecimalZeroMaxPrec,
-					High:      utils.DecimalZeroMaxPrec,
-					Low:       utils.DecimalZeroMaxPrec,
-					Close:     utils.DecimalZeroMaxPrec,
-					Range:     "0",
+					StartTime:   0,
+					EndTime:     0,
+					KlineType:   v,
+					Amount:      utils.DecimalZeroMaxPrec,
+					Volume:      utils.DecimalZeroMaxPrec,
+					Open:        utils.DecimalZeroMaxPrec,
+					High:        utils.DecimalZeroMaxPrec,
+					Low:         utils.DecimalZeroMaxPrec,
+					Close:       utils.DecimalZeroMaxPrec,
+					Range:       "0",
+					InitMatchID: 0,
 				}
 				klines = append(klines, kline)
 				continue
@@ -95,16 +95,17 @@ func (kl *KlineHandler) readInitData() {
 		}
 
 		kline := &model.Kline{
-			KlineType: model.KlineType(d.KlineType),
-			StartTime: d.StartTime,
-			EndTime:   d.EndTime,
-			Amount:    utils.NewFromStringMaxPrec(d.Volume),
-			Volume:    utils.NewFromStringMaxPrec(d.Amount),
-			Open:      utils.NewFromStringMaxPrec(d.Open),
-			High:      utils.NewFromStringMaxPrec(d.High),
-			Low:       utils.NewFromStringMaxPrec(d.Low),
-			Close:     utils.NewFromStringMaxPrec(d.Close),
-			Range:     d.Range,
+			KlineType:   model.KlineType(d.KlineType),
+			StartTime:   d.StartTime,
+			EndTime:     d.EndTime,
+			Amount:      utils.NewFromStringMaxPrec(d.Volume),
+			Volume:      utils.NewFromStringMaxPrec(d.Amount),
+			Open:        utils.NewFromStringMaxPrec(d.Open),
+			High:        utils.NewFromStringMaxPrec(d.High),
+			Low:         utils.NewFromStringMaxPrec(d.Low),
+			Close:       utils.NewFromStringMaxPrec(d.Close),
+			Range:       d.Range,
+			InitMatchID: d.MatchID,
 		}
 		klines = append(klines, kline)
 	}
@@ -216,6 +217,9 @@ func (kl *KlineHandler) send() {
 func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 	logx.Infow("receive match data ", logx.Field("data", data))
 	for _, klineData := range kl.Klines {
+		if data.MatchID != 0 && data.MatchID < klineData.InitMatchID {
+			return
+		}
 		logx.Infow("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 		//如果是mock撮合用最新的价格计算
 		if isBegin {

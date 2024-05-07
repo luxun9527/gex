@@ -18,16 +18,17 @@ type StoreKline struct {
 }
 
 type Kline struct {
-	KlineType KlineType
-	StartTime int64           //周期的开始时间
-	EndTime   int64           //周期的结束时间
-	Amount    decimal.Decimal //成交额
-	Volume    decimal.Decimal //成交量
-	Open      decimal.Decimal //开盘价
-	High      decimal.Decimal //高
-	Low       decimal.Decimal //低
-	Close     decimal.Decimal //收盘价
-	Range     string          //涨跌幅
+	KlineType   KlineType
+	StartTime   int64           //周期的开始时间
+	EndTime     int64           //周期的结束时间
+	Amount      decimal.Decimal //成交额
+	Volume      decimal.Decimal //成交量
+	Open        decimal.Decimal //开盘价
+	High        decimal.Decimal //高
+	Low         decimal.Decimal //低
+	Close       decimal.Decimal //收盘价
+	Range       string          //涨跌幅
+	InitMatchID int64
 }
 
 func (k *Kline) CastToMysqlData(symbolInfo *define.SymbolInfo) *model.Kline {
