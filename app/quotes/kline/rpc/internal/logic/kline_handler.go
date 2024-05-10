@@ -126,6 +126,7 @@ func (kl *KlineHandler) update(matchData <-chan *model.MatchData) {
 			}
 			kl.changed = false
 		case <-kl.cron.C:
+
 			kl.updateLatestKline(nil, true)
 			kl.changed = true
 		}
@@ -215,13 +216,15 @@ func (kl *KlineHandler) send() {
 
 // 更新最新的k线
 func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
-	logx.Infow("receive match data ", logx.Field("data", data))
+	logx.Debugw("update latest kline  data ", logx.Field("data", data))
 	for _, klineData := range kl.Klines {
-		if data.MatchID != 0 && data.MatchID < klineData.InitMatchID {
+		logx.Debugw("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
+
+		// 小于初始化matchID的直接返回。
+		if data != nil && data.MatchID <= klineData.InitMatchID {
 			return
 		}
-		logx.Infow("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
-		//如果是mock撮合用最新的价格计算
+		//如果是每分钟的开始撮合用最新的价格计算
 		if isBegin {
 			//价格为零不计算
 			if klineData.Close.Equal(utils.DecimalZeroMaxPrec) {
@@ -254,7 +257,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 			startTime = data.MatchTime / int64(klineData.KlineType.GetCycle()) * int64(klineData.KlineType.GetCycle())
 			endTime = startTime + int64(klineData.KlineType.GetCycle())
 		}
-		//初始化k线
+		//初始化k线,这是项目启动的第一笔
 		if klineData.Open.Equal(utils.DecimalZeroMaxPrec) {
 			klineData.Open = data.StartPrice
 			klineData.StartTime = startTime
@@ -265,6 +268,8 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 			klineData.Amount = data.Amount
 			klineData.Volume = data.Volume
 			klineData.Range = "0"
+			logx.Debugw("init kline after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
+			continue
 		}
 		//如果k线在一个新的周期
 		if startTime > klineData.StartTime && startTime > 0 {
@@ -285,15 +290,16 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 				klineData.Range = data.EndPrice.Sub(klineData.Open).Div(klineData.Open).Mul(utils.NewFromStringMaxPrec("100")).StringFixedBank(3)
 			}
 			newKline := *klineData
-			//k线
+
 			sk := model.StoreKline{
-				Klines:    []*model.Kline{&historyKline, &newKline},
+				Klines:    []*model.Kline{&historyKline},
 				MessageID: data.MessageID,
 				IsHistory: true,
 			}
 			kl.sendChan <- historyKline
 			kl.sendChan <- newKline
 			kl.storeLatestKline <- sk
+			logx.Debugw("generate new kline after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 			continue
 		}
 		//比较高低，累加成交量成交额

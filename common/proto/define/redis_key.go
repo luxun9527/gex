@@ -3,8 +3,8 @@ package define
 type RedisKey string
 
 const (
-	Ticker       RedisKey = "ticker"
-	Kline        RedisKey = "kline"
+	Ticker       RedisKey = "gex:ticker"
+	Kline        RedisKey = "gex:kline"
 	AccountToken RedisKey = "gex:account:token"
 )
 

@@ -32,7 +32,9 @@ func main() {
 		}
 	})
 	defer s.Stop()
-	// mustNewServer会将全局的logx的writer重新设置
+	// mustNewServer会将全局的logx的writer和日志等级重新设置。
+	//不以go-zero的日志等级为准，所以将其设置为最低的
+	logx.SetLevel(logx.DebugLevel)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

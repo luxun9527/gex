@@ -31,7 +31,7 @@ func InitConsumer(sc *svc.ServiceContext) <-chan *model.MatchData {
 			}
 			switch r := m.Resp.(type) {
 			case *matchMq.MatchResp_MatchResult:
-				logx.Infow("receive match result data ", logx.Field("data", r))
+				logx.Debugw("receive match result data ", logx.Field("data", r))
 				matchData := &model.MatchData{
 					MessageID:  message.ID(),
 					MatchID:    cast.ToInt64(r.MatchResult.MatchId),

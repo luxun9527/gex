@@ -2,14 +2,20 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+	m "github.com/luxun9527/gex/app/quotes/kline/rpc/internal/model"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/define"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/utils"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type GetKlineLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -26,6 +32,9 @@ func NewGetKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetKline
 
 // 获取k线
 func (l *GetKlineLogic) GetKline(in *pb.GetKlineReq) (*pb.GetKlineResp, error) {
+	quoteCoinPrec := l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()
+	baseCoinPrec := l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()
+	//从数据库查历史k线
 	kline := l.svcCtx.Query.Kline
 	klineList, err := kline.WithContext(l.ctx).
 		Where(kline.Symbol.Eq(l.svcCtx.Config.SymbolInfo.SymbolName), kline.KlineType.Eq(int32(in.KlineType)), kline.StartTime.Between(in.StartTime, in.EntTime)).
@@ -36,21 +45,45 @@ func (l *GetKlineLogic) GetKline(in *pb.GetKlineReq) (*pb.GetKlineResp, error) {
 		logx.Errorw("query  kline from mysql failed", logger.ErrorField(err))
 		return nil, errs.ExecSqlFailed
 	}
+	//从redis中查最新k线
+	data, err := l.svcCtx.RedisClient.Hget(define.Kline.WithParams(), l.svcCtx.Config.SymbolInfo.SymbolName+"_"+in.KlineType.String())
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return &pb.GetKlineResp{KlineList: nil}, nil
+		}
+		logx.Errorw("get redis data failed", logger.ErrorField(err))
+		return nil, err
+	}
+	var latestKline m.RedisModel
+	if err := json.Unmarshal([]byte(data), &latestKline); err != nil {
+		logx.Errorw("unmarshal redis data failed", logger.ErrorField(err))
+		return nil, errs.RedisErr
+	}
+
+	switch {
+	case latestKline.StartTime <= in.EntTime && len(klineList) == 300:
+		klineList[len(klineList)-1] = &latestKline.Kline
+	case latestKline.StartTime <= in.EntTime && len(klineList) < 300:
+		klineList = append(klineList, &latestKline.Kline)
+	}
+
+	//考虑到给的参数的区间可能很大，所以从后往前推300
 	klineResp := make([]*pb.GetKlineResp_Kline, 0, len(klineList)+1)
 	for i := len(klineList) - 1; i >= 0; i-- {
 		d := &pb.GetKlineResp_Kline{
 			StartTime: klineList[i].StartTime,
 			EndTime:   klineList[i].EndTime,
 			Symbol:    klineList[i].Symbol,
-			Open:      utils.PrecCut(klineList[i].Open, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-			High:      utils.PrecCut(klineList[i].High, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-			Low:       utils.PrecCut(klineList[i].Low, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-			Close:     utils.PrecCut(klineList[i].Close, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-			Volume:    utils.PrecCut(klineList[i].Volume, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-			Amount:    utils.PrecCut(klineList[i].Amount, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
+			Open:      utils.PrecCut(klineList[i].Open, quoteCoinPrec),
+			High:      utils.PrecCut(klineList[i].High, quoteCoinPrec),
+			Low:       utils.PrecCut(klineList[i].Low, quoteCoinPrec),
+			Close:     utils.PrecCut(klineList[i].Close, quoteCoinPrec),
+			Volume:    utils.PrecCut(klineList[i].Volume, quoteCoinPrec),
+			Amount:    utils.PrecCut(klineList[i].Amount, baseCoinPrec),
 			Range:     klineList[i].Range,
 		}
 		klineResp = append(klineResp, d)
 	}
+
 	return &pb.GetKlineResp{KlineList: klineResp}, nil
 }

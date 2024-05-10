@@ -17,6 +17,7 @@ import (
 const (
 	DefaultLanguage = "zh-CN"
 	DefaultCode     = InternalCode
+	DefaultMsg      = "server error"
 	EtcdPrefixKey   = "language/"
 )
 
@@ -103,7 +104,11 @@ func (t *Translator) translate(lang string, c Code) string {
 	}
 	v, ok := t.Codes.Load(lang)
 	if !ok {
-		v, _ = t.Codes.Load(DefaultLanguage)
+		lang = DefaultLanguage
+	}
+	v, ok = t.Codes.Load(DefaultLanguage)
+	if !ok {
+		return DefaultMsg
 	}
 	code := v.(map[Code]string)
 	msg, ok := code[c]

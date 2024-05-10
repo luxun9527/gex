@@ -19,8 +19,15 @@ const (
 func InitSymbolConfig(key string, etcdConfig etcd.EtcdConfig, symbolInfo *SymbolInfo) {
 	confx.MustLoadFromEtcd(key, etcdConfig, symbolInfo, confx.WithCustomInitLoadFunc(func(kvs []*mvccpb.KeyValue, target any) {
 		for _, v := range kvs {
+			if len(v.Value) == 0 {
+				logx.Severef("load  symbol config failed key = %v", key)
+			}
 			if err := yaml.Unmarshal(v.Value, symbolInfo); err != nil {
 				logx.Severef("get symbol config failed symbolInfo = %v", key)
+			}
+			if symbolInfo.BaseCoinPrecValue <= 0 || symbolInfo.QuoteCoinPrecValue <= 0 {
+				logx.Severef("base coin prec quote coin prec hava a invalid QuoteCoinPrecValue = %v BaseCoinPrecValue =%v ", symbolInfo.QuoteCoinPrecValue, symbolInfo.BaseCoinPrecValue)
+
 			}
 			symbolInfo.BaseCoinPrec.Store(symbolInfo.BaseCoinPrecValue)
 			symbolInfo.QuoteCoinPrec.Store(symbolInfo.QuoteCoinPrecValue)
