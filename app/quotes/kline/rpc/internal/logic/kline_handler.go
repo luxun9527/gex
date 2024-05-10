@@ -125,8 +125,8 @@ func (kl *KlineHandler) update(matchData <-chan *model.MatchData) {
 				kl.snapshot()
 			}
 			kl.changed = false
+			//定时在每分钟的开始输入一个成交量和成交额为0的订单。
 		case <-kl.cron.C:
-
 			kl.updateLatestKline(nil, true)
 			kl.changed = true
 		}
@@ -158,7 +158,7 @@ func (kl *KlineHandler) store() {
 		} else {
 			if err := kl.svcCtx.Query.Transaction(func(tx *query.Query) error {
 				for _, v := range klineData.Klines {
-					data := v.CastToRedisModelData(kl.svcCtx.Config.SymbolInfo, klineData.MatchID)
+					data := v.CastToRedisData(kl.svcCtx.Config.SymbolInfo, klineData.MatchID)
 					d, _ := json.Marshal(data)
 					if err := kl.svcCtx.RedisClient.Hset(define.Kline.WithParams(), data.Symbol+"_"+v.KlineType.String(), string(d)); err != nil {
 						logx.Errorw("update last kline failed", logger.ErrorField(err))
@@ -226,7 +226,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 		}
 		//如果是每分钟的开始撮合用最新的价格计算
 		if isBegin {
-			//价格为零不计算
+			//价格为零表示还没有成交。
 			if klineData.Close.Equal(utils.DecimalZeroMaxPrec) {
 				return
 			}
@@ -259,9 +259,9 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 		}
 		//初始化k线,这是项目启动的第一笔
 		if klineData.Open.Equal(utils.DecimalZeroMaxPrec) {
-			klineData.Open = data.StartPrice
 			klineData.StartTime = startTime
 			klineData.EndTime = endTime
+			klineData.Open = data.StartPrice
 			klineData.High = data.High
 			klineData.Low = data.Low
 			klineData.Close = data.EndPrice
@@ -271,12 +271,31 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 			logx.Debugw("init kline after update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 			continue
 		}
-		//如果k线在一个新的周期
+
+		//如果k线在一个新的周期，要保存历史k线
 		if startTime > klineData.StartTime && startTime > 0 {
+
 			//存储历史k线
 			//发送到发送和写的chan
-			historyKline := *klineData
 
+			//极端情况需要补k线的情况。程序挂了，且这段时间没有成交，无法模拟成交，则需要补k线 程序10:22:05挂了，10:24:01分被拉起来且这段时间没有成交 要补10:23的k线
+			internal := startTime - klineData.StartTime
+			if internal > int64(klineData.KlineType.GetCycle()) {
+				//确定要补几个
+				c := internal/int64(klineData.KlineType.GetCycle()) - 1
+				for i := int64(1); i <= c; i++ {
+					k := klineData.Copy()
+					k.StartTime = k.StartTime + int64(klineData.KlineType.GetCycle())*i
+					k.EndTime = k.StartTime + int64(klineData.KlineType.GetCycle())
+					sk := model.StoreKline{
+						Klines:    []*model.Kline{&k},
+						IsHistory: true,
+					}
+					logx.Sloww("fix missing kline ", logx.Field("data", k.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
+					kl.storeLatestKline <- sk
+				}
+			}
+			historyKline := klineData.Copy()
 			//返回修改为最新的k线
 			klineData.Open = data.StartPrice
 			klineData.StartTime = startTime
@@ -293,7 +312,6 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 
 			sk := model.StoreKline{
 				Klines:    []*model.Kline{&historyKline},
-				MessageID: data.MessageID,
 				IsHistory: true,
 			}
 			kl.sendChan <- historyKline
@@ -305,6 +323,10 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 		//比较高低，累加成交量成交额
 		klineData.StartTime = startTime
 		klineData.EndTime = endTime
+		//如果成交量为零，修改开盘价为最新价
+		if klineData.Amount.Equal(utils.DecimalZeroMaxPrec) {
+			klineData.Open = data.StartPrice
+		}
 		klineData.Amount = klineData.Amount.Add(data.Amount)
 		klineData.Volume = klineData.Volume.Add(data.Volume)
 		if data.High.GreaterThan(klineData.High) {

@@ -31,6 +31,21 @@ type Kline struct {
 	InitMatchID int64
 }
 
+func (k *Kline) Copy() Kline {
+	return Kline{
+		StartTime: k.StartTime,
+		EndTime:   k.EndTime,
+		KlineType: k.KlineType,
+		Open:      k.Open.Copy(),
+		High:      k.High.Copy(),
+		Low:       k.Low.Copy(),
+		Close:     k.Close.Copy(),
+		Volume:    k.Volume.Copy(),
+		Amount:    k.Amount.Copy(),
+		Range:     k.Range,
+	}
+}
+
 func (k *Kline) CastToMysqlData(symbolInfo *define.SymbolInfo) *model.Kline {
 	return &model.Kline{
 		StartTime: k.StartTime,
@@ -47,7 +62,7 @@ func (k *Kline) CastToMysqlData(symbolInfo *define.SymbolInfo) *model.Kline {
 		Range:     k.Range,
 	}
 }
-func (k *Kline) CastToRedisModelData(symbolInfo *define.SymbolInfo, matchID int64) *RedisModel {
+func (k *Kline) CastToRedisData(symbolInfo *define.SymbolInfo, matchID int64) *RedisModel {
 	return &RedisModel{
 		Kline: model.Kline{
 			StartTime: k.StartTime,
@@ -135,7 +150,7 @@ func (kt KlineType) GetCycle() int32 {
 	case Week1:
 		return 604800
 	case Month1:
-		return 2419200
+		return 2678400
 	default:
 		return 0
 	}
