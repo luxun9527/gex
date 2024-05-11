@@ -62,13 +62,17 @@ func (l *GetKlineLogic) GetKline(in *pb.GetKlineReq) (*pb.GetKlineResp, error) {
 
 	switch {
 	case latestKline.StartTime <= in.EntTime && len(klineList) == 300:
-		klineList[len(klineList)-1] = &latestKline.Kline
+		copy(klineList[1:], klineList[:])
+		klineList[0] = &latestKline.Kline
 	case latestKline.StartTime <= in.EntTime && len(klineList) < 300:
 		klineList = append(klineList, &latestKline.Kline)
+		copy(klineList[1:], klineList[:])
+		klineList[0] = &latestKline.Kline
+
 	}
 
 	//考虑到给的参数的区间可能很大，所以从后往前推300
-	klineResp := make([]*pb.GetKlineResp_Kline, 0, len(klineList)+1)
+	klineResp := make([]*pb.GetKlineResp_Kline, 0, len(klineList))
 	for i := len(klineList) - 1; i >= 0; i-- {
 		d := &pb.GetKlineResp_Kline{
 			StartTime: klineList[i].StartTime,

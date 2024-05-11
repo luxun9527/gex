@@ -221,7 +221,7 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 		logx.Debugw("before update ", logx.Field("klineData", klineData.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)))
 
 		// 小于初始化matchID的直接返回。
-		if data != nil && data.MatchID <= klineData.InitMatchID {
+		if data != nil && data.MatchID != 0 && data.MatchID <= klineData.InitMatchID {
 			return
 		}
 		//如果是每分钟的开始撮合用最新的价格计算
@@ -285,6 +285,8 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 				c := internal/int64(klineData.KlineType.GetCycle()) - 1
 				for i := int64(1); i <= c; i++ {
 					k := klineData.Copy()
+					k.Amount = utils.DecimalZeroMaxPrec
+					k.Volume = utils.DecimalZeroMaxPrec
 					k.StartTime = k.StartTime + int64(klineData.KlineType.GetCycle())*i
 					k.EndTime = k.StartTime + int64(klineData.KlineType.GetCycle())
 					sk := model.StoreKline{
