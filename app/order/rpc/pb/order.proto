@@ -108,6 +108,7 @@ message UpdateEntrustOrderReq{
 }
 
 message GetOrderAllPendingOrderResp{
+
   //订单id
   string order_id=1;
   //订单序号,唯一在订单簿中如果价格相同，用这个来排序。

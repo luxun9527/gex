@@ -6,15 +6,17 @@ import (
 	"github.com/dtm-labs/client/dtmgrpc"
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/enum"
+	commonUtils "github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/enum"
-"gorm.io/gorm"
+	"gorm.io/gorm"
 
-"github.com/luxun9527/gex/app/order/rpc/internal/svc"
-"github.com/luxun9527/gex/app/order/rpc/pb"
+	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
+	"github.com/luxun9527/gex/app/order/rpc/pb"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type CreateOrderRevertLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -49,7 +51,8 @@ func (l *CreateOrderRevertLogic) CreateOrderRevert(in *pb.CreateOrderReq) (*pb.O
 	}
 	//构建sql
 	toSQL := entrustOrder.WithContext(l.ctx).UnderlyingDB().ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return tx.Select(entrustOrder.Status.ColumnName().String()).
+		return tx.Table(commonUtils.WithShardingSuffix(order.TableName(), in.UserId)).
+			Select(entrustOrder.Status.ColumnName().String()).
 			Clauses(entrustOrder.OrderID.Eq(in.OrderId)).
 			Updates(order)
 	})
@@ -58,10 +61,10 @@ func (l *CreateOrderRevertLogic) CreateOrderRevert(in *pb.CreateOrderReq) (*pb.O
 		if _, err := tx.Exec(toSQL); err != nil {
 			return err
 		}
-		logx.Infow("CreateOrderRevert CallWithDB invoke")
+		logx.Sloww("Create Order Revert", logx.Field("data", in))
 		return nil
 	}); err != nil {
-		logx.Errorw("CallWithDB failed", logger.ErrorField(err))
+		logx.Errorw("Create Order Revert exec failed", logger.ErrorField(err), logx.Field("data", in))
 		return nil, errs.Internal
 
 	}

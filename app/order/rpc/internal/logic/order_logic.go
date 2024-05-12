@@ -7,16 +7,17 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
+	enum "github.com/luxun9527/gex/common/proto/enum"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-enum "github.com/luxun9527/gex/common/proto/enum"
-"github.com/luxun9527/gex/common/utils"
-"github.com/spf13/cast"
-"github.com/zeromicro/go-zero/core/logx"
-"google.golang.org/grpc/codes"
-"google.golang.org/grpc/status"
-"google.golang.org/protobuf/types/known/emptypb"
-"strings"
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"strings"
 )
+
 type OrderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -64,9 +65,7 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 		logx.Errorw("get gid failed", logger.ErrorField(err))
 		return nil, errs.DtmErr
 	}
-	//l.svcCtx.Config.AccountRpcConf.
-	//gid := stringx.Randn(16)
-	//	l.svcCtx.Config.AccountRpcConf.Target
+
 	accountTarget, err := l.svcCtx.Config.AccountRpcConf.BuildTarget()
 	if err != nil {
 		logx.Errorw("get account client failed", logger.ErrorField(err))
@@ -88,6 +87,7 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 
 	dtmAddr, err := l.svcCtx.Config.DtmConf.BuildTarget()
 	if err != nil {
+		logx.Errorw("get dtm client failed", logger.ErrorField(err))
 		return nil, err
 	}
 	sagaGrpc := dtmgrpc.NewSagaGrpc(dtmAddr, gid.Gid)

@@ -20,6 +20,7 @@ func loadOrder(sc *svc.ServiceContext) {
 	if err != nil {
 		logx.Severef("call GetOrderAllPendingOrder failed %v", err)
 	}
+	var maxOrderPrimary int64
 	for {
 		order, err := stream.Recv()
 		if order.Done {
@@ -29,7 +30,7 @@ func loadOrder(sc *svc.ServiceContext) {
 			//没有加载完则panic
 			logx.Severef("read order from order service failed err = %v", err)
 		}
-		logx.Debugw("init load order", logx.Field("order", order))
+		logx.Infow("init load order", logx.Field("order", order))
 		o := &engine.Order{
 			Uid:            order.Uid,
 			OrderID:        order.OrderId,
@@ -46,7 +47,9 @@ func loadOrder(sc *svc.ServiceContext) {
 			FilledQty:      utils.DecimalZeroMaxPrec,
 			UnfilledAmount: utils.NewFromStringMaxPrec(order.UnFilledAmount),
 		}
-
+		if order.SequenceId > maxOrderPrimary {
+			maxOrderPrimary = order.SequenceId
+		}
 		sc.MatchEngine.HandleOrder(o)
 
 	}

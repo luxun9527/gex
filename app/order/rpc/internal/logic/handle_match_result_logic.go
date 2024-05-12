@@ -9,6 +9,7 @@ import (
 	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
 	commonWs "github.com/luxun9527/gex/common/proto/ws"
 	"github.com/luxun9527/gex/common/utils"
+	commonUtils "github.com/luxun9527/gex/common/utils"
 	gpush "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
 	"github.com/spf13/cast"
@@ -50,11 +51,9 @@ func (l HandleMatchResultLogic) pushOrderChange() {
 // HandleMatchResult  更新订单状态，插入撮合记录
 func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_MatchResult, storeConsumedMessageId func() error) error {
 
-	entrustOrder := l.svcCtx.Query.EntrustOrder
-
 	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
 		//更新订单状态
-		//更新maker订单的状态
+		//更新maker订单的状态,一次撮合有多个maker但是只有一个taker
 		for _, v := range result.MatchResult.MatchedRecord {
 			filledAvgPrice := utils.NewFromStringMaxPrec(v.Maker.FilledAmount).Div(utils.NewFromStringMaxPrec(v.Maker.FilledQty)).String()
 			order := &model.EntrustOrder{
@@ -68,9 +67,11 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 				ID:             v.Maker.Id,
 				UserID:         v.Maker.Uid,
 			}
-			if _, err := tx.WithContext(context.Background()).EntrustOrder.
-				Select(entrustOrder.FilledQty, entrustOrder.UnFilledQty, entrustOrder.FilledAvgPrice, entrustOrder.FilledAmount, entrustOrder.UnFilledAmount, entrustOrder.Status).
-				Where(entrustOrder.ID.Eq(order.ID)).
+			makerOrder := l.svcCtx.Query.EntrustOrder.Table(commonUtils.WithShardingSuffix(order.TableName(), order.UserID))
+
+			if _, err := makerOrder.WithContext(context.Background()).
+				Select(makerOrder.FilledQty, makerOrder.UnFilledQty, makerOrder.FilledAvgPrice, makerOrder.FilledAmount, makerOrder.UnFilledAmount, makerOrder.Status).
+				Where(makerOrder.ID.Eq(order.ID)).
 				Updates(order); err != nil {
 				return err
 			}
@@ -86,6 +87,7 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 		}
 		//更新taker订单的状态,只用最后一条数据
 		taker := result.MatchResult.MatchedRecord[len(result.MatchResult.MatchedRecord)-1].Taker
+
 		filledAvgPrice := utils.NewFromStringMaxPrec(taker.FilledAmount).Div(utils.NewFromStringMaxPrec(taker.FilledQty)).String()
 		order := &model.EntrustOrder{
 			OrderID:        taker.OrderId,
@@ -105,10 +107,11 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 			FilledAmount: utils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
 			Uid:          cast.ToString(order.UserID),
 		}
+		takerOrder := l.svcCtx.Query.EntrustOrder.Table(commonUtils.WithShardingSuffix(order.TableName(), order.UserID))
 
-		if _, err := tx.WithContext(context.Background()).EntrustOrder.
-			Select(entrustOrder.FilledQty, entrustOrder.UnFilledQty, entrustOrder.FilledAvgPrice, entrustOrder.FilledAmount, entrustOrder.UnFilledAmount, entrustOrder.Status).
-			Where(entrustOrder.ID.Eq(order.ID)).
+		if _, err := tx.EntrustOrder.Table(commonUtils.WithShardingSuffix(order.TableName(), order.UserID)).WithContext(context.Background()).
+			Select(takerOrder.FilledQty, takerOrder.UnFilledQty, takerOrder.FilledAvgPrice, takerOrder.FilledAmount, takerOrder.UnFilledAmount, takerOrder.Status).
+			Where(takerOrder.ID.Eq(order.ID)).
 			Updates(order); err != nil {
 			return err
 		}
@@ -130,7 +133,7 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 // CancelOrder  取消订单
 func (l *HandleMatchResultLogic) CancelOrder(resp *matchMq.MatchResp_Cancel, storeConsumedMessageId func() error) error {
 
-	entrustOrder := l.svcCtx.Query.EntrustOrder
+	entrustOrder := l.svcCtx.Query.EntrustOrder.Table(commonUtils.WithShardingSuffix(model.TableNameEntrustOrder, resp.Cancel.Uid))
 	if _, err := entrustOrder.WithContext(context.Background()).
 		Where(entrustOrder.ID.Eq(resp.Cancel.Id)).
 		Update(entrustOrder.Status, int32(enum.OrderStatus_Canceled)); err != nil {

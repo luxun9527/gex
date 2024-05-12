@@ -327,9 +327,16 @@ func (kl *KlineHandler) updateLatestKline(data *model.MatchData, isBegin bool) {
 		//比较高低，累加成交量成交额
 		klineData.StartTime = startTime
 		klineData.EndTime = endTime
-		//如果成交量为零，修改开盘价为最新价
+		//如果成交量为零说明这个k线是定时任务造成的。如果此时有真实成交造成的k线，则应该修改为真实k线
 		if klineData.Amount.Equal(utils.DecimalZeroMaxPrec) {
 			klineData.Open = data.StartPrice
+			klineData.High = data.StartPrice
+			klineData.Low = data.StartPrice
+			klineData.Close = data.StartPrice
+			klineData.Amount = klineData.Amount.Add(data.Amount)
+			klineData.Volume = klineData.Volume.Add(data.Volume)
+			klineData.Range = "0"
+			continue
 		}
 		klineData.Amount = klineData.Amount.Add(data.Amount)
 		klineData.Volume = klineData.Volume.Add(data.Volume)
