@@ -11,6 +11,7 @@ import (
 	logger "github.com/luxun9527/zaplog"
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 	"time"
 
@@ -24,6 +25,7 @@ type ServiceContext struct {
 	MatchConsumer pulsar.Consumer
 	MatchProducer pulsar.Producer
 	WsClient      ws.ProxyClient
+	RedisClient   *redis.Redis
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
@@ -85,6 +87,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		MatchConsumer: consumer,
 		MatchProducer: producer,
 		WsClient:      ws.NewProxyClient(zrpc.MustNewClient(c.WsConf).Conn()),
+		RedisClient:   redis.MustNewRedis(c.RedisConf),
 	}
 	return sc
 }

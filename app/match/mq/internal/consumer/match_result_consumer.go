@@ -49,7 +49,6 @@ func InitConsumer(sc *svc.ServiceContext) {
 				sc.MatchDataChan <- matchData
 			}
 
-			//sc.MatchConsumer.AckIDCumulative()
 			if err := sc.MatchConsumer.Ack(message); err != nil {
 				logx.Errorw("ack message failed", logger.ErrorField(err))
 			}

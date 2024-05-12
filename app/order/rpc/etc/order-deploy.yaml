@@ -6,6 +6,10 @@ Etcd:
     - etcd:2379
   Key: service_order_rpc
 
+RedisConf:
+  Host: redis:6379
+  Type: node
+  PingTimeout: 5s
 DtmConf:
   Etcd:
     Key: dtmservice
@@ -66,3 +70,4 @@ SymbolInfo:
   QuoteCoinName: USDT
   BaseCoinPrec: 4
   QuoteCoinPrec: 4
+

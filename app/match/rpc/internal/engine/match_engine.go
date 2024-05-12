@@ -15,6 +15,7 @@ import (
 	"github.com/spf13/cast"
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stringx"
 	"google.golang.org/protobuf/proto"
 	"log"
 	"math"
@@ -776,7 +777,7 @@ func (m *MatchEngine) GetDepth(level int32) DepthData {
 func (m *MatchEngine) SendMatchResult(matchResult *MatchResult) {
 
 	var resp matchMq.MatchResp
-
+	resp.MessageId = stringx.Rand()
 	if matchResult.CancelResp != nil {
 		resp.Resp = &matchMq.MatchResp_Cancel{
 			Cancel: &matchMq.CancelResp{
@@ -861,24 +862,29 @@ func (m *MatchEngine) SendMatchResult(matchResult *MatchResult) {
 		}
 	}
 
-	logx.Infow("[send] match result", logx.Field("data", &resp))
+	logx.Debugw("send match result", logx.Field("data", &resp))
 	data, _ := proto.Marshal(&resp)
-	for i := 0; true; i++ {
-		if _, err := m.producer.Send(context.Background(), &pulsar.ProducerMessage{
+	var err error
+	for i := 0; i < 10; i++ {
+		if _, err = m.producer.Send(context.Background(), &pulsar.ProducerMessage{
 			Payload: data,
 		}); err != nil {
-			logx.Errorw("send message failed", logger.ErrorField(err))
-			time.Sleep(time.Second * 3)
+			logx.Errorw("send message failed", logger.ErrorField(err), logx.Field("count", i+1))
+			time.Sleep(time.Second)
 			continue
 		}
 		break
 	}
+	if err != nil {
+		logx.Severef("send message failed err=%v", err)
+	}
+
 	m.tick <- matchResult
 }
 
+// 这是一个偷懒的写法，我觉得放到matchmq会比较好。
 func (m *MatchEngine) sendTick() {
 	for matchResult := range m.tick {
-		log.Println("111111121313213")
 		for _, v := range matchResult.MatchedRecords {
 			tick := commonWs.Tick{
 				Price:        v.Price.StringFixedBank(m.c.SymbolInfo.QuoteCoinPrec.Load()),

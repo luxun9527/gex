@@ -109,6 +109,10 @@ func (m matchedOrder) TableName() string { return m.matchedOrderDo.TableName() }
 
 func (m matchedOrder) Alias() string { return m.matchedOrderDo.Alias() }
 
+func (m matchedOrder) Columns(cols ...field.Expr) gen.Columns {
+	return m.matchedOrderDo.Columns(cols...)
+}
+
 func (m *matchedOrder) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := m.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -190,10 +194,6 @@ func (m matchedOrderDo) Select(conds ...field.Expr) *matchedOrderDo {
 
 func (m matchedOrderDo) Where(conds ...gen.Condition) *matchedOrderDo {
 	return m.withDO(m.DO.Where(conds...))
-}
-
-func (m matchedOrderDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *matchedOrderDo {
-	return m.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (m matchedOrderDo) Order(conds ...field.Expr) *matchedOrderDo {

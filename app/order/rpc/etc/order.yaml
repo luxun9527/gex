@@ -5,7 +5,10 @@ Etcd:
   Hosts:
     - 192.168.2.159:2379
   Key: service_order_rpc
-
+RedisConf:
+  Host: 192.168.2.159:6379
+  Type: node
+  PingTimeout: 5s
 DtmConf:
   Etcd:
     Key: dtmservice

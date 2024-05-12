@@ -1,6 +1,6 @@
 syntax = "proto3";
 package commonMq;
-option go_package = "github.com/luxun9527/gex/common/proto/mq/match;match";
+option go_package = "./common/proto/mq/match;match";
 import "enum/enum.proto";
 
 message MatchReq{
@@ -16,6 +16,7 @@ message MatchResp{
       MatchResult match_result=1;
       CancelResp cancel=2;
   }
+  string message_id=3;
 }
 
 //下单操作

@@ -5,14 +5,14 @@ import (
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/query"
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
+	"github.com/luxun9527/gex/common/proto/enum"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	commonWs "github.com/luxun9527/gex/common/proto/ws"
+	"github.com/luxun9527/gex/common/utils"
+	gpush "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/enum"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-commonWs "github.com/luxun9527/gex/common/proto/ws"
-"github.com/luxun9527/gex/common/utils"
-gpush "github.com/luxun9527/gpush/proto"
-"github.com/spf13/cast"
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 // HandleMatchResultLogic 更新订单状态，插入撮合记录
@@ -48,7 +48,7 @@ func (l HandleMatchResultLogic) pushOrderChange() {
 }
 
 // HandleMatchResult  更新订单状态，插入撮合记录
-func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_MatchResult) error {
+func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_MatchResult, storeConsumedMessageId func() error) error {
 
 	entrustOrder := l.svcCtx.Query.EntrustOrder
 
@@ -105,7 +105,6 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 			FilledAmount: utils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
 			Uid:          cast.ToString(order.UserID),
 		}
-		l.oc <- wsOrder
 
 		if _, err := tx.WithContext(context.Background()).EntrustOrder.
 			Select(entrustOrder.FilledQty, entrustOrder.UnFilledQty, entrustOrder.FilledAvgPrice, entrustOrder.FilledAmount, entrustOrder.UnFilledAmount, entrustOrder.Status).
@@ -113,8 +112,14 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 			Updates(order); err != nil {
 			return err
 		}
+		l.oc <- wsOrder
+
+		if err := storeConsumedMessageId(); err != nil {
+			return err
+		}
 
 		return nil
+
 	}); err != nil {
 		return err
 	}
@@ -123,7 +128,7 @@ func (l *HandleMatchResultLogic) HandleMatchResult(result *matchMq.MatchResp_Mat
 }
 
 // CancelOrder  取消订单
-func (l *HandleMatchResultLogic) CancelOrder(resp *matchMq.MatchResp_Cancel) error {
+func (l *HandleMatchResultLogic) CancelOrder(resp *matchMq.MatchResp_Cancel, storeConsumedMessageId func() error) error {
 
 	entrustOrder := l.svcCtx.Query.EntrustOrder
 	if _, err := entrustOrder.WithContext(context.Background()).
@@ -135,6 +140,9 @@ func (l *HandleMatchResultLogic) CancelOrder(resp *matchMq.MatchResp_Cancel) err
 		Id:     cast.ToString(resp.Cancel.Id),
 		Status: int8(enum.OrderStatus_Canceled),
 		Uid:    cast.ToString(resp.Cancel.Uid),
+	}
+	if err := storeConsumedMessageId(); err != nil {
+		return err
 	}
 	l.oc <- wsOrder
 	return nil
