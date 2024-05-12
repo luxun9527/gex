@@ -35,16 +35,22 @@ func (l *GetOrderListLogic) GetOrderList(in *pb.GetOrderListByUserReq) (*pb.GetO
 	for _, v := range in.StatusList {
 		statusCond = append(statusCond, int32(v))
 	}
+	idCond := entrustOrder.ID.Lt(in.Id)
+	if in.Id == 0 {
+		idCond = entrustOrder.ID.Gt(in.Id)
+
+	}
 	result, err := entrustOrder.
 		WithContext(l.ctx).
 		Omit(entrustOrder.UpdatedAt).
-		Where(entrustOrder.UserID.Eq(in.UserId), entrustOrder.ID.Gt(in.Id)).
+		Where(entrustOrder.UserID.Eq(in.UserId), idCond).
 		Where(entrustOrder.Status.In(statusCond...)).
 		Limit(int(in.PageSize)).
 		Order(entrustOrder.ID.Desc()).
 		Find()
 
-	count, err := entrustOrder.WithContext(l.ctx).Where(entrustOrder.UserID.Eq(in.UserId), entrustOrder.ID.Gt(in.Id)).
+	count, err := entrustOrder.WithContext(l.ctx).
+		Where(entrustOrder.UserID.Eq(in.UserId)).
 		Where(entrustOrder.Status.In(statusCond...)).Count()
 	if err != nil {
 		return nil, errs.ExecSqlFailed
