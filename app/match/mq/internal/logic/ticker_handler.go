@@ -109,7 +109,7 @@ func (th *TickerHandler) initTickList() {
 		Where(mo.MatchTime.Between(yesterday, now)).
 		Find()
 	if err != nil {
-		logx.Severef("init tick list failed", logger.ErrorField(err))
+		logx.Severef("init tick list failed %v", err)
 	}
 	for _, v := range data {
 		md := &model.MatchData{

@@ -25,6 +25,7 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+	logx.SetLevel(logx.DebugLevel)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.Infof("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

@@ -20,7 +20,6 @@ func NewStoreMatchResultLogic(svcCtx *svc.ServiceContext) *StoreMatchResultLogic
 }
 
 func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_MatchResult) error {
-	// todo: add your logic here and delete this line
 	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
 		for _, v := range result.MatchResult.MatchedRecord {
 			f := int32(2)

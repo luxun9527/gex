@@ -33,6 +33,7 @@ func main() {
 		}
 	})
 	defer s.Stop()
+	logx.SetLevel(logx.DebugLevel)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

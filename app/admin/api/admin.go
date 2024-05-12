@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/luxun9527/gex/common/pkg/validatorx"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"github.com/luxun9527/gex/app/admin/api/internal/config"
@@ -27,8 +28,8 @@ func main() {
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
+	logx.SetLevel(logx.DebugLevel)
 	handler.RegisterHandlers(server, ctx)
-
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

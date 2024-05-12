@@ -31,7 +31,7 @@ func InitConsumer(sc *svc.ServiceContext) {
 
 			switch r := m.Resp.(type) {
 			case *matchMq.MatchResp_MatchResult:
-				logx.Infow("receive match result data ", logx.Field("data", r))
+				logx.Debugw("receive match result data ", logx.Field("data", r))
 				if err := logic.NewStoreMatchResultLogic(sc).StoreMatchResult(r); err != nil {
 					logx.Severef("consumer match result failed err = %v", err)
 				}

@@ -21,6 +21,7 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	consumer.InitConsumer(ctx)
 	logic.InitHandler(ctx)
+	logx.SetLevel(logx.DebugLevel)
 	logx.Info("server start")
 	select {}
 }
