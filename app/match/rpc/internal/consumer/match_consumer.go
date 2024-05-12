@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/luxun9527/gex/app/match/rpc/internal/engine"
 	"github.com/luxun9527/gex/app/match/rpc/internal/svc"
+	"github.com/luxun9527/gex/common/proto/enum"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/enum"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-"github.com/luxun9527/gex/common/utils"
-"github.com/zeromicro/go-zero/core/logx"
-"google.golang.org/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 func InitMatchConsumer(sc *svc.ServiceContext) {
@@ -29,6 +29,10 @@ func InitMatchConsumer(sc *svc.ServiceContext) {
 			logx.Infow("receive message failed", logx.Field("data", matchReq))
 			switch operate := matchReq.Operate.(type) {
 			case *matchMq.MatchReq_NewOrder:
+				if operate.NewOrder.SequenceId <= sc.InitOrderPrimaryID {
+					logx.Sloww("receive invalid order ", logx.Field("currentSequenceId", operate.NewOrder.SequenceId), logx.Field("InitOrderPrimaryID", sc.InitOrderPrimaryID))
+					continue
+				}
 				order := &engine.Order{
 					Uid:            operate.NewOrder.Uid,
 					OrderID:        operate.NewOrder.OrderId,

@@ -29,7 +29,7 @@ var (
 )
 
 const singingKey = "874cb20cd4a3e0db979c8135300c12fe"
-const ExpiresTime = time.Second * 60 * 60 * 24 * 10
+const ExpiresTime = time.Hour * 24 * 10
 
 func NewJWT() *JWT {
 	return &JWT{

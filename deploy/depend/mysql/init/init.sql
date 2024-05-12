@@ -106,8 +106,10 @@ CREATE TABLE `matched_order`  (
   `match_time` bigint(0) NOT NULL DEFAULT 0 COMMENT '撮合时间',
   `created_at` bigint(0) NOT NULL DEFAULT 0 COMMENT '创建时间',
   `updated_at` bigint(0) NOT NULL DEFAULT 0 COMMENT '修改时间',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unqi_match_sub_id`(`match_sub_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
 
 -- ----------------------------
 -- Table structure for user
@@ -148,6 +150,265 @@ create table if not exists dtm_barrier.barrier(
 
 
 
+DROP TABLE IF EXISTS `entrust_order_00`;
+CREATE TABLE `trade`.`entrust_order_00`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_01`;
+CREATE TABLE `trade`.`entrust_order_01`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_02`;
+CREATE TABLE `trade`.`entrust_order_02`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_03`;
+CREATE TABLE `trade`.`entrust_order_03`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_04`;
+CREATE TABLE `trade`.`entrust_order_04`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_05`;
+CREATE TABLE `trade`.`entrust_order_05`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_06`;
+CREATE TABLE `trade`.`entrust_order_06`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_07`;
+CREATE TABLE `trade`.`entrust_order_07`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `entrust_order_08`;
+CREATE TABLE `trade`.`entrust_order_08`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+DROP TABLE IF EXISTS `trade`.`entrust_order_09`;
+CREATE TABLE `trade`.`entrust_order_09`  (
+                                             `id` bigint NOT NULL COMMENT '序号 主键 雪花算法生成，递增',
+                                             `order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单号',
+                                             `user_id` bigint NOT NULL COMMENT '用户id',
+                                             `symbol_id` mediumint NOT NULL COMMENT '交易对ID',
+                                             `symbol_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '交易对名称',
+                                             `qty` decimal(40, 18) NOT NULL COMMENT '下单数量',
+                                             `price` decimal(40, 18) NOT NULL COMMENT '价格',
+                                             `side` tinyint NOT NULL COMMENT '方向1买 2卖',
+                                             `amount` decimal(40, 18) NOT NULL COMMENT '金额',
+                                             `status` tinyint NOT NULL COMMENT '状态1新订单2部分成交 3全部成交，4撤销，5无效订单',
+                                             `order_type` tinyint NOT NULL COMMENT '订单类型1市价单2限价单',
+                                             `filled_qty` decimal(40, 18) NOT NULL COMMENT '成交数量',
+                                             `un_filled_qty` decimal(40, 18) NOT NULL COMMENT '未成交数量',
+                                             `filled_avg_price` decimal(40, 18) NOT NULL COMMENT '成交均价',
+                                             `filled_amount` decimal(40, 18) NOT NULL COMMENT '成交金额',
+                                             `un_filled_amount` decimal(40, 18) NOT NULL COMMENT '未成交金额',
+                                             `created_at` bigint NOT NULL COMMENT '创建时间',
+                                             `updated_at` bigint NOT NULL COMMENT '修改时间',
+                                             `deleted_at` bigint NOT NULL COMMENT '删除时间',
+                                             PRIMARY KEY (`id`) USING BTREE,
+                                             INDEX `idx_user_id_status`(`user_id` ASC, `status` ASC) USING BTREE,
+                                             INDEX `uni_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 INSERT INTO `trade`.`asset`(`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (1, 1, 'test1', 1, 'BTC', 100000.000000000000000000, 0.000000000000000000, 1699151196, 1699151196);
 INSERT INTO `trade`.`asset`(`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (2, 1, 'test1', 2, 'USDT', 100000.000000000000000000, 0.000000000000000000, 1699151196, 1699151196);

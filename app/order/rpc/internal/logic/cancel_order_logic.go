@@ -4,18 +4,21 @@ import (
 	"context"
 	"errors"
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/luxun9527/gex/app/order/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/proto/enum"
+	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
+	commonUtils "github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/enum"
-matchMq "github.com/luxun9527/gex/common/proto/mq/match"
-"google.golang.org/protobuf/proto"
-"gorm.io/gorm"
+	"google.golang.org/protobuf/proto"
+	"gorm.io/gorm"
 
-"github.com/luxun9527/gex/app/order/rpc/internal/svc"
-"github.com/luxun9527/gex/app/order/rpc/pb"
+	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
+	"github.com/luxun9527/gex/app/order/rpc/pb"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type CancelOrderLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -33,7 +36,7 @@ func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cance
 // CancelOrder 取消订单
 func (l *CancelOrderLogic) CancelOrder(in *pb.CancelOrderReq) (*pb.OrderEmpty, error) {
 	//前置检查,检查订单是否是该用户的
-	entrustOrder := l.svcCtx.Query.EntrustOrder
+	entrustOrder := l.svcCtx.Query.EntrustOrder.Table(commonUtils.WithShardingSuffix(model.TableNameEntrustOrder, in.Uid))
 
 	order, err := entrustOrder.WithContext(l.ctx).
 		Select(entrustOrder.UserID, entrustOrder.Status, entrustOrder.Side, entrustOrder.Price, entrustOrder.OrderType).
@@ -41,18 +44,18 @@ func (l *CancelOrderLogic) CancelOrder(in *pb.CancelOrderReq) (*pb.OrderEmpty, e
 		First()
 	if err != nil {
 		if errors.Is(gorm.ErrRecordNotFound, err) {
-			return nil, errs.ExecSqlFailed
+			return nil, errs.OrderNotFound
 		}
 		logx.Errorw("query entrustOrder status failed", logger.ErrorField(err))
-		return nil, errs.Internal
-	}
-	//市价单不能手动取消
-	if enum.OrderType(order.OrderType) == enum.OrderType_MO {
-		return nil, errs.LoOrderCancelFailed
+		return nil, errs.ExecSqlFailed
 	}
 	//订单不是该用户id
 	if order.UserID != in.Uid {
 		return nil, errs.ExecSqlFailed
+	}
+	//市价单不能手动取消
+	if enum.OrderType(order.OrderType) == enum.OrderType_MO {
+		return nil, errs.LoOrderCancelFailed
 	}
 	//订单状态不对
 	if enum.OrderStatus(order.Status) != enum.OrderStatus_NewCreated && enum.OrderStatus(order.Status) != enum.OrderStatus_PartFilled {

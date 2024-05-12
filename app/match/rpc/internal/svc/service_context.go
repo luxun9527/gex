@@ -18,12 +18,13 @@ import (
 )
 
 type ServiceContext struct {
-	MatchConsumer pulsar.Consumer
-	Config        *config.Config
-	MatchEngine   *engine.MatchEngine
-	OrderClient   orderservice.OrderService
-	Query         *query.Query
-	RedisClient   *redis.Redis
+	MatchConsumer      pulsar.Consumer
+	Config             *config.Config
+	MatchEngine        *engine.MatchEngine
+	OrderClient        orderservice.OrderService
+	Query              *query.Query
+	RedisClient        *redis.Redis
+	InitOrderPrimaryID int64
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
@@ -63,7 +64,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 		Type:             pulsar.Shared,
 	})
 	if err != nil {
-		logx.Severef("init pulsar consumer failed %v", logger.ErrorField(err))
+		logx.Severef("init pulsar consumer failed err = %v", err)
 	}
 	//使用交易对的Id作为workid
 	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID))

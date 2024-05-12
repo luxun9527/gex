@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
+	"github.com/luxun9527/gex/app/order/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
 	enum "github.com/luxun9527/gex/common/proto/enum"
 	"github.com/luxun9527/gex/common/utils"
+	commonUtils "github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,20 +30,27 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 // GetOrderList 获取用户订单列表
 func (l *GetOrderListLogic) GetOrderList(in *pb.GetOrderListByUserReq) (*pb.GetOrderListByUserResp, error) {
 
-	entrustOrder := l.svcCtx.Query.EntrustOrder
+	entrustOrder := l.svcCtx.Query.EntrustOrder.Table(commonUtils.WithShardingSuffix(model.TableNameEntrustOrder, in.UserId))
 	statusCond := make([]int32, 0, len(in.StatusList))
 	for _, v := range in.StatusList {
 		statusCond = append(statusCond, int32(v))
 	}
-	result, err := entrustOrder.WithContext(l.ctx).
+	idCond := entrustOrder.ID.Lt(in.Id)
+	if in.Id == 0 {
+		idCond = entrustOrder.ID.Gt(in.Id)
+
+	}
+	result, err := entrustOrder.
+		WithContext(l.ctx).
 		Omit(entrustOrder.UpdatedAt).
-		Where(entrustOrder.UserID.Eq(in.UserId), entrustOrder.ID.Gt(in.Id)).
+		Where(entrustOrder.UserID.Eq(in.UserId), idCond).
 		Where(entrustOrder.Status.In(statusCond...)).
 		Limit(int(in.PageSize)).
 		Order(entrustOrder.ID.Desc()).
 		Find()
 
-	count, err := entrustOrder.WithContext(l.ctx).Where(entrustOrder.UserID.Eq(in.UserId), entrustOrder.ID.Gt(in.Id)).
+	count, err := entrustOrder.WithContext(l.ctx).
+		Where(entrustOrder.UserID.Eq(in.UserId)).
 		Where(entrustOrder.Status.In(statusCond...)).Count()
 	if err != nil {
 		return nil, errs.ExecSqlFailed

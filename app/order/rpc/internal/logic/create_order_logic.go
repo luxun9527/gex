@@ -60,7 +60,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 	}
 	orderId = fmt.Sprintf("%v%v%v", orderId, int32(in.Side), idgen.NextId())
 
-	or := &model.EntrustOrder{
+	order := &model.EntrustOrder{
 		ID:             idgen.NextId(),
 		OrderID:        orderId,
 		UserID:         in.UserId,
@@ -92,16 +92,13 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 		return nil, errs.CastToDtmError(errs.ExecSqlFailed)
 	}
 	toSQL := entrustOrder.WithContext(l.ctx).UnderlyingDB().ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return tx.Create(or)
+		return tx.Table(commonUtils.WithShardingSuffix(order.TableName(), order.UserID)).Create(order)
 	})
 	//测试执行失败的情况
 
 	if err := barrier.CallWithDB(db, func(tx *sql.Tx) error {
-		if _, err := tx.Exec(toSQL); err != nil {
-			return err
-		}
-
-		return nil
+		_, err := tx.Exec(toSQL)
+		return err
 	}); err != nil {
 		logx.Errorw("CreateOrder CallWithDB failed", logger.ErrorField(err))
 		return nil, errs.CastToDtmError(errs.Internal)
@@ -110,9 +107,9 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 	//构建消息发送
 	msg := &matchMq.MatchReq{Operate: &matchMq.MatchReq_NewOrder{
 		NewOrder: &matchMq.NewOrderOperate{
-			OrderId:    or.OrderID,
-			SequenceId: or.ID,
-			Uid:        or.UserID,
+			OrderId:    order.OrderID,
+			SequenceId: order.ID,
+			Uid:        order.UserID,
 			Side:       in.Side,
 			Price:      in.Price,
 			Qty:        in.Qty,
@@ -128,20 +125,20 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 	}
 	//发送ws数据
 	wsOrder := &commonWs.Order{
-		Id:             cast.ToString(or.ID),
-		OrderId:        cast.ToString(or.OrderID),
-		SymbolName:     or.SymbolName,
-		Price:          commonUtils.PrecCut(or.Price, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-		Qty:            commonUtils.PrecCut(or.Qty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
-		Amount:         commonUtils.PrecCut(or.Amount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-		Side:           int8(or.Side),
+		Id:             cast.ToString(order.ID),
+		OrderId:        cast.ToString(order.OrderID),
+		SymbolName:     order.SymbolName,
+		Price:          commonUtils.PrecCut(order.Price, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
+		Qty:            commonUtils.PrecCut(order.Qty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
+		Amount:         commonUtils.PrecCut(order.Amount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
+		Side:           int8(order.Side),
 		Status:         int8(enum.OrderStatus_NewCreated),
-		OrderType:      int8(or.OrderType),
-		FilledAmount:   commonUtils.PrecCut(or.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-		FilledQty:      commonUtils.PrecCut(or.FilledQty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
-		FilledAvgPrice: commonUtils.PrecCut(or.FilledAvgPrice, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
-		Uid:            cast.ToString(or.UserID),
-		CreatedAt:      or.CreatedAt,
+		OrderType:      int8(order.OrderType),
+		FilledAmount:   commonUtils.PrecCut(order.FilledAmount, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
+		FilledQty:      commonUtils.PrecCut(order.FilledQty, l.svcCtx.Config.SymbolInfo.BaseCoinPrec.Load()),
+		FilledAvgPrice: commonUtils.PrecCut(order.FilledAvgPrice, l.svcCtx.Config.SymbolInfo.QuoteCoinPrec.Load()),
+		Uid:            cast.ToString(order.UserID),
+		CreatedAt:      order.CreatedAt,
 	}
 	l.pushWsData(wsOrder)
 	return &pb.OrderEmpty{}, nil
