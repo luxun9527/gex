@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"github.com/luxun9527/gex/app/match/mq/internal/dao/model"
 	"github.com/luxun9527/gex/app/match/mq/internal/dao/query"
 	"github.com/luxun9527/gex/app/match/mq/internal/svc"
 	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type StoreMatchResultLogic struct {
@@ -40,7 +42,12 @@ func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_Match
 				TakerIsBuyer: f,
 			}
 			if err := tx.WithContext(context.Background()).MatchedOrder.Create(mr); err != nil {
+				if errors.Is(err, gorm.ErrDuplicatedKey) {
+					logx.Sloww("matched order already exists has Duplicated key", logx.Field("data", mr))
+					continue
+				}
 				return err
+
 			}
 		}
 		return nil

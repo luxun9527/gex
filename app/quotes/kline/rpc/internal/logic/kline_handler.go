@@ -16,7 +16,7 @@ import (
 	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"gorm.io/gorm/clause"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -142,9 +142,11 @@ func (kl *KlineHandler) store() {
 				for _, v := range klineData.Klines {
 					mysqlData := v.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)
 					logx.Infow("store history kline data", logx.Field("data", mysqlData))
-					if err := kl.svcCtx.Query.Kline.WithContext(context.Background()).
-						Clauses(clause.Insert{Modifier: "IGNORE"}).
-						Create(mysqlData); err != nil {
+					if err := kl.svcCtx.Query.Kline.WithContext(context.Background()).Create(mysqlData); err != nil {
+						if errors.Is(err, gorm.ErrDuplicatedKey) {
+							logx.Sloww("store history kline data has duplicated Key", logx.Field("data", mysqlData))
+							continue
+						}
 						return err
 					}
 				}

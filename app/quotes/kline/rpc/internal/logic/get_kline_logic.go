@@ -65,6 +65,7 @@ func (l *GetKlineLogic) GetKline(in *pb.GetKlineReq) (*pb.GetKlineResp, error) {
 		copy(klineList[1:], klineList[:])
 		klineList[0] = &latestKline.Kline
 	case latestKline.StartTime <= in.EntTime && len(klineList) < 300:
+		//数组整体后移
 		klineList = append(klineList, &latestKline.Kline)
 		copy(klineList[1:], klineList[:])
 		klineList[0] = &latestKline.Kline
