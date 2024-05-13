@@ -30,16 +30,17 @@ func NewAddErrorCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddE
 func (l *AddErrorCodeLogic) AddErrorCode(req *types.AddErrorCodeReq) (resp *types.Empty, err error) {
 
 	errorCode := l.svcCtx.Query.ErrorCode
-	count, err := errorCode.WithContext(l.ctx).
-		Where(errorCode.Language.Eq(req.Language), errorCode.ErrorCodeID.Eq(req.ErrorCodeId)).
-		Count()
-	if err != nil {
-		return nil, err
-	}
-	if count > 0 {
-		return nil, errs.DuplicateDataErr
-	}
+
 	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
+		count, err := errorCode.WithContext(l.ctx).
+			Where(errorCode.Language.Eq(req.Language), errorCode.ErrorCodeID.Eq(req.ErrorCodeId)).
+			Count()
+		if err != nil {
+			return err
+		}
+		if count > 0 {
+			return errs.DuplicateDataErr
+		}
 		code := &model.ErrorCode{
 			ID:            0,
 			ErrorCodeID:   req.ErrorCodeId,

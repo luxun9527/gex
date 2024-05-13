@@ -115,7 +115,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 			return nil, errs.WarpMessage(errs.ParamValidateFailed, "amount must is a number")
 		}
 		//价格精度
-		a := strings.Split(req.Qty, ".")
+		a := strings.Split(req.Amount, ".")
 		if len(a) == 2 {
 			quotePrec = len(a[1])
 		}
@@ -177,7 +177,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 			basePrec = len(q[1])
 		}
 		//价格精度
-		if int(symbolInfo.QuoteCoinPrec.Load()) < basePrec {
+		if int(symbolInfo.BaseCoinPrec.Load()) < basePrec {
 			return nil, errs.ErrPrec
 		}
 
