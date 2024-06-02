@@ -67,6 +67,7 @@ type (
 	SymbolInfo {
 		ID            uint32 `json:"id"`
 		SymbolName    string `json:"symbol_name"`
+		SymbolId      int32  `json:"symbol_id"`
 		BaseCoinID    uint32 `json:"base_coin_id"`
 		BaseCoinName  string `json:"base_coin_name"`
 		BaseCoinPrec  int32  `json:"base_coin_prec"`
@@ -84,6 +85,7 @@ type (
 	AddSymbolReq {
 		BaseCoinID  uint32 `json:"base_coin_id"`
 		QuoteCoinID int32  `json:"quote_coin_id"`
+		SymbolId    int32  `json:"symbol_id"`
 	}
 	AddSymbolResp {
 	}
@@ -93,6 +95,7 @@ type (
 	AddCoinReq {
 		CoinName string `json:"coin_name"`
 		Prec     int32  `json:"prec"`
+		CoinId   int32  `json:"coin_id"`
 	}
 	AddCoinResp {
 	}
@@ -105,6 +108,7 @@ type (
 	CoinInfo {
 		ID       uint32 `json:"id"`
 		CoinName string `json:"coin_name"`
+		CoinId   int32  `json:"coin_id"`
 		Prec     int32  `json:"prec"`
 	}
 	GetCoinListResp {
@@ -166,6 +170,7 @@ type (
 		ID       uint32 `json:"id"`
 		CoinName string `json:"coin_name"`
 		Prec     int32  `json:"prec"`
+		CoinId   int32  `json:"coin_id"`
 	}
 )
 @server(
@@ -223,4 +228,15 @@ service Admin {
 	@doc "修改错误码"
 	@handler UpdateErrorCode
 	post /update_error_code (UpdateErrorCodeReq) returns (Empty)
+	
+	@doc "同步错误码"
+	@handler SyncErrorCode
+	post /sync_error_code (Empty) returns (Empty)
+	
+	@doc "同步币种配置"
+	@handler SyncCoinConfig
+	post /sync_coin_config (Empty) returns (Empty)
+	@doc "同步交易对配置"
+	@handler SyncSymbolConfig
+	post /sync_symbol_config (Empty) returns (Empty)
 }

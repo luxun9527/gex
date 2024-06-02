@@ -77,6 +77,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/update_error_code",
 				Handler: UpdateErrorCodeHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/sync_error_code",
+				Handler: SyncErrorCodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/sync_coin_config",
+				Handler: SyncCoinConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/sync_symbol_config",
+				Handler: SyncSymbolConfigHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/admin/v1"),
 	)

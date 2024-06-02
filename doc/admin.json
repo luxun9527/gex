@@ -279,6 +279,90 @@
         ]
       }
     },
+    "/admin/v1/sync_coin_config": {
+      "post": {
+        "summary": "同步币种配置",
+        "operationId": "SyncCoinConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/v1/sync_error_code": {
+      "post": {
+        "summary": "同步错误码",
+        "operationId": "SyncErrorCode",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/v1/sync_symbol_config": {
+      "post": {
+        "summary": "同步交易对配置",
+        "operationId": "SyncSymbolConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
     "/admin/v1/update_coin": {
       "post": {
         "summary": "修改币种",
@@ -402,12 +486,17 @@
         "prec": {
           "type": "integer",
           "format": "int32"
+        },
+        "coin_id": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "title": "AddCoinReq",
       "required": [
         "coin_name",
-        "prec"
+        "prec",
+        "coin_id"
       ]
     },
     "AddCoinResp": {
@@ -445,12 +534,17 @@
         "quote_coin_id": {
           "type": "integer",
           "format": "int32"
+        },
+        "symbol_id": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "title": "AddSymbolReq",
       "required": [
         "base_coin_id",
-        "quote_coin_id"
+        "quote_coin_id",
+        "symbol_id"
       ]
     },
     "AddSymbolResp": {
@@ -467,6 +561,10 @@
         "coin_name": {
           "type": "string"
         },
+        "coin_id": {
+          "type": "integer",
+          "format": "int32"
+        },
         "prec": {
           "type": "integer",
           "format": "int32"
@@ -476,6 +574,7 @@
       "required": [
         "id",
         "coin_name",
+        "coin_id",
         "prec"
       ]
     },
@@ -708,6 +807,10 @@
         "symbol_name": {
           "type": "string"
         },
+        "symbol_id": {
+          "type": "integer",
+          "format": "int32"
+        },
         "base_coin_id": {
           "type": "integer",
           "format": "int32"
@@ -735,6 +838,7 @@
       "required": [
         "id",
         "symbol_name",
+        "symbol_id",
         "base_coin_id",
         "base_coin_name",
         "base_coin_prec",
@@ -756,13 +860,18 @@
         "prec": {
           "type": "integer",
           "format": "int32"
+        },
+        "coin_id": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "title": "UpdateCoinReq",
       "required": [
         "id",
         "coin_name",
-        "prec"
+        "prec",
+        "coin_id"
       ]
     },
     "UpdateErrorCodeReq": {

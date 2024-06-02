@@ -2,13 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
 	"github.com/luxun9527/gex/app/admin/api/internal/dao/query"
-	"github.com/luxun9527/gex/common/proto/define"
-	"gopkg.in/yaml.v3"
-
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
+	"github.com/luxun9527/gex/common/errs"
+	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -52,46 +52,11 @@ func (l *UpdateCoinLogic) UpdateCoin(req *types.UpdateCoinReq) (resp *types.Empt
 			return err
 		}
 
-		symbols, err := tx.Symbol.WithContext(l.ctx).Where(symbol.BaseCoinID.Eq(req.ID)).Or(symbol.QuoteCoinID.Eq(req.ID)).Find()
-		if err != nil {
-			return err
-		}
-		for _, v := range symbols {
-			symbolInfo := &define.SymbolInfo{
-				SymbolName:         v.SymbolName,
-				SymbolID:           int32(v.ID),
-				BaseCoinName:       v.BaseCoinName,
-				BaseCoinID:         int32(v.BaseCoinID),
-				QuoteCoinName:      v.QuoteCoinName,
-				QuoteCoinID:        int32(v.QuoteCoinID),
-				BaseCoinPrecValue:  v.BaseCoinPrec,
-				QuoteCoinPrecValue: v.QuoteCoinPrec,
-			}
-			data, err := yaml.Marshal(symbolInfo)
-			if err != nil {
-				return err
-			}
-			if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdSymbolPrefix+v.SymbolName, string(data)); err != nil {
-				logx.Errorw("put config to etcd failed", logx.Field("err", err))
-				return err
-			}
-		}
-
-		coinInfo := define.CoinInfo{
-			CoinID:   int32(req.ID),
-			CoinName: req.CoinName,
-			Prec:     req.Prec,
-		}
-		data, err := yaml.Marshal(coinInfo)
-		if err != nil {
-			return err
-		}
-		if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdCoinPrefix+req.CoinName, string(data)); err != nil {
-			logx.Errorw("put config to etcd failed", logx.Field("err", err))
-			return err
-		}
 		return nil
 	}); err != nil {
+		if errors.Is(gorm.ErrDuplicatedKey, err) {
+			return nil, errs.DuplicateDataErr
+		}
 		return nil, err
 	}
 	return

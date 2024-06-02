@@ -29,6 +29,7 @@ func newSymbol(db *gorm.DB, opts ...gen.DOOption) symbol {
 	_symbol.ALL = field.NewAsterisk(tableName)
 	_symbol.ID = field.NewUint32(tableName, "id")
 	_symbol.SymbolName = field.NewString(tableName, "symbol_name")
+	_symbol.SymbolID = field.NewInt32(tableName, "symbol_id")
 	_symbol.BaseCoinID = field.NewUint32(tableName, "base_coin_id")
 	_symbol.BaseCoinName = field.NewString(tableName, "base_coin_name")
 	_symbol.BaseCoinPrec = field.NewInt32(tableName, "base_coin_prec")
@@ -49,7 +50,8 @@ type symbol struct {
 
 	ALL           field.Asterisk
 	ID            field.Uint32
-	SymbolName    field.String
+	SymbolName    field.String // 交易对名称
+	SymbolID      field.Int32  // 交易对id
 	BaseCoinID    field.Uint32 // 基础币ID
 	BaseCoinName  field.String // 基础币名称
 	BaseCoinPrec  field.Int32  // 基础币精度
@@ -77,6 +79,7 @@ func (s *symbol) updateTableName(table string) *symbol {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewUint32(table, "id")
 	s.SymbolName = field.NewString(table, "symbol_name")
+	s.SymbolID = field.NewInt32(table, "symbol_id")
 	s.BaseCoinID = field.NewUint32(table, "base_coin_id")
 	s.BaseCoinName = field.NewString(table, "base_coin_name")
 	s.BaseCoinPrec = field.NewInt32(table, "base_coin_prec")
@@ -98,6 +101,8 @@ func (s symbol) TableName() string { return s.symbolDo.TableName() }
 
 func (s symbol) Alias() string { return s.symbolDo.Alias() }
 
+func (s symbol) Columns(cols ...field.Expr) gen.Columns { return s.symbolDo.Columns(cols...) }
+
 func (s *symbol) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := s.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -108,9 +113,10 @@ func (s *symbol) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *symbol) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 11)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["symbol_name"] = s.SymbolName
+	s.fieldMap["symbol_id"] = s.SymbolID
 	s.fieldMap["base_coin_id"] = s.BaseCoinID
 	s.fieldMap["base_coin_name"] = s.BaseCoinName
 	s.fieldMap["base_coin_prec"] = s.BaseCoinPrec
@@ -176,10 +182,6 @@ func (s symbolDo) Select(conds ...field.Expr) *symbolDo {
 
 func (s symbolDo) Where(conds ...gen.Condition) *symbolDo {
 	return s.withDO(s.DO.Where(conds...))
-}
-
-func (s symbolDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *symbolDo {
-	return s.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (s symbolDo) Order(conds ...field.Expr) *symbolDo {
