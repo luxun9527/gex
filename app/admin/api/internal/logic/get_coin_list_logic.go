@@ -33,6 +33,7 @@ func (l *GetCoinListLogic) GetCoinList(req *types.GetCoinListReq) (resp *types.G
 			ID:       v.ID,
 			CoinName: v.CoinName,
 			Prec:     v.Prec,
+			CoinId:   v.CoinID,
 		}
 		coinList = append(coinList, d)
 	}

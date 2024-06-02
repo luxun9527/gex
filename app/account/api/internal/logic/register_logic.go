@@ -5,11 +5,12 @@ import (
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
 	logger "github.com/luxun9527/zaplog"
 
-"github.com/luxun9527/gex/app/account/api/internal/svc"
-"github.com/luxun9527/gex/app/account/api/internal/types"
+	"github.com/luxun9527/gex/app/account/api/internal/svc"
+	"github.com/luxun9527/gex/app/account/api/internal/types"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type RegisterLogic struct {
 	logx.Logger
 	ctx    context.Context
@@ -25,7 +26,6 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.Empty, err error) {
-	// todo: add your logic here and delete this line
 	if _, err := l.svcCtx.AccountRpcClient.Register(l.ctx, &accountservice.RegisterReq{
 		Username:    req.Username,
 		Password:    req.Password,

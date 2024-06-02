@@ -28,6 +28,7 @@ func newCoin(db *gorm.DB, opts ...gen.DOOption) coin {
 	tableName := _coin.coinDo.TableName()
 	_coin.ALL = field.NewAsterisk(tableName)
 	_coin.ID = field.NewUint32(tableName, "id")
+	_coin.CoinID = field.NewInt32(tableName, "coin_id")
 	_coin.CoinName = field.NewString(tableName, "coin_name")
 	_coin.Prec = field.NewInt32(tableName, "prec")
 	_coin.CreatedAt = field.NewUint32(tableName, "created_at")
@@ -43,7 +44,8 @@ type coin struct {
 	coinDo coinDo
 
 	ALL       field.Asterisk
-	ID        field.Uint32 // 币种ID，也是主键ID
+	ID        field.Uint32 // 主键ID
+	CoinID    field.Int32  // 币种ID
 	CoinName  field.String // 币种名称
 	Prec      field.Int32  // 币种精度，小数位保留多少
 	CreatedAt field.Uint32 // 创建时间
@@ -66,6 +68,7 @@ func (c coin) As(alias string) *coin {
 func (c *coin) updateTableName(table string) *coin {
 	c.ALL = field.NewAsterisk(table)
 	c.ID = field.NewUint32(table, "id")
+	c.CoinID = field.NewInt32(table, "coin_id")
 	c.CoinName = field.NewString(table, "coin_name")
 	c.Prec = field.NewInt32(table, "prec")
 	c.CreatedAt = field.NewUint32(table, "created_at")
@@ -83,6 +86,8 @@ func (c coin) TableName() string { return c.coinDo.TableName() }
 
 func (c coin) Alias() string { return c.coinDo.Alias() }
 
+func (c coin) Columns(cols ...field.Expr) gen.Columns { return c.coinDo.Columns(cols...) }
+
 func (c *coin) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := c.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -93,8 +98,9 @@ func (c *coin) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *coin) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 6)
+	c.fieldMap = make(map[string]field.Expr, 7)
 	c.fieldMap["id"] = c.ID
+	c.fieldMap["coin_id"] = c.CoinID
 	c.fieldMap["coin_name"] = c.CoinName
 	c.fieldMap["prec"] = c.Prec
 	c.fieldMap["created_at"] = c.CreatedAt
@@ -156,10 +162,6 @@ func (c coinDo) Select(conds ...field.Expr) *coinDo {
 
 func (c coinDo) Where(conds ...gen.Condition) *coinDo {
 	return c.withDO(c.DO.Where(conds...))
-}
-
-func (c coinDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *coinDo {
-	return c.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (c coinDo) Order(conds ...field.Expr) *coinDo {

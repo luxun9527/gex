@@ -52,6 +52,7 @@ type GetSymbolListReq struct {
 type SymbolInfo struct {
 	ID            uint32 `json:"id"`
 	SymbolName    string `json:"symbol_name"`
+	SymbolId      int32  `json:"symbol_id"`
 	BaseCoinID    uint32 `json:"base_coin_id"`
 	BaseCoinName  string `json:"base_coin_name"`
 	BaseCoinPrec  int32  `json:"base_coin_prec"`
@@ -68,6 +69,7 @@ type GetSymbolListResp struct {
 type AddSymbolReq struct {
 	BaseCoinID  uint32 `json:"base_coin_id"`
 	QuoteCoinID int32  `json:"quote_coin_id"`
+	SymbolId    int32  `json:"symbol_id"`
 }
 
 type AddSymbolResp struct {
@@ -76,6 +78,7 @@ type AddSymbolResp struct {
 type AddCoinReq struct {
 	CoinName string `json:"coin_name"`
 	Prec     int32  `json:"prec"`
+	CoinId   int32  `json:"coin_id"`
 }
 
 type AddCoinResp struct {
@@ -89,6 +92,7 @@ type GetCoinListReq struct {
 type CoinInfo struct {
 	ID       uint32 `json:"id"`
 	CoinName string `json:"coin_name"`
+	CoinId   int32  `json:"coin_id"`
 	Prec     int32  `json:"prec"`
 }
 
@@ -143,4 +147,5 @@ type UpdateCoinReq struct {
 	ID       uint32 `json:"id"`
 	CoinName string `json:"coin_name"`
 	Prec     int32  `json:"prec"`
+	CoinId   int32  `json:"coin_id"`
 }

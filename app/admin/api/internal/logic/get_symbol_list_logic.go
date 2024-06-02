@@ -34,6 +34,7 @@ func (l *GetSymbolListLogic) GetSymbolList(req *types.GetSymbolListReq) (resp *t
 		s := &types.SymbolInfo{
 			ID:            v.ID,
 			SymbolName:    v.SymbolName,
+			SymbolId:      v.SymbolID,
 			BaseCoinID:    v.BaseCoinID,
 			BaseCoinName:  v.BaseCoinName,
 			BaseCoinPrec:  v.BaseCoinPrec,

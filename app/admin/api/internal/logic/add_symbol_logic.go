@@ -2,16 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/query"
-	"github.com/luxun9527/gex/common/errs"
-	"github.com/luxun9527/gex/common/proto/define"
-	"gopkg.in/yaml.v3"
-
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
-
+	"github.com/luxun9527/gex/common/errs"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 )
 
 type AddSymbolLogic struct {
@@ -45,6 +42,7 @@ func (l *AddSymbolLogic) AddSymbol(req *types.AddSymbolReq) (resp *types.AddSymb
 	symbolName := baseCoinInfo.CoinName + "_" + quoteCoinInfo.CoinName
 	c := &model.Symbol{
 		SymbolName:    symbolName,
+		SymbolID:      req.SymbolId,
 		BaseCoinID:    req.BaseCoinID,
 		BaseCoinName:  baseCoinInfo.CoinName,
 		BaseCoinPrec:  baseCoinInfo.Prec,
@@ -52,48 +50,13 @@ func (l *AddSymbolLogic) AddSymbol(req *types.AddSymbolReq) (resp *types.AddSymb
 		QuoteCoinName: quoteCoinInfo.CoinName,
 		QuoteCoinPrec: quoteCoinInfo.Prec,
 	}
-
-	count, err := symbol.WithContext(l.ctx).Where(symbol.SymbolName.Eq(symbolName)).Count()
-	if err != nil {
-		return nil, err
-	}
-	if count > 0 {
-		return nil, errs.DuplicateDataErr
-	}
-	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
-		if err := tx.Symbol.WithContext(l.ctx).Create(c); err != nil {
-			logx.Errorw("create symbol failed", logx.Field("err", err))
-			return err
+	if err := symbol.WithContext(l.ctx).Create(c); err != nil {
+		if errors.Is(gorm.ErrDuplicatedKey, err) {
+			return nil, errs.DuplicateDataErr
 		}
-		symbols, err := tx.Symbol.WithContext(l.ctx).Find()
-		if err != nil {
-			return err
-		}
-		for _, v := range symbols {
-			symbolInfo := &define.SymbolInfo{
-				SymbolName:         v.SymbolName,
-				SymbolID:           int32(v.ID),
-				BaseCoinName:       v.BaseCoinName,
-				BaseCoinID:         int32(v.BaseCoinID),
-				QuoteCoinName:      v.QuoteCoinName,
-				QuoteCoinID:        int32(v.QuoteCoinID),
-				BaseCoinPrecValue:  v.BaseCoinPrec,
-				QuoteCoinPrecValue: v.QuoteCoinPrec,
-			}
-			data, err := yaml.Marshal(symbolInfo)
-			if err != nil {
-				return err
-			}
-			if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdSymbolPrefix+v.SymbolName, string(data)); err != nil {
-				logx.Errorw("put config to etcd failed", logx.Field("err", err))
-				return err
-			}
-		}
-
-		return nil
-	}); err != nil {
+		logx.Errorw("create symbol failed", logx.Field("err", err))
 		return nil, err
 	}
 
-	return
+	return &types.AddSymbolResp{}, nil
 }

@@ -6,10 +6,11 @@ import (
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
 	logger "github.com/luxun9527/zaplog"
-"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type GetServiceConfigLogic struct {
 	logx.Logger
 	ctx    context.Context
@@ -25,7 +26,6 @@ func NewGetServiceConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetServiceConfigLogic) GetServiceConfig(req *types.GetServiceConfigReq) (resp *types.GetServiceConfigResp, err error) {
-	// todo: add your logic here and delete this line
 	data, err := l.svcCtx.EtcdCli.Get(l.ctx, req.Key)
 	if err != nil {
 		logx.Errorw("get config from etcd failed", logx.Field("err", err))

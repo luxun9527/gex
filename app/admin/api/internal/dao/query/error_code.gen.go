@@ -88,6 +88,8 @@ func (e errorCode) TableName() string { return e.errorCodeDo.TableName() }
 
 func (e errorCode) Alias() string { return e.errorCodeDo.Alias() }
 
+func (e errorCode) Columns(cols ...field.Expr) gen.Columns { return e.errorCodeDo.Columns(cols...) }
+
 func (e *errorCode) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := e.fieldMap[fieldName]
 	if !ok || _f == nil {
@@ -162,10 +164,6 @@ func (e errorCodeDo) Select(conds ...field.Expr) *errorCodeDo {
 
 func (e errorCodeDo) Where(conds ...gen.Condition) *errorCodeDo {
 	return e.withDO(e.DO.Where(conds...))
-}
-
-func (e errorCodeDo) Exists(subquery interface{ UnderlyingDB() *gorm.DB }) *errorCodeDo {
-	return e.Where(field.CompareSubQuery(field.ExistsOp, nil, subquery.UnderlyingDB()))
 }
 
 func (e errorCodeDo) Order(conds ...field.Expr) *errorCodeDo {
