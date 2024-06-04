@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
 )
 
 func newUser(db *gorm.DB, opts ...gen.DOOption) user {

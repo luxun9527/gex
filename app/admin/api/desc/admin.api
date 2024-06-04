@@ -173,6 +173,33 @@ type (
 		CoinId   int32  `json:"coin_id"`
 	}
 )
+type (
+	GetMatchListReq {
+		PageNo   int64 `form:"page_no"`
+		PageSize int64 `form:"page_size"`
+	}
+	MatchInfo {
+		ID               int64           `json:"id"`
+		MatchID          string          `json:"match_id"`
+		SymbolID         int32           `json:"symbol_id"`
+		SymbolName       string          `json:"symbol_name"`
+		MatchTime        int64           `json:"match_time"`
+		SubMatchInfoList []*SubMatchInfo `json:"sub_match_info_list"`
+	}
+	SubMatchInfo {
+		TakerUserID   int64  `json:"taker_user_id"`
+		TakerUsername string `json:"taker_username"`
+		MakerUserID   int64  `json:"maker_user_id"`
+		MakerUsername string `json:"maker_username"`
+		MatchPrice    string `json:"match_price"`
+		MatchQty      string `json:"match_qty"`
+		MatchAmount   string `json:"match_amount"`
+	}
+	GetMatchListResp {
+		List  []*MatchInfo `json:"list"`
+		Total int64        `json:"total"`
+	}
+)
 @server(
 	prefix: /admin/v1
 )
@@ -239,4 +266,7 @@ service Admin {
 	@doc "同步交易对配置"
 	@handler SyncSymbolConfig
 	post /sync_symbol_config (Empty) returns (Empty)
+	@doc "获取撮合列表"
+	@handler GetMatchList
+	post /get_match_list (GetMatchListReq) returns (GetMatchListResp)
 }

@@ -59,7 +59,7 @@ func (s *AccountServiceServer) AddUserAsset(ctx context.Context, in *pb.AddUserA
 }
 
 // 注册
-func (s *AccountServiceServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.Empty, error) {
+func (s *AccountServiceServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	l := logic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }

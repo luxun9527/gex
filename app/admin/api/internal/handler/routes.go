@@ -92,6 +92,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/sync_symbol_config",
 				Handler: SyncSymbolConfigHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/get_match_list",
+				Handler: GetMatchListHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/admin/v1"),
 	)
