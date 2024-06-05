@@ -24,7 +24,7 @@ func NewGetErrorCodeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetErrorCodeListLogic) GetErrorCodeList(req *types.GetErrorCodeListReq) (resp *types.GetErrorCodeListResp, err error) {
-	errorCode := l.svcCtx.Query.ErrorCode
+	errorCode := l.svcCtx.AdminQuery.ErrorCode
 	data, count, err := errorCode.WithContext(l.ctx).
 		Where(errorCode.Language.Eq(req.Language)).
 		Order(errorCode.ID.Desc()).

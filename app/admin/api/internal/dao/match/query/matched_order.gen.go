@@ -35,7 +35,7 @@ func newMatchedOrder(db *gorm.DB, opts ...gen.DOOption) matchedOrder {
 	_matchedOrder.TakerUserID = field.NewInt64(tableName, "taker_user_id")
 	_matchedOrder.TakerOrderID = field.NewString(tableName, "taker_order_id")
 	_matchedOrder.MakerOrderID = field.NewString(tableName, "maker_order_id")
-	_matchedOrder.MaerUserID = field.NewInt64(tableName, "maer_user_id")
+	_matchedOrder.MakerUserID = field.NewInt64(tableName, "maker_user_id")
 	_matchedOrder.TakerIsBuyer = field.NewInt32(tableName, "taker_is_buyer")
 	_matchedOrder.Price = field.NewString(tableName, "price")
 	_matchedOrder.Qty = field.NewString(tableName, "qty")
@@ -61,7 +61,7 @@ type matchedOrder struct {
 	TakerUserID  field.Int64  // taker用户id
 	TakerOrderID field.String // taker订单id
 	MakerOrderID field.String // maker订单id
-	MaerUserID   field.Int64  // maker用户id
+	MakerUserID  field.Int64  // maker用户id
 	TakerIsBuyer field.Int32  // taker是否是买单 1是 2否
 	Price        field.String // 价格
 	Qty          field.String // 数量(基础币)
@@ -93,7 +93,7 @@ func (m *matchedOrder) updateTableName(table string) *matchedOrder {
 	m.TakerUserID = field.NewInt64(table, "taker_user_id")
 	m.TakerOrderID = field.NewString(table, "taker_order_id")
 	m.MakerOrderID = field.NewString(table, "maker_order_id")
-	m.MaerUserID = field.NewInt64(table, "maer_user_id")
+	m.MakerUserID = field.NewInt64(table, "maker_user_id")
 	m.TakerIsBuyer = field.NewInt32(table, "taker_is_buyer")
 	m.Price = field.NewString(table, "price")
 	m.Qty = field.NewString(table, "qty")
@@ -138,7 +138,7 @@ func (m *matchedOrder) fillFieldMap() {
 	m.fieldMap["taker_user_id"] = m.TakerUserID
 	m.fieldMap["taker_order_id"] = m.TakerOrderID
 	m.fieldMap["maker_order_id"] = m.MakerOrderID
-	m.fieldMap["maer_user_id"] = m.MaerUserID
+	m.fieldMap["maker_user_id"] = m.MakerUserID
 	m.fieldMap["taker_is_buyer"] = m.TakerIsBuyer
 	m.fieldMap["price"] = m.Price
 	m.fieldMap["qty"] = m.Qty

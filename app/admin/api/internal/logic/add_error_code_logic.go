@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
@@ -29,7 +29,7 @@ func NewAddErrorCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddE
 
 func (l *AddErrorCodeLogic) AddErrorCode(req *types.AddErrorCodeReq) (resp *types.Empty, err error) {
 
-	errorCode := l.svcCtx.Query.ErrorCode
+	errorCode := l.svcCtx.AdminQuery.ErrorCode
 	code := &model.ErrorCode{
 		ID:            0,
 		ErrorCodeID:   req.ErrorCodeId,

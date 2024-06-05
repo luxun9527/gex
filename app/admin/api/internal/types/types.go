@@ -151,8 +151,8 @@ type UpdateCoinReq struct {
 }
 
 type GetMatchListReq struct {
-	PageNo   int64 `form:"page_no"`
-	PageSize int64 `form:"page_size"`
+	PageNo   int64 `json:"page_no"`
+	PageSize int64 `json:"page_size"`
 }
 
 type MatchInfo struct {
@@ -160,18 +160,20 @@ type MatchInfo struct {
 	MatchID          string          `json:"match_id"`
 	SymbolID         int32           `json:"symbol_id"`
 	SymbolName       string          `json:"symbol_name"`
-	MatchTime        int64           `json:"match_time"`
+	TotalQty         string          `json:"total_qty"`
+	TotalAmount      string          `json:"total_amount"`
+	AvgPrice         string          `json:"avg_price"`
+	CreatedAt        int64           `json:"created_at"`
 	SubMatchInfoList []*SubMatchInfo `json:"sub_match_info_list"`
 }
 
 type SubMatchInfo struct {
-	TakerUserID   int64  `json:"taker_user_id"`
-	TakerUsername string `json:"taker_username"`
-	MakerUserID   int64  `json:"maker_user_id"`
-	MakerUsername string `json:"maker_username"`
-	MatchPrice    string `json:"match_price"`
-	MatchQty      string `json:"match_qty"`
-	MatchAmount   string `json:"match_amount"`
+	TakerUserID int64  `json:"taker_user_id"`
+	MakerUserID int64  `json:"maker_user_id"`
+	MatchPrice  string `json:"match_price"`
+	MatchQty    string `json:"match_qty"`
+	MatchAmount string `json:"match_amount"`
+	MatchTime   int64  `json:"match_time"`
 }
 
 type GetMatchListResp struct {

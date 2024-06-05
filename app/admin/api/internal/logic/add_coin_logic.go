@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
@@ -27,7 +27,7 @@ func NewAddCoinLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCoinLo
 
 func (l *AddCoinLogic) AddCoin(req *types.AddCoinReq) (resp *types.AddCoinResp, err error) {
 
-	coin := l.svcCtx.Query.Coin
+	coin := l.svcCtx.AdminQuery.Coin
 	c := &model.Coin{
 		CoinName: req.CoinName,
 		Prec:     req.Prec,

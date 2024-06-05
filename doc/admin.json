@@ -860,7 +860,16 @@
         "symbol_name": {
           "type": "string"
         },
-        "match_time": {
+        "total_qty": {
+          "type": "string"
+        },
+        "total_amount": {
+          "type": "string"
+        },
+        "avg_price": {
+          "type": "string"
+        },
+        "created_at": {
           "type": "integer",
           "format": "int64"
         },
@@ -877,7 +886,10 @@
         "match_id",
         "symbol_id",
         "symbol_name",
-        "match_time",
+        "total_qty",
+        "total_amount",
+        "avg_price",
+        "created_at",
         "sub_match_info_list"
       ]
     },
@@ -908,15 +920,9 @@
           "type": "integer",
           "format": "int64"
         },
-        "taker_username": {
-          "type": "string"
-        },
         "maker_user_id": {
           "type": "integer",
           "format": "int64"
-        },
-        "maker_username": {
-          "type": "string"
         },
         "match_price": {
           "type": "string"
@@ -926,17 +932,20 @@
         },
         "match_amount": {
           "type": "string"
+        },
+        "match_time": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "title": "SubMatchInfo",
       "required": [
         "taker_user_id",
-        "taker_username",
         "maker_user_id",
-        "maker_username",
         "match_price",
         "match_qty",
-        "match_amount"
+        "match_amount",
+        "match_time"
       ]
     },
     "SymbolInfo": {

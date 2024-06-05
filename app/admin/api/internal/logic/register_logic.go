@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
+	"errors"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/utils"
+	"gorm.io/gorm"
 
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
@@ -31,24 +33,17 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.Empty, err
 		return nil, errs.PasswordNotMatch
 	}
 
-	u := l.svcCtx.Query.User
-	count, err := u.WithContext(l.ctx).Where(u.Username.Eq(req.Username)).Count()
-	if err != nil {
-		return nil, err
-	}
-	if count > 0 {
-		return nil, errs.DuplicateDataErr
-	}
+	u := l.svcCtx.AdminQuery.User
 	p := utils.BcryptHash(req.Password)
 	user := &model.User{
-		ID:        0,
-		Username:  req.Username,
-		Password:  p,
-		CreatedAt: 0,
-		UpdatedAt: 0,
-		DeletedAt: 0,
+		Username: req.Username,
+		Password: p,
 	}
 	if err := u.WithContext(l.ctx).Create(user); err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return nil, errs.DuplicateDataErr
+		}
+		logx.Errorw("create user error", logx.Field("err", err))
 		return nil, err
 	}
 	return &types.Empty{}, nil

@@ -26,7 +26,7 @@ func NewSyncCoinConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sy
 }
 
 func (l *SyncCoinConfigLogic) SyncCoinConfig(req *types.Empty) (resp *types.Empty, err error) {
-	coin := l.svcCtx.Query.Coin
+	coin := l.svcCtx.AdminQuery.Coin
 
 	coins, err := coin.WithContext(l.ctx).Find()
 	if err != nil {
@@ -40,6 +40,7 @@ func (l *SyncCoinConfigLogic) SyncCoinConfig(req *types.Empty) (resp *types.Empt
 		}
 		data, err := yaml.Marshal(coinInfo)
 		if err != nil {
+			logx.Errorw("marshal config to yaml failed", logx.Field("err", err))
 			return &types.Empty{}, nil
 		}
 		if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdCoinPrefix+v.CoinName, string(data)); err != nil {

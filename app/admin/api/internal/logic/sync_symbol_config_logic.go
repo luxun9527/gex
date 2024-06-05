@@ -27,7 +27,7 @@ func NewSyncSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *SyncSymbolConfigLogic) SyncSymbolConfig(req *types.Empty) (resp *types.Empty, err error) {
-	symbol := l.svcCtx.Query.Symbol
+	symbol := l.svcCtx.AdminQuery.Symbol
 
 	symbols, err := symbol.WithContext(l.ctx).Find()
 	if err != nil {
@@ -47,6 +47,7 @@ func (l *SyncSymbolConfigLogic) SyncSymbolConfig(req *types.Empty) (resp *types.
 		}
 		data, err := yaml.Marshal(symbolInfo)
 		if err != nil {
+			logx.Errorw("yaml marshal config failed", logx.Field("err", err))
 			return nil, err
 		}
 		if _, err := l.svcCtx.EtcdCli.Put(l.ctx, define.EtcdSymbolPrefix+v.SymbolName, string(data)); err != nil {

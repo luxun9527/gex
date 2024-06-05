@@ -24,7 +24,7 @@ func NewGetSymbolListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 func (l *GetSymbolListLogic) GetSymbolList(req *types.GetSymbolListReq) (resp *types.GetSymbolListResp, err error) {
-	symbol := l.svcCtx.Query.Symbol
+	symbol := l.svcCtx.AdminQuery.Symbol
 	offset := (req.PageNo - 1) * req.PageSize
 	data, count, err := symbol.WithContext(l.ctx).
 		Order(symbol.ID.Desc()).

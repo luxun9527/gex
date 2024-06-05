@@ -16,7 +16,7 @@ type MatchedOrder struct {
 	TakerUserID  int64  `gorm:"column:taker_user_id;not null;comment:taker用户id" json:"taker_user_id"`                    // taker用户id
 	TakerOrderID string `gorm:"column:taker_order_id;not null;comment:taker订单id" json:"taker_order_id"`                  // taker订单id
 	MakerOrderID string `gorm:"column:maker_order_id;not null;comment:maker订单id" json:"maker_order_id"`                  // maker订单id
-	MaerUserID   int64  `gorm:"column:maer_user_id;not null;comment:maker用户id" json:"maer_user_id"`                      // maker用户id
+	MakerUserID  int64  `gorm:"column:maker_user_id;not null;comment:maker用户id" json:"maker_user_id"`                    // maker用户id
 	TakerIsBuyer int32  `gorm:"column:taker_is_buyer;not null;default:2;comment:taker是否是买单 1是 2否" json:"taker_is_buyer"` // taker是否是买单 1是 2否
 	Price        string `gorm:"column:price;not null;comment:价格" json:"price"`                                           // 价格
 	Qty          string `gorm:"column:qty;not null;comment:数量(基础币)" json:"qty"`                                          // 数量(基础币)

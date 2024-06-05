@@ -32,3 +32,23 @@ LoggerConfig:
     MaxCount: 20 #  最大缓存数量 达到刷新间隔或最大记录数 触发发送  开发测试调小一点，生产环境调大一点
     Level: warn # 指定上报级别
 
+AdminGormConf:
+  ip: mysql
+  port: 3307
+  dbName: admin
+  username: root
+  password: root
+  maxIdleConns: 10
+  maxOpenConns: 100
+MatchGormConf:
+  ip: mysql
+  port: 3307
+  dbName: trade
+  username: root
+  password: root
+  maxIdleConns: 10
+  maxOpenConns: 100
+LanguageEtcdConf:
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 5

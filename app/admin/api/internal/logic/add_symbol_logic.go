@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
@@ -28,8 +28,8 @@ func NewAddSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddSymb
 func (l *AddSymbolLogic) AddSymbol(req *types.AddSymbolReq) (resp *types.AddSymbolResp, err error) {
 
 	var (
-		coin   = l.svcCtx.Query.Coin
-		symbol = l.svcCtx.Query.Symbol
+		coin   = l.svcCtx.AdminQuery.Coin
+		symbol = l.svcCtx.AdminQuery.Symbol
 	)
 	baseCoinInfo, err := coin.WithContext(l.ctx).Where(coin.ID.Eq(req.BaseCoinID)).Take()
 	if err != nil {
