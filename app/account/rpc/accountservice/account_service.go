@@ -26,6 +26,7 @@ type (
 	LoginReq             = pb.LoginReq
 	LoginResp            = pb.LoginResp
 	RegisterReq          = pb.RegisterReq
+	RegisterResp         = pb.RegisterResp
 	UnFreezeUserAssetReq = pb.UnFreezeUserAssetReq
 	ValidateTokenReq     = pb.ValidateTokenReq
 	ValidateTokenResp    = pb.ValidateTokenResp
@@ -44,7 +45,7 @@ type (
 		// 增加用户资产
 		AddUserAsset(ctx context.Context, in *AddUserAssetReq, opts ...grpc.CallOption) (*Empty, error)
 		// 注册
-		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*Empty, error)
+		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		// 登录
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		// 登出
@@ -101,7 +102,7 @@ func (m *defaultAccountService) AddUserAsset(ctx context.Context, in *AddUserAss
 }
 
 // 注册
-func (m *defaultAccountService) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*Empty, error) {
+func (m *defaultAccountService) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
 	client := pb.NewAccountServiceClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
 }

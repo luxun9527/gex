@@ -161,6 +161,34 @@
         ]
       }
     },
+    "/admin/v1/get_match_list": {
+      "post": {
+        "summary": "获取撮合列表",
+        "operationId": "GetMatchList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetMatchListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetMatchListReq"
+            }
+          }
+        ],
+        "requestBody": {},
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
     "/admin/v1/get_service_config": {
       "post": {
         "summary": "获取服务配置",
@@ -678,6 +706,44 @@
         "total"
       ]
     },
+    "GetMatchListReq": {
+      "type": "object",
+      "properties": {
+        "page_no": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetMatchListReq",
+      "required": [
+        "page_no",
+        "page_size"
+      ]
+    },
+    "GetMatchListResp": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchInfo"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetMatchListResp",
+      "required": [
+        "list",
+        "total"
+      ]
+    },
     "GetServiceConfigReq": {
       "type": "object",
       "properties": {
@@ -777,6 +843,56 @@
         "user_info"
       ]
     },
+    "MatchInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "match_id": {
+          "type": "string"
+        },
+        "symbol_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "symbol_name": {
+          "type": "string"
+        },
+        "total_qty": {
+          "type": "string"
+        },
+        "total_amount": {
+          "type": "string"
+        },
+        "avg_price": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "sub_match_info_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubMatchInfo"
+          }
+        }
+      },
+      "title": "MatchInfo",
+      "required": [
+        "id",
+        "match_id",
+        "symbol_id",
+        "symbol_name",
+        "total_qty",
+        "total_amount",
+        "avg_price",
+        "created_at",
+        "sub_match_info_list"
+      ]
+    },
     "RegisterReq": {
       "type": "object",
       "properties": {
@@ -795,6 +911,41 @@
         "username",
         "password",
         "comfirm_password"
+      ]
+    },
+    "SubMatchInfo": {
+      "type": "object",
+      "properties": {
+        "taker_user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "maker_user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "match_price": {
+          "type": "string"
+        },
+        "match_qty": {
+          "type": "string"
+        },
+        "match_amount": {
+          "type": "string"
+        },
+        "match_time": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "SubMatchInfo",
+      "required": [
+        "taker_user_id",
+        "maker_user_id",
+        "match_price",
+        "match_qty",
+        "match_amount",
+        "match_time"
       ]
     },
     "SymbolInfo": {

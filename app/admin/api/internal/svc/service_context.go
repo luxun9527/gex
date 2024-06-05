@@ -2,7 +2,8 @@ package svc
 
 import (
 	"github.com/luxun9527/gex/app/admin/api/internal/config"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/query"
+	adminQuery "github.com/luxun9527/gex/app/admin/api/internal/dao/admin/query"
+	matchQuery "github.com/luxun9527/gex/app/admin/api/internal/dao/match/query"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
@@ -11,10 +12,11 @@ import (
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	EtcdCli   *clientv3.Client
-	JwtClient *utils.JWT
-	Query     *query.Query
+	Config     config.Config
+	EtcdCli    *clientv3.Client
+	JwtClient  *utils.JWT
+	AdminQuery *adminQuery.Query
+	MatchQuery *matchQuery.Query
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -27,9 +29,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		logx.Severef("init etcd client failed %v", err)
 	}
 	return &ServiceContext{
-		Config:    c,
-		EtcdCli:   cli,
-		JwtClient: utils.NewJWT(),
-		Query:     query.Use(c.GormConf.MustNewGormClient()),
+		Config:     c,
+		EtcdCli:    cli,
+		JwtClient:  utils.NewJWT(),
+		AdminQuery: adminQuery.Use(c.AdminGormConf.MustNewGormClient()),
+		MatchQuery: matchQuery.Use(c.MatchGormConf.MustNewGormClient()),
 	}
 }

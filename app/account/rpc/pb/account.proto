@@ -81,6 +81,12 @@ message RegisterReq{
   //手机号
   int64 phone_number=3;
 }
+message RegisterResp{
+  //用户名
+  string username=1;
+  //用户ID
+  int64  uid=2;
+}
 message LoginReq{
   //用户名
   string username=1;
@@ -129,7 +135,7 @@ service AccountService {
   //增加用户资产
   rpc AddUserAsset(AddUserAssetReq)returns(Empty);
   //注册
-  rpc Register(RegisterReq)returns(Empty);
+  rpc Register(RegisterReq)returns(RegisterResp);
   //登录
   rpc Login(LoginReq)returns(LoginResp);
   //登出

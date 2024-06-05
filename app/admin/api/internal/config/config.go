@@ -11,6 +11,7 @@ type Config struct {
 	rest.RestConf
 	LoggerConfig     logger.Config
 	EtcdConf         etcd.EtcdConfig
-	GormConf         commongorm.GormConf
+	AdminGormConf    commongorm.GormConf
+	MatchGormConf    commongorm.GormConf
 	LanguageEtcdConf etcd.EtcdConfig
 }

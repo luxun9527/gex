@@ -4,14 +4,15 @@ import (
 	"context"
 	"github.com/luxun9527/gex/app/account/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/utils"
 
-"github.com/luxun9527/gex/app/account/rpc/internal/svc"
-"github.com/luxun9527/gex/app/account/rpc/pb"
+	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
+	"github.com/luxun9527/gex/app/account/rpc/pb"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type RegisterLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -27,7 +28,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 // 注册
-func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.Empty, error) {
+func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	// todo: add your logic here and delete this line
 	user := &model.User{
 		Username:    in.Username,
@@ -39,5 +40,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.Empty, error) {
 		logx.Errorw("create user failed", logger.ErrorField(err))
 		return nil, errs.ExecSqlFailed
 	}
-	return &pb.Empty{}, nil
+	return &pb.RegisterResp{
+		Username: in.Username,
+		Uid:      int64(user.ID),
+	}, nil
 }

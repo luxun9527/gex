@@ -149,3 +149,34 @@ type UpdateCoinReq struct {
 	Prec     int32  `json:"prec"`
 	CoinId   int32  `json:"coin_id"`
 }
+
+type GetMatchListReq struct {
+	PageNo   int64 `json:"page_no"`
+	PageSize int64 `json:"page_size"`
+}
+
+type MatchInfo struct {
+	ID               int64           `json:"id"`
+	MatchID          string          `json:"match_id"`
+	SymbolID         int32           `json:"symbol_id"`
+	SymbolName       string          `json:"symbol_name"`
+	TotalQty         string          `json:"total_qty"`
+	TotalAmount      string          `json:"total_amount"`
+	AvgPrice         string          `json:"avg_price"`
+	CreatedAt        int64           `json:"created_at"`
+	SubMatchInfoList []*SubMatchInfo `json:"sub_match_info_list"`
+}
+
+type SubMatchInfo struct {
+	TakerUserID int64  `json:"taker_user_id"`
+	MakerUserID int64  `json:"maker_user_id"`
+	MatchPrice  string `json:"match_price"`
+	MatchQty    string `json:"match_qty"`
+	MatchAmount string `json:"match_amount"`
+	MatchTime   int64  `json:"match_time"`
+}
+
+type GetMatchListResp struct {
+	List  []*MatchInfo `json:"list"`
+	Total int64        `json:"total"`
+}

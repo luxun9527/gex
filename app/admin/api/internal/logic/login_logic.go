@@ -6,12 +6,13 @@ import (
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
+	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/utils"
-"gorm.io/gorm"
+	"gorm.io/gorm"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type LoginLogic struct {
 	logx.Logger
 	ctx    context.Context
@@ -28,7 +29,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
 
-	user := l.svcCtx.Query.User
+	user := l.svcCtx.AdminQuery.User
 
 	u, err := user.WithContext(l.ctx).
 		Select(user.Username, user.ID, user.Password).

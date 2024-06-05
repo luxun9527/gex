@@ -16,7 +16,7 @@ import (
 	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -135,6 +135,7 @@ func (kl *KlineHandler) update(matchData <-chan *model.MatchData) {
 
 // 存储历史k线和最新的k线
 func (kl *KlineHandler) store() {
+	k := kl.svcCtx.Query.Kline
 	for klineData := range kl.storeLatestKline {
 		//存储历史k线
 		if klineData.IsHistory {
@@ -142,11 +143,21 @@ func (kl *KlineHandler) store() {
 				for _, v := range klineData.Klines {
 					mysqlData := v.CastToMysqlData(kl.svcCtx.Config.SymbolInfo)
 					logx.Infow("store history kline data", logx.Field("data", mysqlData))
-					if err := kl.svcCtx.Query.Kline.WithContext(context.Background()).Create(mysqlData); err != nil {
-						if errors.Is(err, gorm.ErrDuplicatedKey) {
-							logx.Sloww("store history kline data has duplicated Key", logx.Field("data", mysqlData))
-							continue
-						}
+					onUpdate := map[string]interface{}{
+						k.Open.ColumnName().String():   mysqlData.Open,
+						k.High.ColumnName().String():   mysqlData.High,
+						k.Low.ColumnName().String():    mysqlData.Low,
+						k.Close.ColumnName().String():  mysqlData.Close,
+						k.Amount.ColumnName().String(): mysqlData.Amount,
+						k.Volume.ColumnName().String(): mysqlData.Volume,
+						k.Range.ColumnName().String():  mysqlData.Range,
+					}
+					if err := k.WithContext(context.Background()).
+						Clauses(clause.OnConflict{
+							DoUpdates: clause.Assignments(onUpdate),
+						}).
+						Create(mysqlData); err != nil {
+						logx.Errorw("store history kline data failed", logx.Field("data", mysqlData), logx.Field("err", err))
 						return err
 					}
 				}
@@ -207,7 +218,6 @@ func (kl *KlineHandler) send() {
 			Payload: data.CastToWsData(kl.svcCtx.Config.SymbolInfo),
 		}
 		if _, err := kl.svcCtx.WsClient.PushData(context.Background(), &gpush.Data{
-			Uid:   "",
 			Topic: commonWs.KlinePrefix.WithParam(kl.svcCtx.Config.SymbolInfo.SymbolName) + "@" + data.KlineType.String(),
 			Data:  msg.ToBytes(),
 		}); err != nil {

@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
 	"github.com/luxun9527/gex/common/errs"
 	"gorm.io/gorm"
 
@@ -34,7 +34,7 @@ func (l *UpdateErrorCodeLogic) UpdateErrorCode(req *types.UpdateErrorCodeReq) (r
 		ErrorCodeName: req.ErrorCodeName,
 		Language:      req.Language,
 	}
-	errorCode := l.svcCtx.Query.ErrorCode
+	errorCode := l.svcCtx.AdminQuery.ErrorCode
 	if _, err := errorCode.WithContext(l.ctx).Updates(code); err != nil {
 		if errors.Is(gorm.ErrDuplicatedKey, err) {
 			return nil, errs.DuplicateDataErr

@@ -48,7 +48,7 @@ type AccountServiceClient interface {
 	// 增加用户资产
 	AddUserAsset(ctx context.Context, in *AddUserAssetReq, opts ...grpc.CallOption) (*Empty, error)
 	// 注册
-	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*Empty, error)
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	// 登录
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	// 登出
@@ -119,8 +119,8 @@ func (c *accountServiceClient) AddUserAsset(ctx context.Context, in *AddUserAsse
 	return out, nil
 }
 
-func (c *accountServiceClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *accountServiceClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	out := new(RegisterResp)
 	err := c.cc.Invoke(ctx, AccountService_Register_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ type AccountServiceServer interface {
 	// 增加用户资产
 	AddUserAsset(context.Context, *AddUserAssetReq) (*Empty, error)
 	// 注册
-	Register(context.Context, *RegisterReq) (*Empty, error)
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	// 登录
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	// 登出
@@ -204,7 +204,7 @@ func (UnimplementedAccountServiceServer) DeductUserAsset(context.Context, *Deduc
 func (UnimplementedAccountServiceServer) AddUserAsset(context.Context, *AddUserAssetReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUserAsset not implemented")
 }
-func (UnimplementedAccountServiceServer) Register(context.Context, *RegisterReq) (*Empty, error) {
+func (UnimplementedAccountServiceServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedAccountServiceServer) Login(context.Context, *LoginReq) (*LoginResp, error) {

@@ -15,7 +15,7 @@ orderapi:
 orderdoc:
 	   goctl api plugin -plugin goctl-swagger="swagger -filename doc/order.json -host api.gex.com" -api app/order/api/desc/order.api -dir .
 genorder:
-	gentool --dsn="root:root@tcp(192.168.2.159:3307)/trade?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql --tables=entrust_order,matched_order  -outPath=app/order/rpc/internal/dao/query -fieldMap="decimal:string;tinyint:int32;bigint:int64;"
+	gentool --dsn="root:root@tcp(192.168.2.159:3307)/trade?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql --tables=entrust_order_00,matched_order  -outPath=app/order/rpc/internal/dao/query -fieldMap="decimal:string;tinyint:int32;bigint:int64;"
 enum:
 	protoc   -I. --go_out=./  common/proto/enum/*.proto
 matchmq:
@@ -26,7 +26,6 @@ matchrpc:
 	make matchmodel
 matchmodel:
 	gentool --dsn="root:root@tcp(192.168.2.159:3307)/trade?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql --tables=matched_order  -outPath=app/match/rpc/internal/dao/query -fieldMap="decimal:string;tinyint:int32;int:int64"
-	gentool --dsn="root:root@tcp(192.168.2.159:3307)/trade?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql --tables=matched_order  -outPath=app/match/mq/internal/dao/query -fieldMap="decimal:string;tinyint:int32;int:int64"
 klinerpc:
 	goctl rpc  protoc -I./ app/quotes/kline/rpc/pb/kline.proto --go_out=app/quotes/kline/rpc --go-grpc_out=app/quotes/kline/rpc  --zrpc_out=app/quotes/kline/rpc -style=go_zero  -home=template
 tickerrpc:
@@ -47,9 +46,10 @@ adminapi:
 admindoc:
 	goctl api plugin -plugin goctl-swagger="swagger -filename doc/admin.json -host api.gex.com" -api app/admin/api/desc/admin.api -dir .
 
-adminModel:
-	gentool --dsn="root:root@tcp(192.168.2.159:3307)/admin?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql  -outPath=app/admin/api/internal/dao/query -fieldMap="decimal:string;tinyint:int32;int:int32" -fieldSignable=true
+adminmodel:
+	gentool --dsn="root:root@tcp(192.168.2.159:3307)/admin?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql  -outPath=app/admin/api/internal/dao/admin/query -fieldMap="decimal:string;tinyint:int32;int:int32" -fieldSignable=true
 	softdeleted -p app/admin/api/internal/dao/model/*.go
+	gentool --dsn="root:root@tcp(192.168.2.159:3307)/trade?charset=utf8mb4&parseTime=True&loc=Local" --db=mysql --tables=matched_order  -outPath=app/admin/api/internal/dao/match/query -fieldMap="decimal:string;tinyint:int32;int:int64"
 
 kline:
 	make klinerpc  && make klinemodel

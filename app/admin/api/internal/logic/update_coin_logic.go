@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/model"
-	"github.com/luxun9527/gex/app/admin/api/internal/dao/query"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/model"
+	"github.com/luxun9527/gex/app/admin/api/internal/dao/admin/query"
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
@@ -29,13 +29,13 @@ func NewUpdateCoinLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 
 func (l *UpdateCoinLogic) UpdateCoin(req *types.UpdateCoinReq) (resp *types.Empty, err error) {
 	// todo: add your logic here and delete this line
-	symbol := l.svcCtx.Query.Symbol
+	symbol := l.svcCtx.AdminQuery.Symbol
 	c := &model.Coin{
 		CoinName: req.CoinName,
 		Prec:     req.Prec,
 		ID:       req.ID,
 	}
-	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
+	if err := l.svcCtx.AdminQuery.Transaction(func(tx *query.Query) error {
 		if _, err := tx.WithContext(l.ctx).Coin.Updates(c); err != nil {
 			return err
 		}
