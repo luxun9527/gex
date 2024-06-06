@@ -63,7 +63,8 @@ services:
       MYSQL_ROOT_PASSWORD: root         # 设置root用户密码
     ports: # 映射端口
       - "3307:3307"
-
+    networks:
+      - gex
   redis:
     image: redis:7.0.5                    # 镜像'redis:7.0.5'
     container_name: redis                                                             # 容器名为'redis'

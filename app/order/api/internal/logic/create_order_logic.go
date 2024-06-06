@@ -50,6 +50,8 @@ func (l *CreateOrderLogic) validateUserBalance(uid int64, coinId int32, freezeQt
 }
 
 func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.Empty, err error) {
+	//todo 重复提交校验
+
 	//参数校验
 	s, ok := l.svcCtx.Symbols.Load(req.SymbolName)
 	if !ok {
