@@ -1,42 +1,36 @@
 Name: OrderApi
 Host: 0.0.0.0
 Port: 20013
-TimeOut: 3600
-
+TimeOut: 100000
 OrderRpcConf:
   Etcd:
     Key: service_order_rpc
     Hosts:
       - etcd:2379
   NonBlock: true
+  TimeOut: 100000
 MatchRpcConf:
   Etcd:
     Key: service_match_rpc
     Hosts:
       - etcd:2379
   NonBlock: true
+  TimeOut: 100000
 AccountRpcConf:
   Etcd:
     Key: service_account_rpc
     Hosts:
       - etcd:2379
   NonBlock: true
+  TimeOut: 100000
 WsConf:
   Etcd:
     Key: proxy
     Hosts:
       - etcd:2379
   NonBlock: true
-SymbolListConf:
-  BTC_USDT:
-    SymbolName: BTC_USDT
-    SymbolID: 1
-    BaseCoinID: 1
-    BaseCoinName: BTC
-    QuoteCoinID: 2
-    QuoteCoinName: USDT
-    BaseCoinPrec: 4 #基础保留多少位小数
-    QuoteCoinPrec: 4 #保留多少位小数
+  TimeOut: 100000
+
 LoggerConfig:
   Name: order-api #可选 填的话在增加一个 {"project": "Name"}的filed
   Level: info  #日志等级 debug info warn error
@@ -62,6 +56,13 @@ LoggerConfig:
     FlushSec: 3 # 刷新间隔单位为秒 开发测试调小一点，生产环境调大一点
     MaxCount: 20 #  最大缓存数量 达到刷新间隔或最大记录数 触发发送  开发测试调小一点，生产环境调大一点
     Level: warn # 指定上报级别
+
+
 LanguageEtcdConf:
-  Endpoints: ["etcd:2379"]
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 5
+SymbolEtcdConfig:
+  Endpoints:
+    - etcd:2379
   DialTimeout: 5

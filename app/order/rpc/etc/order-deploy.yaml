@@ -1,32 +1,33 @@
 Name: order.rpc
 ListenOn: 0.0.0.0:20001
 Timeout: 1000000
+Symbol: BTC_USDT
 Etcd:
   Hosts:
-    - 192.168.2.159:2379
+    - etcd:2379
   Key: service_order_rpc
 RedisConf:
-  Host: 192.168.2.159:6379
+  Host: redis:6379
   Type: node
   PingTimeout: 5s
 DtmConf:
   Etcd:
     Key: dtmservice
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
   TimeOut: 1000000
 AccountRpcConf:
   Etcd:
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
     Key: service_account_rpc
   NonBlock: true
   TimeOut: 1000000
 OrderRpcConf:
   Etcd:
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
     Key: service_order_rpc.BTC_USDT
   NonBlock: true
   TimeOut: 1000000
@@ -34,12 +35,12 @@ WsConf:
   Etcd:
     Key: proxy
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
   TimeOut: 1000000
 PulsarConfig:
   hosts:
-    - 192.168.2.159:6650
+    - pulsar:6650
 SnowFlakeWorkID: 1
 LoggerConfig:
   Name: order-rpc #可选 填的话在增加一个 {"project": "Name"}的filed
@@ -67,15 +68,14 @@ LoggerConfig:
     MaxCount: 20 #  最大缓存数量 达到刷新间隔或最大记录数 触发发送  开发测试调小一点，生产环境调大一点
     Level: warn # 指定上报级别
 GormConf:
-  ip: 192.168.2.159
+  ip: mysql
   port: 3307
   dbName: trade
   username: root
   password: root
   maxIdleConns: 10
   maxOpenConns: 100
-Symbol: BTC_USDT
 SymbolEtcdConfig:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5

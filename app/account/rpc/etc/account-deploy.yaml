@@ -1,10 +1,17 @@
 Name: account.rpc
 ListenOn: 0.0.0.0:20002
-Timeout: 0
+Timeout: 5000
 Etcd:
   Hosts:
     - etcd:2379
   Key: service_account_rpc
+
+SymbolEtcdConfig:
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 5
+
+
 GormConf:
   ip: mysql
   port: 3307
@@ -39,25 +46,7 @@ LoggerConfig:
     MaxCount: 20 #  最大缓存数量 达到刷新间隔或最大记录数 触发发送  开发测试调小一点，生产环境调大一点
     Level: warn # 指定上报级别
 
-SymbolListConf:
-  BTC_USDT:
-    SymbolName: BTC_USDT
-    SymbolID: 1
-    BaseCoinID: 1
-    BaseCoinName: BTC
-    QuoteCoinID: 2
-    QuoteCoinName: USDT
-    BaseCoinPrec: 4
-    QuoteCoinPrec: 4
-CoinListConf:
-  BTC:
-    CoinName: BTC
-    CoinID: 1
-    Prec: 4
-  USDT:
-    CoinName: USDT
-    CoinID: 2
-    Prec: 4
+
 
 PulsarConfig:
   hosts:
