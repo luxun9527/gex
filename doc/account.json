@@ -225,13 +225,22 @@
     "GetCaptchaResp": {
       "type": "object",
       "properties": {
-        "captch": {
+        "captcha_pic": {
           "type": "string"
+        },
+        "captcha_id": {
+          "type": "string"
+        },
+        "captch_length": {
+          "type": "integer",
+          "format": "int32"
         }
       },
       "title": "GetCaptchaResp",
       "required": [
-        "captch"
+        "captcha_pic",
+        "captcha_id",
+        "captch_length"
       ]
     },
     "GetUserAssetListResp": {
@@ -257,12 +266,20 @@
         },
         "password": {
           "type": "string"
+        },
+        "captcha": {
+          "type": "string"
+        },
+        "captcha_id": {
+          "type": "string"
         }
       },
       "title": "LoginReq",
       "required": [
         "username",
-        "password"
+        "password",
+        "captcha",
+        "captcha_id"
       ]
     },
     "LoginResp": {

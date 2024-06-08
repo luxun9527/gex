@@ -21,8 +21,9 @@ func NewStoreMatchResultLogic(svcCtx *svc.ServiceContext) *StoreMatchResultLogic
 	}
 }
 
-func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_MatchResult) error {
+func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_MatchResult, storeMsgID func() error) error {
 	if err := l.svcCtx.Query.Transaction(func(tx *query.Query) error {
+
 		for _, v := range result.MatchResult.MatchedRecord {
 			f := int32(2)
 			if result.MatchResult.TakerIsBuy {
@@ -41,6 +42,7 @@ func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_Match
 				MatchTime:    result.MatchResult.MatchTime,
 				TakerIsBuyer: f,
 			}
+			//重复消费也问题不大
 			if err := tx.WithContext(context.Background()).MatchedOrder.Create(mr); err != nil {
 				if errors.Is(err, gorm.ErrDuplicatedKey) {
 					logx.Sloww("matched order already exists has Duplicated key", logx.Field("data", mr))
@@ -49,6 +51,9 @@ func (l *StoreMatchResultLogic) StoreMatchResult(result *matchMq.MatchResp_Match
 				return err
 
 			}
+		}
+		if err := storeMsgID(); err != nil {
+			return err
 		}
 		return nil
 	}); err != nil {

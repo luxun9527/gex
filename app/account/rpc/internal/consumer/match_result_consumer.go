@@ -36,12 +36,14 @@ func InitConsumer(sc *svc.ServiceContext) {
 				existed, err := sc.RedisClient.ExistsCtx(context.Background(), m.MessageId)
 				if err != nil {
 					logx.Errorw("redis exists failed", logger.ErrorField(err))
+					continue
 				}
 				if existed {
 					logx.Sloww("match result message id already exists", logx.Field("message_id", m.MessageId))
 					if err := c.Ack(message); err != nil {
 						logx.Errorw("ack message failed", logger.ErrorField(err))
 					}
+					continue
 				}
 				storeConsumedMessageId := func() error {
 					//保存7天

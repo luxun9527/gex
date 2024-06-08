@@ -1,7 +1,12 @@
+Symbol: BTC_USDT
+SymbolEtcdConfig:
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 5
 
 PulsarConfig:
   hosts:
-    - pulsar:6650
+    - 192.168.2.159:6650
 LoggerConfig:
   Name: match-mq #可选 填的话在增加一个 {"project": "Name"}的filed
   Level: debug  #日志等级 debug info warn error
@@ -29,16 +34,6 @@ LoggerConfig:
     Level: warn # 指定上报级别
 
 
-
-SymbolInfo:
-  SymbolName: BTC_USDT
-  SymbolID: 1
-  BaseCoinID: 1
-  BaseCoinName: BTC
-  QuoteCoinID: 2
-  QuoteCoinName: USDT
-  BaseCoinPrec: 4
-  QuoteCoinPrec: 4
 GormConf:
   ip: mysql
   port: 3307

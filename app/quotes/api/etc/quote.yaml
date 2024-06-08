@@ -14,16 +14,7 @@ KlineRpcConf:
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true
-SymbolList:
-  - SymbolInfo:
-    SymbolName: BTC_USDT
-    SymbolID: 1
-    BaseCoinID: 1
-    BaseCoinName: BTC
-    QuoteCoinID: 2
-    QuoteCoinName: USDT
-    BaseCoinPrec: 4
-    QuoteCoinPrec: 4
+
 LoggerConfig:
   Name: quotes-api #可选 填的话在增加一个 {"project": "Name"}的filed
   Level: debug  #日志等级 debug info warn error

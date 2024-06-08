@@ -1,6 +1,6 @@
 Name: match.rpc
 ListenOn: 0.0.0.0:20003
-Timeout: 0
+Timeout: 5000
 Symbol: BTC_USDT
 Etcd:
   Hosts:

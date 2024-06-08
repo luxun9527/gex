@@ -28,11 +28,31 @@ func InitConsumer(sc *svc.ServiceContext) {
 				}
 				continue
 			}
-
+			//重复提交校验
+			existed, err := sc.RedisClient.ExistsCtx(context.Background(), m.MessageId)
+			if err != nil {
+				logx.Errorw("redis exists failed", logger.ErrorField(err))
+				continue
+			}
+			if existed {
+				logx.Sloww("match result message id already exists", logx.Field("message_id", m.MessageId))
+				if err := sc.MatchConsumer.Ack(message); err != nil {
+					logx.Errorw("ack message failed", logger.ErrorField(err))
+				}
+				continue
+			}
+			storeConsumedMessageId := func() error {
+				//保存7天
+				if err := sc.RedisClient.SetexCtx(context.Background(), m.MessageId, "", 86400*7); err != nil {
+					logx.Errorw("redis setex failed", logger.ErrorField(err))
+					return err
+				}
+				return nil
+			}
 			switch r := m.Resp.(type) {
 			case *matchMq.MatchResp_MatchResult:
 				logx.Debugw("receive match result data ", logx.Field("data", r))
-				if err := logic.NewStoreMatchResultLogic(sc).StoreMatchResult(r); err != nil {
+				if err := logic.NewStoreMatchResultLogic(sc).StoreMatchResult(r, storeConsumedMessageId); err != nil {
 					logx.Severef("consumer match result failed err = %v", err)
 				}
 

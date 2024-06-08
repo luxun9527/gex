@@ -2,10 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"github.com/luxun9527/gex/app/account/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
+	"gorm.io/gorm"
 
 	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/account/rpc/pb"
@@ -37,6 +39,9 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		Status:      1,
 	}
 	if err := l.svcCtx.Query.User.WithContext(l.ctx).Create(user); err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return nil, errs.DuplicateDataErr
+		}
 		logx.Errorw("create user failed", logger.ErrorField(err))
 		return nil, errs.ExecSqlFailed
 	}

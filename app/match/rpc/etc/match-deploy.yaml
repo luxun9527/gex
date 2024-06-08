@@ -1,14 +1,24 @@
 Name: match.rpc
 ListenOn: 0.0.0.0:20003
-Timeout: 0
+Timeout: 5000
+Symbol: BTC_USDT
 Etcd:
   Hosts:
     - etcd:2379
   Key: service_match_rpc
 
+SymbolEtcdConfig:
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 5
+EtcdConfig:
+  Endpoints:
+    - etcd:2379
+  DialTimeout: 5
+
 PulsarConfig:
   hosts:
-    - pulsar:6650
+    - 192.168.2.159:6650
 LoggerConfig:
   Name: match-rpc #可选 填的话在增加一个 {"project": "Name"}的filed
   Level: debug  #日志等级 debug info warn error
@@ -47,15 +57,7 @@ WsConf:
     Hosts:
       - etcd:2379
   NonBlock: true
-SymbolInfo:
-    SymbolName: BTC_USDT
-    SymbolID: 1
-    BaseCoinID: 1
-    BaseCoinName: BTC
-    QuoteCoinID: 2
-    QuoteCoinName: USDT
-    BaseCoinPrec: 4
-    QuoteCoinPrec: 4
+
 GormConf:
   ip: mysql
   port: 3307
@@ -68,4 +70,3 @@ RedisConf:
   Host: redis:6379
   Type: node
   PingTimeout: 5s
-
