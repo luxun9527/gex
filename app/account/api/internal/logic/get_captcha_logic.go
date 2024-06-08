@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
-
 	"github.com/luxun9527/gex/app/account/api/internal/svc"
 	"github.com/luxun9527/gex/app/account/api/internal/types"
-
+	"github.com/mojocn/base64Captcha"
 	"github.com/zeromicro/go-zero/core/logx"
+	"time"
 )
 
 type GetCaptchaLogic struct {
@@ -24,7 +24,18 @@ func NewGetCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCap
 }
 
 func (l *GetCaptchaLogic) GetCaptcha() (resp *types.GetCaptchaResp, err error) {
-	// todo: add your logic here and delete this line
+	var store = base64Captcha.NewMemoryStore(10000, time.Minute*3)
+	driver := base64Captcha.NewDriverDigit(80, 240, 6, 0.7, 80)
+	cp := base64Captcha.NewCaptcha(driver, store)
+	id, b64s, _, err := cp.Generate()
+	if err != nil {
+		logx.Errorw("generate captcha failed", logx.Field("err", err))
+		return nil, err
+	}
+	return &types.GetCaptchaResp{
+		CaptchaPic:    b64s,
+		CaptchaId:     id,
+		CaptchaLength: 6,
+	}, nil
 
-	return
 }

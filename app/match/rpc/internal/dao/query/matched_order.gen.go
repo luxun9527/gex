@@ -32,8 +32,10 @@ func newMatchedOrder(db *gorm.DB, opts ...gen.DOOption) matchedOrder {
 	_matchedOrder.MatchSubID = field.NewString(tableName, "match_sub_id")
 	_matchedOrder.SymbolID = field.NewInt32(tableName, "symbol_id")
 	_matchedOrder.SymbolName = field.NewString(tableName, "symbol_name")
+	_matchedOrder.TakerUserID = field.NewInt64(tableName, "taker_user_id")
 	_matchedOrder.TakerOrderID = field.NewString(tableName, "taker_order_id")
 	_matchedOrder.MakerOrderID = field.NewString(tableName, "maker_order_id")
+	_matchedOrder.MakerUserID = field.NewInt64(tableName, "maker_user_id")
 	_matchedOrder.TakerIsBuyer = field.NewInt32(tableName, "taker_is_buyer")
 	_matchedOrder.Price = field.NewString(tableName, "price")
 	_matchedOrder.Qty = field.NewString(tableName, "qty")
@@ -56,8 +58,10 @@ type matchedOrder struct {
 	MatchSubID   field.String // 本次匹配的id，一次撮合会多次匹配
 	SymbolID     field.Int32  // 交易对id
 	SymbolName   field.String // 交易对名称
+	TakerUserID  field.Int64  // taker用户id
 	TakerOrderID field.String // taker订单id
 	MakerOrderID field.String // maker订单id
+	MakerUserID  field.Int64  // maker用户id
 	TakerIsBuyer field.Int32  // taker是否是买单 1是 2否
 	Price        field.String // 价格
 	Qty          field.String // 数量(基础币)
@@ -86,8 +90,10 @@ func (m *matchedOrder) updateTableName(table string) *matchedOrder {
 	m.MatchSubID = field.NewString(table, "match_sub_id")
 	m.SymbolID = field.NewInt32(table, "symbol_id")
 	m.SymbolName = field.NewString(table, "symbol_name")
+	m.TakerUserID = field.NewInt64(table, "taker_user_id")
 	m.TakerOrderID = field.NewString(table, "taker_order_id")
 	m.MakerOrderID = field.NewString(table, "maker_order_id")
+	m.MakerUserID = field.NewInt64(table, "maker_user_id")
 	m.TakerIsBuyer = field.NewInt32(table, "taker_is_buyer")
 	m.Price = field.NewString(table, "price")
 	m.Qty = field.NewString(table, "qty")
@@ -123,14 +129,16 @@ func (m *matchedOrder) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (m *matchedOrder) fillFieldMap() {
-	m.fieldMap = make(map[string]field.Expr, 14)
+	m.fieldMap = make(map[string]field.Expr, 16)
 	m.fieldMap["id"] = m.ID
 	m.fieldMap["match_id"] = m.MatchID
 	m.fieldMap["match_sub_id"] = m.MatchSubID
 	m.fieldMap["symbol_id"] = m.SymbolID
 	m.fieldMap["symbol_name"] = m.SymbolName
+	m.fieldMap["taker_user_id"] = m.TakerUserID
 	m.fieldMap["taker_order_id"] = m.TakerOrderID
 	m.fieldMap["maker_order_id"] = m.MakerOrderID
+	m.fieldMap["maker_user_id"] = m.MakerUserID
 	m.fieldMap["taker_is_buyer"] = m.TakerIsBuyer
 	m.fieldMap["price"] = m.Price
 	m.fieldMap["qty"] = m.Qty

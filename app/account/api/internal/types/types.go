@@ -5,7 +5,9 @@ type Empty struct {
 }
 
 type GetCaptchaResp struct {
-	Captch string `json:"captch"`
+	CaptchaPic    string `json:"captcha_pic"`
+	CaptchaId     string `json:"captcha_id"`
+	CaptchaLength int32  `json:"captch_length"`
 }
 
 type RegisterReq struct {
@@ -17,8 +19,10 @@ type RegisterReq struct {
 }
 
 type LoginReq struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Captcha   string `json:"captcha"`
+	CaptchaId string `json:"captcha_id"`
 }
 
 type LoginResp struct {
