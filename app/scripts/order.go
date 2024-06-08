@@ -37,7 +37,7 @@ func main() {
 					SetHeader("Content-Type", "application/json").
 					SetBody(map[string]interface{}{
 						"symbol_id":   14,
-						"symbol_name": "BTC_USDT",
+						"symbol_name": "IKUN_USDT",
 						"price":       cast.ToString(price),
 						"qty":         "1",
 						"amount":      "",
@@ -64,7 +64,7 @@ func main() {
 					SetHeader("Content-Type", "application/json").
 					SetBody(map[string]interface{}{
 						"symbol_id":   14,
-						"symbol_name": "BTC_USDT",
+						"symbol_name": "IKUN_USDT",
 						"price":       cast.ToString(price),
 						"qty":         "1",
 						"amount":      "",
@@ -94,7 +94,7 @@ func getDepthLevel() (int, int, error) {
 	var result = map[string]interface{}{}
 	_, err := cli.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"symbol":"BTC_USDT", "level":300}`).
+		SetBody(`{"symbol":"IKUN_USDT", "level":300}`).
 		SetResult(&result).
 		Post("http://api.gex.com/quotes/v1/get_depth_list")
 	if err != nil {
@@ -152,7 +152,7 @@ func getPrice() <-chan float64 {
 	if err != nil {
 		log.Panicf("dial failed %v", err)
 	}
-	if err := c.WriteMessage(websocket.TextMessage, []byte(`{"type":"subscribe","symbol":"BINANCE:BTCUSDT"}`)); err != nil {
+	if err := c.WriteMessage(websocket.TextMessage, []byte(`{"type":"subscribe","symbol":"BINANCE:IKUNUSDT"}`)); err != nil {
 		log.Panicf("write failed %v", err)
 	}
 	var resp Resp

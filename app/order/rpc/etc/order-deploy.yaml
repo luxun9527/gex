@@ -1,7 +1,7 @@
 Name: order.rpc
 ListenOn: 0.0.0.0:20001
 Timeout: 1000000
-Symbol: BTC_USDT
+Symbol: IKUN_USDT
 Etcd:
   Hosts:
     - etcd:2379
@@ -28,7 +28,7 @@ OrderRpcConf:
   Etcd:
     Hosts:
       - etcd:2379
-    Key: service_order_rpc.BTC_USDT
+    Key: service_order_rpc.IKUN_USDT
   NonBlock: true
   TimeOut: 1000000
 WsConf:

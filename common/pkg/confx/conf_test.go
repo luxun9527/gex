@@ -41,10 +41,10 @@ package confx
 //    Hosts:
 //      - 192.168.2.159:2379
 //SymbolInfo:
-//    SymbolName: BTC_USDT
+//    SymbolName: IKUN_USDT
 //    SymbolID: 1
 //    BaseCoinID: 1
-//    BaseCoinName: BTC
+//    BaseCoinName: IKUN
 //    QuoteCoinID: 2
 //    QuoteCoinName: USDT
 //    BaseCoinPrec: 4

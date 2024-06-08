@@ -1,4 +1,4 @@
-Symbol: BTC_USDT
+Symbol: IKUN_USDT
 SymbolEtcdConfig:
   Endpoints:
     - etcd:2379

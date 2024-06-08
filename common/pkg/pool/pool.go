@@ -40,7 +40,7 @@ func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
 
 	logx.Infow("add conn detail", logx.Field("key", kv.Key), logx.Field("value", kv.Value))
 
-	//注册后的key service_order_rpc.BTC_USDT/78232932937927000的格式。
+	//注册后的key service_order_rpc.IKUN_USDT/78232932937927000的格式。
 	d := strings.Split(string(kv.Key), "/")
 	if len(d) != 2 {
 		return
@@ -54,7 +54,7 @@ func (r *RpcClients) addConn(kv *mvccpb.KeyValue) {
 
 	//etcd的配置。
 	etcdConfig := r.etcdConf
-	//key为 service_order_rpc.BTC_USDT这个key
+	//key为 service_order_rpc.IKUN_USDT这个key
 	etcdConfig.Key = d[0]
 	rpcConfig := zrpc.RpcClientConf{
 		Etcd:     etcdConfig,
