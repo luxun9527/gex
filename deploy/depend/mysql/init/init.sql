@@ -520,14 +520,14 @@ create table if not exists dtm_barrier.barrier(
 use trade;
 INSERT INTO `trade`.`user` (`id`, `username`, `password`, `phone_number`, `status`, `created_at`, `updated_at`) VALUES (3, 'lisi', '$2a$10$9RMgCUfhSur5Gdcf9lFK/OzH8lDfpy95h829TsP14WKeOUIdcZboa', 0, 1, 1709361748, 1709361748);
 
-INSERT INTO `trade`.`asset` (`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (1, 3, 'lisilisi', 1, 'IKUN', 100000.000000000000000000, 0.000000000000000000, 1699151196, 1717842556);
-INSERT INTO `trade`.`asset` (`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (2, 3, 'lisilisi', 2, 'BTC', 10000.000000000000000000, 0.000000000000000000, 1699151196, 1717840944);
+INSERT INTO `trade`.`asset` (`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (1, 3, 'lisilisi', 3, 'IKUN', 100000.000000000000000000, 0.000000000000000000, 1699151196, 1717842556);
+INSERT INTO `trade`.`asset` (`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (2, 3, 'lisilisi', 2, 'USDT', 10000.000000000000000000, 0.000000000000000000, 1699151196, 1717840944);
 
 use admin;
 INSERT INTO `admin`.`user` (`id`, `nickname`, `username`, `password`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, '', 'test', '$2a$10$JlwKAMWRujhfry1WjQGGYO8a/LbkSmb0L/NJxReNBqdexYE697Gv6', 1707199053, 1707199053, 0);
 INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 1, 'BTC', 4, 1709478655, 1715176820, 0);
-INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, 2, 'USDT', 5, 1709478663, 1717332751, 0);
-INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (29, 100, 'IKUN', 3, 1717430307, 1717430307, 0);
+INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, 2, 'USDT', 3, 1709478663, 1717332751, 0);
+INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (3, 3, 'IKUN', 3, 1717430307, 1717430307, 0);
 
 INSERT INTO `admin`.`error_code` (`id`, `error_code_id`, `error_code_name`, `language`, `created_at`, `updated_at`, `deleted_at`) VALUES (28, 100001, '内部错误', 'zh-CN', 1707961978, 1707961978, 0);
 INSERT INTO `admin`.`error_code` (`id`, `error_code_id`, `error_code_name`, `language`, `created_at`, `updated_at`, `deleted_at`) VALUES (29, 100002, '内部错误', 'zh-CN', 1707962048, 1707962048, 0);
@@ -555,4 +555,4 @@ INSERT INTO `admin`.`error_code` (`id`, `error_code_id`, `error_code_name`, `lan
 INSERT INTO `admin`.`error_code` (`id`, `error_code_id`, `error_code_name`, `language`, `created_at`, `updated_at`, `deleted_at`) VALUES (59, 100012, '验证码错误', 'zh-CN', 1717341916, 1717341916, 0);
 
 
-INSERT INTO `admin`.`symbol` (`id`, `symbol_name`, `symbol_id`, `base_coin_id`, `base_coin_name`, `base_coin_prec`, `quote_coin_id`, `quote_coin_name`, `quote_coin_prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (16, 'IKUN_USDT', 6, 29, 'IKUN', 3, 2, 'USDT', 5, 1717851844, 1717851844, 0);
+INSERT INTO `admin`.`symbol` (`id`, `symbol_name`, `symbol_id`, `base_coin_id`, `base_coin_name`, `base_coin_prec`, `quote_coin_id`, `quote_coin_name`, `quote_coin_prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'IKUN_USDT', 6, 3, 'IKUN', 3, 2, 'USDT', 3, 1717851844, 1717851844, 0);

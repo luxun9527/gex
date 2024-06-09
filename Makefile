@@ -56,13 +56,17 @@ kline:
 
 run:
 	chmod +x ./deploy/scripts/run.sh
+	sed -i 's/\r$//' ./deploy/scripts/run.sh
 	./deploy/scripts/run.sh
 clear:
 	chmod +x ./deploy/scripts/remove_containers.sh
 	chmod +x ./deploy/scripts/remove_images.sh
+	sed -i 's/\r$//' ./deploy/scripts/remove_containers.sh
+	sed -i 's/\r$//' ./deploy/scripts/remove_images.sh
 	./deploy/scripts/remove_containers.sh
 	./deploy/scripts/remove_images.sh
-	rm -rf deploy/depend/pulsar/data
+	rm -rf deploy/depend/pulsar/data/*
+	rm -rf deploy/depend/mysql/data/*
 
 dep1:
 	docker-compose -f deploy/depend/docker-compose.yaml up
@@ -70,7 +74,7 @@ dep2:
 	docker-compose -f deploy/dockerfiles/docker-compose.yaml up
 
 build:
-	go env -w GOOS=linux
+	go env -w GOOS=linuxq
 	go env -w  GOPROXY=https://goproxy.cn,direct
 	go env -w  CGO_ENABLED=0
 	 go build  -ldflags="-s -w"  -o ./bin/accountapi ./app/account/api/account.go

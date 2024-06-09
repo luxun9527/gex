@@ -18,7 +18,7 @@ EtcdConfig:
 
 PulsarConfig:
   hosts:
-    - 192.168.2.159:6650
+    - pulsar:6650
 LoggerConfig:
   Name: match-rpc #可选 填的话在增加一个 {"project": "Name"}的filed
   Level: debug  #日志等级 debug info warn error

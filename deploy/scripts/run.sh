@@ -10,44 +10,45 @@ if [ -z "$network_exists" ]; then
 fi
 
 lang='50006: 超过最小精度11
-      100001: 内部错误
-      100002: 内部错误
-      100003: 内部错误
-      100004: 参数错误
-      100005: 记录未找到
-      100006: 重复数据
-      100007: 内部错误
-      100009: 内部错误
-      100010: 内部错误
-      100011: 内部错误
-      100012: 验证码错误
-      200001: 用户不存在
-      200002: 用户余额不足
-      200003: token验证失败
-      200004: token到期
-      200005: 账户密码验证失败1
-      500001: 订单未找到
-      500002: 订单已经成交获取已经取消
-      500003: 市价单不允许手动取消
-      500004: 订单簿没有买单
-      500005: 订单簿没有卖单
-      500006: 超过币种最小精度'
+100001: 内部错误
+100002: 内部错误
+100003: 内部错误
+100004: 参数错误
+100005: 记录未找到
+100006: 重复数据
+100007: 内部错误
+100009: 内部错误
+100010: 内部错误
+100011: 内部错误
+100012: 验证码错误
+200001: 用户不存在
+200002: 用户余额不足
+200003: token验证失败
+200004: token到期
+200005: 账户密码验证失败1
+500001: 订单未找到
+500002: 订单已经成交获取已经取消
+500003: 市价单不允许手动取消
+500004: 订单簿没有买单
+500005: 订单簿没有卖单
+500006: 超过币种最小精度'
 
-coin1='coinid: 29
-       coinname: IKUN
-       prec: 3'
+coin1='coinid: 3
+coinname: IKUN
+prec: 3'
 
 coin2='coinid: 2
-       coinname: USDT
-       prec: 5'
+coinname: USDT
+prec: 3'
 symbol='symbolname: IKUN_USDT
-        symbolid: 6
-        basecoinname: IKUN
-        basecoinid: 29
-        quotecoinname: USDT
-        quotecoinid: 2
-        baseCoinPrec: 3
-        quoteCoinPrec: 5'
+symbolid: 6
+basecoinname: IKUN
+basecoinid: 3
+quotecoinname: USDT
+quotecoinid: 2
+baseCoinPrec: 3
+quoteCoinPrec: 3'
+
 docker-compose -f deploy/depend/docker-compose.yaml up -d
 
 sleep 30s
@@ -59,6 +60,8 @@ docker exec -it etcd /usr/local/bin/etcdctl put Symbol/IKUN_USDT -- "$symbol"
 
 
 docker exec -it pulsar /pulsar/bin/pulsar-admin namespaces create public/trade
+docker exec -it pulsar /pulsar/bin/pulsar-admin topics create persistent://public/trade/match_source_IKUN_USDT
+docker exec -it pulsar /pulsar/bin/pulsar-admin topics create persistent://public/trade/match_result_IKUN_USDT
 
 docker-compose -f deploy/dockerfiles/docker-compose.yaml up -d
 
