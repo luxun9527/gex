@@ -38,7 +38,7 @@ services:
       dockerfile:  ./deploy/dockerfiles/Dockerfile-matchrpc
     container_name: matchrpc
     restart: unless-stopped
-    entrypoint: ["/app/matchrpc"]
+    entrypoint: ["/app/matchrpc","-f","/app/match.yaml"]
     ports: # 映射端口
       - "20003:20003"
     networks:
