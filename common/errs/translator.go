@@ -7,7 +7,6 @@ import (
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"gopkg.in/yaml.v3"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -93,7 +92,7 @@ func InitTranslatorFromEtcd(etcdConfig etcd.EtcdConfig) {
 		}
 	}))
 	m.Range(func(key, value any) bool {
-		log.Printf("key =%v,value =%v", key, value)
+		logx.Infof("key = %v,value =%v", key, value)
 		return true
 	})
 	translator = &Translator{Codes: m}

@@ -52,6 +52,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			s.QuoteCoinPrec.Store(s.QuoteCoinPrecValue)
 			s.BaseCoinPrec.Store(s.BaseCoinPrecValue)
 			symbolConfig.Store(s.SymbolName, &s)
+			logx.Infof("symbol config loaded symbolConfig %+v", &symbolConfig)
+
 		}
 	}), confx.WithCustomWatchFunc(func(evs []*clientv3.Event, target any) {
 		for _, v := range evs {
@@ -60,17 +62,23 @@ func NewServiceContext(c config.Config) *ServiceContext {
 				var s define.SymbolInfo
 				if err := yaml.Unmarshal(v.Kv.Value, &s); err != nil {
 					logx.Errorf("get symbol config failed symbolInfo =%v", s)
+					continue
 				}
+				logx.Slowf("symbol config changed symbolConfig %+v", &s)
 				s.QuoteCoinPrec.Store(s.QuoteCoinPrecValue)
 				s.BaseCoinPrec.Store(s.BaseCoinPrecValue)
 				symbolConfig.Store(s.SymbolName, &s)
+				logx.Slowf("symbol config changed after added symbolConfig %+v", &symbolConfig)
+
 			case mvccpb.DELETE: //删除
 				var s define.SymbolInfo
 				if err := yaml.Unmarshal(v.Kv.Value, &s); err != nil {
 					logx.Errorf("get symbol config failed symbolInfo =%v", s)
+					continue
 				}
+				logx.Slowf("delete symbol config changed symbolConfig %+v", &s)
 				symbolConfig.Delete(s.SymbolName)
-				logx.Sloww("warn symbol config deleted")
+				logx.Slowf("symbol config changed after added symbolConfig %+v", &symbolConfig)
 			}
 		}
 	}))

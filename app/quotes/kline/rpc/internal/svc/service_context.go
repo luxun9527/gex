@@ -29,6 +29,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	var symbolInfo define.SymbolInfo
 	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
 	c.SymbolInfo = &symbolInfo
+	logx.Infow("symbol config load ", logx.Field("symbol", symbolInfo))
 
 	c.Etcd.Key += "." + c.Symbol
 

@@ -33,6 +33,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	var symbolInfo define.SymbolInfo
 	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
+	logx.Infof("init symbol config symbolInfo %+v", &symbolInfo)
 
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {

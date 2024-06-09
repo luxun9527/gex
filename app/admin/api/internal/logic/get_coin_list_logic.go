@@ -27,6 +27,10 @@ func (l *GetCoinListLogic) GetCoinList(req *types.GetCoinListReq) (resp *types.G
 	coin := l.svcCtx.AdminQuery.Coin
 	offset := (req.PageNo - 1) * req.PageSize
 	data, count, err := coin.WithContext(l.ctx).FindByPage(int(offset), int(req.PageSize))
+	if err != nil {
+		logx.Errorw("getCoinList failed", logx.Field("err", err))
+		return nil, err
+	}
 	coinList := make([]*types.CoinInfo, 0, len(data))
 	for _, v := range data {
 		d := &types.CoinInfo{
