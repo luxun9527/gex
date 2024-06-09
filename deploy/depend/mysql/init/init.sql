@@ -115,7 +115,6 @@ SET FOREIGN_KEY_CHECKS = 1;
  Date: 08/06/2024 20:45:56
 */
 
---====================================================================================================================================================================================================================
 DROP DATABASE IF EXISTS trade;
 CREATE DATABASE trade CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
@@ -495,10 +494,9 @@ CREATE TABLE `user`  (
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-------------=======================================================================================================================================================================================================
 
 create database if not exists dtm_barrier;
-/*!40100 DEFAULT CHARACTER SET utf8mb4 */
+
 use dtm_barrier;
 drop table if exists dtm_barrier.barrier;
 create table if not exists dtm_barrier.barrier(
@@ -517,21 +515,15 @@ create table if not exists dtm_barrier.barrier(
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 
--- noinspection SqlDialectInspectionForFile
 
--- noinspection SqlNoDataSourceInspectionForFile
 
 use trade;
--- 插入新增用户 lisi lisilisi
 INSERT INTO `trade`.`user` (`id`, `username`, `password`, `phone_number`, `status`, `created_at`, `updated_at`) VALUES (3, 'lisi', '$2a$10$9RMgCUfhSur5Gdcf9lFK/OzH8lDfpy95h829TsP14WKeOUIdcZboa', 0, 1, 1709361748, 1709361748);
 
--- 插入
--- noinspection SqlNoDataSourceInspection
 INSERT INTO `trade`.`asset` (`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (1, 3, 'lisilisi', 1, 'IKUN', 100000.000000000000000000, 0.000000000000000000, 1699151196, 1717842556);
 INSERT INTO `trade`.`asset` (`id`, `user_id`, `username`, `coin_id`, `coin_name`, `available_qty`, `frozen_qty`, `created_at`, `updated_at`) VALUES (2, 3, 'lisilisi', 2, 'BTC', 10000.000000000000000000, 0.000000000000000000, 1699151196, 1717840944);
 
 use admin;
--- test testtest
 INSERT INTO `admin`.`user` (`id`, `nickname`, `username`, `password`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, '', 'test', '$2a$10$JlwKAMWRujhfry1WjQGGYO8a/LbkSmb0L/NJxReNBqdexYE697Gv6', 1707199053, 1707199053, 0);
 INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 1, 'BTC', 4, 1709478655, 1715176820, 0);
 INSERT INTO `admin`.`coin` (`id`, `coin_id`, `coin_name`, `prec`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, 2, 'USDT', 5, 1709478663, 1717332751, 0);

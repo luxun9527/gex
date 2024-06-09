@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/luxun9527/gex/common/errs"
 	"gopkg.in/yaml.v3"
+	"log"
 
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
@@ -39,6 +40,7 @@ func (l *SyncErrorCodeLogic) SyncErrorCode(req *types.Empty) (resp *types.Empty,
 			m[v.ErrorCodeID] = v.ErrorCodeName
 		}
 		d, err := yaml.Marshal(m)
+		log.Println(string(d))
 		if err != nil {
 			logx.Errorw("sync error code to etcd failed", logx.Field("err", err))
 			return nil, err
