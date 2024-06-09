@@ -117,10 +117,12 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 			OrderType:  in.OrderType,
 		},
 	}}
+	logx.Infow("send message", logx.Field("msg", msg))
 	data, _ := proto.Marshal(msg)
 	if _, err := l.svcCtx.MatchProducer.Send(l.ctx, &pulsar.ProducerMessage{
 		Payload: data,
 	}); err != nil {
+		logx.Errorw("CreateOrder Send message failed", logger.ErrorField(err))
 		return nil, errs.CastToDtmError(errs.PulsarErr)
 	}
 	//发送ws数据

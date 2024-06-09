@@ -20,7 +20,7 @@ func TestOrderGrpc(t *testing.T) {
 	_, err = client.Order(context.Background(), &pb.CreateOrderReq{
 		UserId:     1,
 		SymbolId:   1,
-		SymbolName: "BTC_USDT",
+		SymbolName: "IKUN_USDT",
 		Qty:        "1.0",
 		Price:      "100",
 		Amount:     "100",
@@ -33,7 +33,7 @@ func TestOrderGrpc(t *testing.T) {
 	//_, err = client.Order(context.Background(), &pb.CreateOrderReq{
 	//	UserId:      3,
 	//	SymbolId:    1,
-	//	SymbolName:  "BTC_USDT",
+	//	SymbolName:  "IKUN_USDT",
 	//	Qty:         "1.0",
 	//	Price:       "100",
 	//	Amount:      "100",
@@ -57,7 +57,7 @@ func TestOrderGrpc1(t *testing.T) {
 	_, err = client.Order(context.Background(), &pb.CreateOrderReq{
 		UserId:     3,
 		SymbolId:   1,
-		SymbolName: "BTC_USDT",
+		SymbolName: "IKUN_USDT",
 		Qty:        "1.0",
 		Price:      "90",
 		Amount:     "90",

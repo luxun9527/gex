@@ -1,0 +1,33 @@
+
+
+[server]
+PullPort=":10067"
+HttpPort=":10068"
+
+[Logger]
+Name = "ws-proxy"
+Level = "debug"
+Stacktrace = true
+AddCaller = true
+CallShip = 3
+Mode = "console"
+Json = false
+MaxSize = 0
+MaxAge = 0
+MaxBackup = 0
+Async = false
+Compress = false
+Console = false
+Color = true
+IsReport = false
+
+[Logger.ReportConfig]
+Type = "lark"
+ChatID = 0
+FlushSec = 3
+MaxCount = 20
+Level = "warn"
+
+[etcd]
+endpoints=["etcd:2379"]
+keyPrefix="proxy"

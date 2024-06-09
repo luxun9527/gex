@@ -1,7 +1,7 @@
 Name: kline_rpc
 ListenOn: 0.0.0.0:20009
 Timeout: 0
-Symbol: BTC_USDT
+Symbol: IKUN_USDT
 Etcd:
   Hosts:
    - 192.168.2.159:2379

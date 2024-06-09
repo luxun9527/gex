@@ -1,4 +1,4 @@
-Symbol: BTC_USDT
+Symbol: IKUN_USDT
 SymbolEtcdConfig:
   Endpoints:
     - 192.168.2.159:2379

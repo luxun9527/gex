@@ -26,7 +26,7 @@ func InitMatchConsumer(sc *svc.ServiceContext) {
 				logx.Errorw("unmarshal message fail", logger.ErrorField(err))
 				continue
 			}
-			logx.Infow("receive message failed", logx.Field("data", matchReq))
+			logx.Infow("receive message failed", logx.Field("data", &matchReq))
 			switch operate := matchReq.Operate.(type) {
 			case *matchMq.MatchReq_NewOrder:
 				if operate.NewOrder.SequenceId <= sc.InitOrderPrimaryID {

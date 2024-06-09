@@ -3,12 +3,14 @@ package logic
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/luxun9527/gex/app/match/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/app/match/rpc/internal/svc"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zaplog"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 
 	"github.com/luxun9527/gex/app/match/rpc/pb"
 
@@ -38,6 +40,9 @@ func (l *GetTickerLogic) GetTicker(in *pb.GetTickerReq) (*pb.GetTickerResp, erro
 		data, err := l.svcCtx.RedisClient.Hgetall(string(define.Ticker))
 		respData := make([]*pb.GetTickerResp_Ticker, 0, len(data))
 		if err != nil {
+			if errors.Is(err, redis.Nil) {
+				return resp, nil
+			}
 			logx.Errorw("query from redis failed", logger.ErrorField(err))
 			return nil, errs.RedisErr
 		}
@@ -60,14 +65,31 @@ func (l *GetTickerLogic) GetTicker(in *pb.GetTickerReq) (*pb.GetTickerResp, erro
 		}
 		resp.TickerList = respData
 	} else {
+		respData := make([]*pb.GetTickerResp_Ticker, 0, 10)
+
 		var tickerRedisData model.TickerRedisData
 		data, err := l.svcCtx.RedisClient.Hget(string(define.Ticker), in.Symbol)
 		if err != nil {
+			if errors.Is(err, redis.Nil) {
+				d := &pb.GetTickerResp_Ticker{
+					LatestPrice: "0",
+					High:        "0",
+					Low:         "0",
+					Volume:      "0",
+					Amount:      "0",
+					Last24Price: "0",
+					PriceRange:  "0",
+					Symbol:      tickerRedisData.Symbol,
+				}
+				respData = append(respData, d)
+				resp.TickerList = respData
+				return resp, nil
+			}
 			logx.Errorw("query from redis failed", logger.ErrorField(err))
 			return nil, errs.RedisErr
 		}
-		respData := make([]*pb.GetTickerResp_Ticker, 0, len(data))
 		if err := json.Unmarshal([]byte(data), &tickerRedisData); err != nil {
+			logx.Errorw("unmarshal from redis failed", logger.ErrorField(err))
 			return nil, errs.Internal
 		}
 		d := &pb.GetTickerResp_Ticker{

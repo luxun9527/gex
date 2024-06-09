@@ -1,0 +1,53 @@
+
+authUrl="http://accountapi:20014/account/v1/validate_token"
+
+[server]
+port="9992"
+
+[bucket]
+#分区数量
+BucketCount =512
+#分发chan的长度
+DispatchChanSize =100
+[connection]
+#写频率毫秒
+WriteRate=500
+#连接超时时间单位毫秒
+TimeOut=200000000
+#是否压缩 使用defalte协议压缩
+IsCompress=false
+#写缓存的大小
+WriteBuf=200
+#读缓存的大小，最后设置成最大消息的大小
+ReadBuf=200
+
+[Logger]
+Name = "ws-proxy"
+Level = "debug"
+Stacktrace = true
+AddCaller = true
+CallShip = 3
+Mode = "console"
+Json = false
+MaxSize = 0
+MaxAge = 0
+MaxBackup = 0
+Async = false
+Compress = false
+Console = false
+Color = true
+IsReport = false
+
+[Logger.ReportConfig]
+Type = "lark"
+ChatID = 0
+FlushSec = 3
+MaxCount = 20
+Level = "warn"
+
+[proxyRpc]
+#etcd服务的地址
+endpoints=["etcd:2379"]
+#设置的key前缀
+keyPrefix="proxy"
+

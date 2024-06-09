@@ -1,6 +1,7 @@
 Name: kline_rpc
 ListenOn: 0.0.0.0:20009
 Timeout: 5000
+Symbol: IKUN_USDT
 Etcd:
   Hosts:
    - etcd:2379
