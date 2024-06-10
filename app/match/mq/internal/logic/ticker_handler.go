@@ -146,7 +146,7 @@ func (th *TickerHandler) updateTickerData(matchData *model.MatchData) {
 		th.tickerData.High = matchData.High
 	}
 
-	if matchData.Low.LessThan(matchData.Low) || th.tickerData.Price.Equal(utils.DecimalZeroMaxPrec) {
+	if matchData.Low.LessThan(th.tickerData.Low) || th.tickerData.Price.Equal(utils.DecimalZeroMaxPrec) {
 		th.tickerData.Low = matchData.Low
 	}
 
