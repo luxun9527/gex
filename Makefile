@@ -56,13 +56,10 @@ kline:
 
 run:
 	chmod +x ./deploy/scripts/run.sh
-	sed -i 's/\r$//' ./deploy/scripts/run.sh
 	./deploy/scripts/run.sh
 clear:
 	chmod +x ./deploy/scripts/remove_containers.sh
 	chmod +x ./deploy/scripts/remove_images.sh
-	sed -i 's/\r$//' ./deploy/scripts/remove_containers.sh
-	sed -i 's/\r$//' ./deploy/scripts/remove_images.sh
 	./deploy/scripts/remove_containers.sh
 	./deploy/scripts/remove_images.sh
 	rm -rf deploy/depend/pulsar/data/*
@@ -74,16 +71,16 @@ dep2:
 	docker-compose -f deploy/dockerfiles/docker-compose.yaml up
 
 build:
-	go env -w GOOS=linuxq
+	go env -w GOOS=linux
 	go env -w  GOPROXY=https://goproxy.cn,direct
 	go env -w  CGO_ENABLED=0
-	 go build  -ldflags="-s -w"  -o ./bin/accountapi ./app/account/api/account.go
-	 go build -ldflags="-s -w" -o ./bin/accountrpc ./app/account/rpc/account.go
-	 go build -ldflags="-s -w" -o ./bin/adminapi ./app/admin/api/admin.go
-	 go build -ldflags="-s -w" -o ./bin/matchmq ./app/match/mq/match.go
-	 go build -ldflags="-s -w" -o ./bin/matchrpc ./app/match/rpc/match.go
-	 go build -ldflags="-s -w" -o ./bin/orderapi ./app/order/api/order.go
-	 go build -ldflags="-s -w" -o ./bin/orderrpc ./app/order/rpc/order.go
-	 go build -ldflags="-s -w" -o ./bin/quoteapi ./app/quotes/api/quote.go
-	 go build -ldflags="-s -w" -o ./bin/klinerpc ./app/quotes/kline/rpc/kline.go
+	go build  -ldflags="-s -w"  -o ./bin/accountapi ./app/account/api/account.go
+	go build -ldflags="-s -w" -o ./bin/accountrpc ./app/account/rpc/account.go
+	go build -ldflags="-s -w" -o ./bin/adminapi ./app/admin/api/admin.go
+	go build -ldflags="-s -w" -o ./bin/matchmq ./app/match/mq/match.go
+	go build -ldflags="-s -w" -o ./bin/matchrpc ./app/match/rpc/match.go
+	go build -ldflags="-s -w" -o ./bin/orderapi ./app/order/api/order.go
+	go build -ldflags="-s -w" -o ./bin/orderrpc ./app/order/rpc/order.go
+	go build -ldflags="-s -w" -o ./bin/quoteapi ./app/quotes/api/quote.go
+	go build -ldflags="-s -w" -o ./bin/klinerpc ./app/quotes/kline/rpc/kline.go
 

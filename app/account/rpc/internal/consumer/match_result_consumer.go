@@ -32,6 +32,9 @@ func InitConsumer(sc *svc.ServiceContext) {
 					}
 					continue
 				}
+				//大家用的都是相同的redis需要加前缀区分
+				m.MessageId = "accountrpc_" + m.MessageId
+				logx.Infow("receive message match result", logx.Field("message", &m))
 				//重复提交校验
 				existed, err := sc.RedisClient.ExistsCtx(context.Background(), m.MessageId)
 				if err != nil {
@@ -39,7 +42,7 @@ func InitConsumer(sc *svc.ServiceContext) {
 					continue
 				}
 				if existed {
-					logx.Sloww("match result message id already exists", logx.Field("message_id", m.MessageId))
+					logx.Sloww("match result message id already exists", logx.Field("message", &m))
 					if err := c.Ack(message); err != nil {
 						logx.Errorw("ack message failed", logger.ErrorField(err))
 					}

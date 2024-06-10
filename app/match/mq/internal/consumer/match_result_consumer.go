@@ -28,6 +28,9 @@ func InitConsumer(sc *svc.ServiceContext) {
 				}
 				continue
 			}
+
+			m.MessageId = "matchrpc_" + m.MessageId
+			logx.Infow("receive match result message", logx.Field("message", &m))
 			//重复提交校验
 			existed, err := sc.RedisClient.ExistsCtx(context.Background(), m.MessageId)
 			if err != nil {
