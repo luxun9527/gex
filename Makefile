@@ -55,6 +55,7 @@ kline:
 	make klinerpc  && make klinemodel
 
 run:
+	make pre
 	chmod +x ./deploy/scripts/run.sh
 	./deploy/scripts/run.sh
 clear:
@@ -64,6 +65,20 @@ clear:
 	./deploy/scripts/remove_images.sh
 	rm -rf deploy/depend/pulsar/data/*
 	rm -rf deploy/depend/mysql/data/*
+
+pre:
+	chmod +x ./bin/accountapi
+	chmod +x ./bin/accountrpc
+	chmod +x ./bin/adminapi
+	chmod +x ./bin/matchmq
+	chmod +x ./bin/matchrpc
+	chmod +x ./bin/orderapi
+	chmod +x ./bin/orderrpc
+	chmod +x ./bin/quoteapi
+	chmod +x ./bin/klinerpc
+	chmod +x ./deploy/depend/dtm/dtm
+	chmod +x ./deploy/depend/ws/proxy/proxy
+	chmod +x ./deploy/depend/ws/socket/socket
 
 dep1:
 	docker-compose -f deploy/depend/docker-compose.yaml up
@@ -83,4 +98,3 @@ build:
 	go build -ldflags="-s -w" -o ./bin/orderrpc ./app/order/rpc/order.go
 	go build -ldflags="-s -w" -o ./bin/quoteapi ./app/quotes/api/quote.go
 	go build -ldflags="-s -w" -o ./bin/klinerpc ./app/quotes/kline/rpc/kline.go
-
