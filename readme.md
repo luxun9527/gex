@@ -1,5 +1,8 @@
 # go微服务实践-基于go-zero实现一个数字货币交易平台。 
 
+在线体验 斥巨资搞了台机器  http://47.113.223.16 
+
+账户密码在这 https://github.com/luxun9527/gex/blob/main/resource/users.txt
 
 
 后端：https://github.com/luxun9527/gex   您的star,点赞评论是我更新的动力
