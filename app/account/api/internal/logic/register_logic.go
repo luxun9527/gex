@@ -2,9 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/luxun9527/gex/app/account/rpc/accountservice"
-	logger "github.com/luxun9527/zaplog"
-
 	"github.com/luxun9527/gex/app/account/api/internal/svc"
 	"github.com/luxun9527/gex/app/account/api/internal/types"
 
@@ -26,13 +23,13 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.Empty, err error) {
-	if _, err := l.svcCtx.AccountRpcClient.Register(l.ctx, &accountservice.RegisterReq{
-		Username:    req.Username,
-		Password:    req.Password,
-		PhoneNumber: req.PhoneNumber,
-	}); err != nil {
-		logx.Errorw("register failed", logger.ErrorField(err))
-		return nil, err
-	}
+	//if _, err := l.svcCtx.AccountRpcClient.Register(l.ctx, &accountservice.RegisterReq{
+	//	Username:    req.Username,
+	//	Password:    req.Password,
+	//	PhoneNumber: req.PhoneNumber,
+	//}); err != nil {
+	//	logx.Errorw("register failed", logger.ErrorField(err))
+	//	return nil, err
+	//}
 	return
 }

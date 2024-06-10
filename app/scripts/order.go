@@ -36,7 +36,7 @@ func main() {
 					SetHeader("gexToken", token).
 					SetHeader("Content-Type", "application/json").
 					SetBody(map[string]interface{}{
-						"symbol_id":   14,
+						"symbol_id":   6,
 						"symbol_name": "IKUN_USDT",
 						"price":       cast.ToString(price),
 						"qty":         "1",
@@ -56,14 +56,15 @@ func main() {
 				}
 				log.Println("下单成功", price)
 			}
+
 			if bidsLevel < 15 {
-				//卖盘 价差3%
-				price = price * 0.97
+				//卖盘 价差1%
+				price = price * 0.99
 				_, err = cli.R().
 					SetHeader("gexToken", token).
 					SetHeader("Content-Type", "application/json").
 					SetBody(map[string]interface{}{
-						"symbol_id":   14,
+						"symbol_id":   6,
 						"symbol_name": "IKUN_USDT",
 						"price":       cast.ToString(price),
 						"qty":         "1",
@@ -72,7 +73,7 @@ func main() {
 						"order_type":  2,
 					}).
 					SetResult(&result).
-					Post("http://api.gex.com/order/v1/create_order")
+					Post("http://47.113.223.16/order/v1/create_order")
 				if err != nil {
 					log.Printf("下单失败 %v", err)
 				}

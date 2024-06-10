@@ -38,7 +38,7 @@ func (l *AddUserAssetLogic) AddUserAsset(in *pb.AddUserAssetReq) (*pb.Empty, err
 	asset := l.svcCtx.Query.Asset
 
 	c, ok := l.svcCtx.Coins.Load(in.CoinName)
-	if ok {
+	if !ok {
 		return nil, errs.WarpMessage(errs.ParamValidateFailed, "coin not found")
 	}
 	coinInfo := c.(*define.CoinInfo)
