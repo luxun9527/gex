@@ -66,7 +66,7 @@ services:
     networks:
       - gex
   redis:
-    image: redis:7.0.5                    # 镜像'redis:7.0.5'
+    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/redis:7.0.5                    # 镜像'redis:7.0.5'
     container_name: redis                                                             # 容器名为'redis'
     restart: unless-stopped                                                                   # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     command: redis-server /etc/redis/redis.conf   # 启动redis服务并添加密码为：123456,默认不开启redis-aof方式持久化配置
