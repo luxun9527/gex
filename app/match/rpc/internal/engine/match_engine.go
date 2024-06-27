@@ -434,6 +434,12 @@ func (m *MatchEngine) matchLimitOrderBuy(takerOrder *Order) {
 	deletedKeys := make([]*Key, 0, 2)
 	for iterator.Next() {
 		makerOrder := iterator.Value().(*Order)
+
+		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
+		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled || makerOrder.Price.GreaterThan(takerOrder.Price) {
+			break
+		}
+		//计较价格
 		result := takerOrder.UnfilledQty.Cmp(makerOrder.UnfilledQty)
 		var matchedRecord *MatchedRecord
 		switch {
@@ -511,10 +517,6 @@ func (m *MatchEngine) matchLimitOrderBuy(takerOrder *Order) {
 		matchedRecord.Maker = *makerOrder
 		matchedRecord.MatchedRecordID = cast.ToString(idgen.NextId())
 		matchedResult.MatchedRecords = append(matchedResult.MatchedRecords, matchedRecord)
-		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
-		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled || makerOrder.Price.GreaterThan(takerOrder.Price) {
-			break
-		}
 
 	}
 	//删除卖盘被匹配过的订单，更新卖一价
@@ -561,6 +563,11 @@ func (m *MatchEngine) matchLimitOrderSell(takerOrder *Order) {
 	deletedKeys := make([]*Key, 0, 2)
 	for iterator.Next() {
 		makerOrder := iterator.Value().(*Order)
+		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
+		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled || takerOrder.Price.GreaterThan(makerOrder.Price) {
+			break
+		}
+
 		result := takerOrder.UnfilledQty.Cmp(makerOrder.UnfilledQty)
 		switch {
 		case result == 1:
@@ -636,10 +643,6 @@ func (m *MatchEngine) matchLimitOrderSell(takerOrder *Order) {
 		matchedRecord.Maker = *makerOrder
 		matchedRecord.MatchedRecordID = cast.ToString(idgen.NextId())
 		matchedResult.MatchedRecords = append(matchedResult.MatchedRecords, matchedRecord)
-		//订单全部成交退出，或者小于下一个订单的价格。不再循环匹配。
-		if takerOrder.OrderStatus == enum.OrderStatus_ALLFilled || takerOrder.Price.GreaterThan(makerOrder.Price) {
-			break
-		}
 
 	}
 	//删除买盘被匹配过的订单，更新卖一价
