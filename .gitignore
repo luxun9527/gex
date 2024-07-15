@@ -1,5 +1,5 @@
 .idea
-template
+
 admin_template
 deploy/depend/mysql/data
 deploy/depend/nginx/log
