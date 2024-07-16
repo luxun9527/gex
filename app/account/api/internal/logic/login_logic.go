@@ -28,7 +28,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
 	// 验证验证码
-	if l.svcCtx.CaptchaStore.Verify(req.CaptchaId, req.Captcha, true) {
+	if !l.svcCtx.CaptchaStore.Verify(req.CaptchaId, req.Captcha, true) {
 		return nil, errs.CaptchaValidateFailed
 	}
 	loginResp, err := l.svcCtx.AccountRpcClient.Login(l.ctx, &accountservice.LoginReq{

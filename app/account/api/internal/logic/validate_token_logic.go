@@ -27,7 +27,6 @@ func NewValidateTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Val
 }
 
 func (l *ValidateTokenLogic) ValidateToken(req *types.ValidateTokenReq) (resp *types.ValidateTokenResp, err error) {
-	// todo: add your logic here and delete this line
 	userInfo, err := l.svcCtx.AccountRpcClient.ValidateToken(l.ctx, &accountservice.ValidateTokenReq{Token: req.Token})
 	if err != nil {
 		return nil, errs.TokenValidateFailed
