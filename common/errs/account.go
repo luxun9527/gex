@@ -13,12 +13,14 @@ const (
 	TokenExpireCode
 	// LoginFailedCode 登录账户密码验证失败
 	LoginFailedCode
+	CaptchaValidateFailedCode
 )
 
 var (
-	UserNotFound        = UserNotFoundCode.Error("")
-	AmountInsufficient  = AmountInsufficientCode.Error("")
-	TokenValidateFailed = TokenValidateFailedCode.Error("")
-	TokenExpire         = TokenExpireCode.Error("")
-	LoginFailed         = LoginFailedCode.Error("")
+	UserNotFound          = UserNotFoundCode.Error("")
+	AmountInsufficient    = AmountInsufficientCode.Error("")
+	TokenValidateFailed   = TokenValidateFailedCode.Error("")
+	TokenExpire           = TokenExpireCode.Error("")
+	LoginFailed           = LoginFailedCode.Error("")
+	CaptchaValidateFailed = CaptchaValidateFailedCode.Error("")
 )
