@@ -28,6 +28,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	logger.InitZapLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
+
 	sc := &ServiceContext{
 		Config:         c,
 		KlineClients:   pool.NewRpcClients(c.KlineRpcConf.Etcd),
