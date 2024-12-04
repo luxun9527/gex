@@ -3,8 +3,6 @@ package logic
 import (
 	"context"
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
-	"github.com/luxun9527/gex/common/errs"
-
 	"github.com/luxun9527/gex/app/quotes/api/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/api/internal/types"
 
@@ -26,14 +24,8 @@ func NewGetTickListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTi
 }
 
 func (l *GetTickListLogic) GetTickList(req *types.GetTickReq) (resp *types.GetTickResp, err error) {
-	// todo: add your logic here and delete this line
-	conn, ok := l.svcCtx.MatchClients.GetConn(req.Symbol)
-	if !ok {
-		logx.Sloww("symbol not found", logx.Field("symbol", req.Symbol))
-		return nil, errs.Internal
-	}
-	client := l.svcCtx.GetMatchClient(conn)
-	tickListResp, err := client.GetTick(l.ctx, &matchpb.GetTickReq{
+
+	tickListResp, err := l.svcCtx.MatchClients.GetTick(l.ctx, &matchpb.GetTickReq{
 		Symbol: req.Symbol,
 		Limit:  req.Limit,
 	})

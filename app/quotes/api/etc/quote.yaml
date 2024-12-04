@@ -10,7 +10,7 @@ MatchRpcConf:
   NonBlock: true
 KlineRpcConf:
   Etcd:
-    Key: service_kline_rpc
+    Key: klineRpc
     Hosts:
       - 192.168.2.159:2379
   NonBlock: true

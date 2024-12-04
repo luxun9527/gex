@@ -5,8 +5,8 @@ import (
 	"github.com/luxun9527/gex/app/quotes/api/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/api/internal/types"
 	klinepb "github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
-	"github.com/luxun9527/gex/common/errs"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/metadata"
 )
 
 type GetKlineListLogic struct {
@@ -24,19 +24,15 @@ func NewGetKlineListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetK
 }
 
 func (l *GetKlineListLogic) GetKlineList(req *types.KlineListReq) (resp *types.KlineListResp, err error) {
-	conn, ok := l.svcCtx.KlineClients.GetConn(req.Symbol)
-	if !ok {
-		logx.Sloww("symbol not found", logx.Field("symbol", req.Symbol))
-		return nil, errs.Internal
-	}
-	client := l.svcCtx.GetKlineClient(conn)
-	klineResp, err := client.GetKline(l.ctx, &klinepb.GetKlineReq{
+	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", req.Symbol))
+	klineResp, err := l.svcCtx.KlineClients.GetKline(ctx, &klinepb.GetKlineReq{
 		StartTime: req.StartTime,
 		EntTime:   req.EndTime,
 		KlineType: klinepb.KlineType(req.KlineType),
 		Symbol:    req.Symbol,
 	})
 	if err != nil {
+		logx.Errorf("get kline list error: %v", err)
 		return nil, err
 	}
 	klines := make([]*types.Kline, 0, len(klineResp.KlineList))

@@ -1,11 +1,10 @@
 Name: kline_rpc
 ListenOn: 0.0.0.0:20009
-Timeout: 0
 Symbol: IKUN_USDT
-Etcd:
-  Hosts:
-   - 192.168.2.159:2379
-  Key: service_kline_rpc
+etcdRegisterConf:
+  etcdConf:
+    endpoints: ["192.168.2.159:2379"]
+  key: klineRpc
 
 SymbolEtcdConfig:
   Endpoints:
