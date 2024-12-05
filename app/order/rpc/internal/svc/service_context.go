@@ -6,13 +6,17 @@ import (
 	"github.com/dtm-labs/client/dtmgrpc/dtmgpb"
 	"github.com/luxun9527/gex/app/order/rpc/internal/config"
 	"github.com/luxun9527/gex/app/order/rpc/internal/dao/query"
+	"github.com/luxun9527/gex/common/pkg/etcd"
 	"github.com/luxun9527/gex/common/proto/define"
 	ws "github.com/luxun9527/gpush/proto"
 	logger "github.com/luxun9527/zaplog"
+	"github.com/spf13/cast"
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"google.golang.org/grpc/attributes"
+	"strings"
 	"time"
 
 	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
@@ -38,12 +42,21 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	define.InitSymbolConfig(define.EtcdSymbolPrefix+c.Symbol, c.SymbolEtcdConfig, &symbolInfo)
 	c.SymbolInfo = &symbolInfo
 	logx.Infow("symbol config load ", logx.Field("symbol", symbolInfo))
-	c.Etcd.Key += "." + c.SymbolInfo.SymbolName
+
 	target, err := c.DtmConf.BuildTarget()
 	if err != nil {
 		logx.Severef("init dtm client failed %v", err)
 		return nil
 	}
+	logx.Infof("dtm client init success %v", target)
+
+	//注册到etcd
+	d := strings.Split(c.RpcServerConf.ListenOn, ":")
+	c.EtcdRegisterConf.Key += "/" + c.Symbol
+	c.EtcdRegisterConf.Port = cast.ToInt32(d[1])
+	c.EtcdRegisterConf.MataData = attributes.New("symbol", c.Symbol)
+	etcd.Register(c.EtcdRegisterConf)
+
 	//使用交易对的Id作为workid
 	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID))
 	idgen.SetIdGenerator(options)

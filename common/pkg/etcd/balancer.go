@@ -1,11 +1,12 @@
 package etcd
 
 import (
-	"fmt"
 	"github.com/spf13/cast"
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/balancer/base"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"time"
 )
 
@@ -18,6 +19,10 @@ func init() {
 	balancer.Register(newSymbolBalancerBuilder())
 }
 
+var (
+	NotAvailableConn = status.Error(codes.Unavailable, "no available connection")
+)
+
 const SymbolLB = "symbol_lb"
 
 // 自定义 Picker
@@ -28,7 +33,7 @@ type symbolPicker struct {
 func (p *symbolPicker) Pick(info balancer.PickInfo) (balancer.PickResult, error) {
 	// 如果没有可用的连接，返回错误
 	if len(p.subConns) == 0 {
-		return balancer.PickResult{}, nil
+		return balancer.PickResult{}, NotAvailableConn
 	}
 	md, ok := metadata.FromIncomingContext(info.Ctx)
 	if !ok {
@@ -37,7 +42,7 @@ func (p *symbolPicker) Pick(info balancer.PickInfo) (balancer.PickResult, error)
 	symbol := md.Get("symbol")[0]
 	conns, ok := p.subConns[symbol]
 	if !ok || len(conns) == 0 {
-		return balancer.PickResult{}, fmt.Errorf("no available connection for symbol: %s", symbol)
+		return balancer.PickResult{}, NotAvailableConn
 	}
 	index := time.Now().UnixNano() % int64(len(conns))
 	return balancer.PickResult{SubConn: conns[index]}, nil

@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 	orderpb "github.com/luxun9527/gex/app/order/rpc/pb"
-	"github.com/luxun9527/gex/common/errs"
 	enum "github.com/luxun9527/gex/common/proto/enum"
 	"github.com/spf13/cast"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/luxun9527/gex/app/order/api/internal/svc"
 	"github.com/luxun9527/gex/app/order/api/internal/types"
@@ -30,17 +30,14 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 func (l *GetOrderListLogic) GetOrderList(req *types.GetOrderListReq) (resp *types.GetOrderListResp, err error) {
 	// todo: add your logic here and delete this line
 	uid := l.ctx.Value("uid")
-	conn, ok := l.svcCtx.OrderClients.GetConn(req.SymbolName)
-	if !ok {
-		logx.Sloww("symbol not found", logx.Field("symbol", req.SymbolName))
-		return nil, errs.Internal
-	}
-	client := l.svcCtx.GetOrderClient(conn)
+
+	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", cast.ToString(req.SymbolName)))
+
 	statusList := make([]enum.OrderStatus, 0, len(req.Status))
 	for _, v := range req.Status {
 		statusList = append(statusList, enum.OrderStatus(v))
 	}
-	orderList, err := client.GetOrderList(l.ctx, &orderpb.GetOrderListByUserReq{
+	orderList, err := l.svcCtx.OrderClient.GetOrderList(ctx, &orderpb.GetOrderListByUserReq{
 		UserId:     cast.ToInt64(uid),
 		StatusList: statusList,
 		PageSize:   req.PageSize,

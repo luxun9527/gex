@@ -1,10 +1,10 @@
 Name: order.rpc
 ListenOn: 0.0.0.0:20001
 Timeout: 1000000
-Etcd:
-  Hosts:
-    - 192.168.2.159:2379
-  Key: service_order_rpc
+etcdRegisterConf:
+  etcdConf:
+    endpoints: ["192.168.2.159:2379"]
+  key: orderRpc
 RedisConf:
   Host: 192.168.2.159:6379
   Type: node
@@ -20,14 +20,14 @@ AccountRpcConf:
   Etcd:
     Hosts:
       - 192.168.2.159:2379
-    Key: service_account_rpc
+    Key: accountRpc
   NonBlock: true
   TimeOut: 1000000
 OrderRpcConf:
   Etcd:
     Hosts:
       - 192.168.2.159:2379
-    Key: service_order_rpc.IKUN_USDT
+    Key: orderRpc/IKUN_USDT
   NonBlock: true
   TimeOut: 1000000
 WsConf:

@@ -15,11 +15,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-type (
-	GetKlineClientFunc func(cc grpc.ClientConnInterface) klinepb.KlineServiceClient
-	GetMatchClientFunc func(cc grpc.ClientConnInterface) matchpb.MatchServiceClient
-)
-
 type ServiceContext struct {
 	Config       config.Config
 	KlineClients klinepb.KlineServiceClient
@@ -30,8 +25,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	logger.InitZapLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)
-	var clientOpts []zrpc.ClientOption
 	//自定义负载均衡策略
+	var clientOpts []zrpc.ClientOption
 	serviceConfig := grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"symbol_lb"}`)
 
 	//自定义resolver

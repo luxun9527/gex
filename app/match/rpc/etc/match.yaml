@@ -2,19 +2,16 @@ Name: match.rpc
 ListenOn: 0.0.0.0:20003
 Timeout: 5000
 Symbol: IKUN_USDT
-Etcd:
-  Hosts:
-    - 192.168.2.159:2379
-  Key: service_match_rpc
+etcdRegisterConf:
+  etcdConf:
+    endpoints: ["192.168.2.159:2379"]
+  key: matchRpc
 
 SymbolEtcdConfig:
   Endpoints:
     - 192.168.2.159:2379
   DialTimeout: 5
-EtcdConfig:
-  Endpoints:
-    - 192.168.2.159:2379
-  DialTimeout: 5
+
 
 PulsarConfig:
   hosts:
@@ -49,7 +46,7 @@ OrderRpcConf:
   Etcd:
     Hosts:
       - 192.168.2.159:2379
-    Key: service_order_rpc.IKUN_USDT
+    Key: orderRpc/IKUN_USDT
   NonBlock: true
 WsConf:
   Etcd:

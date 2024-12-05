@@ -24,4 +24,5 @@ type Config struct {
 	WsConf           zrpc.RpcClientConf
 	Symbol           string
 	SymbolEtcdConfig etcd.EtcdConfig
+	EtcdRegisterConf etcd.EtcdRegisterConf `json:",optional"`
 }

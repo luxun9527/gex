@@ -9,6 +9,7 @@ import (
 	"github.com/luxun9527/gex/common/proto/enum"
 	"github.com/luxun9527/gex/common/utils"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/metadata"
 )
 
 func Start(sc *svc.ServiceContext) {
@@ -16,7 +17,8 @@ func Start(sc *svc.ServiceContext) {
 	consumer.InitMatchConsumer(sc)
 }
 func loadOrder(sc *svc.ServiceContext) {
-	stream, err := sc.OrderClient.GetOrderAllPendingOrder(context.Background(), &orderservice.OrderEmpty{})
+	ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("symbol", sc.Config.Symbol))
+	stream, err := sc.OrderClient.GetOrderAllPendingOrder(ctx, &orderservice.OrderEmpty{})
 	if err != nil {
 		logx.Severef("call GetOrderAllPendingOrder failed %v", err)
 	}

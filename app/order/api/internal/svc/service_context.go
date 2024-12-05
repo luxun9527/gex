@@ -2,13 +2,15 @@ package svc
 
 import (
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
+	"github.com/luxun9527/gex/app/match/rpc/matchservice"
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
 	"github.com/luxun9527/gex/app/order/api/internal/config"
 	"github.com/luxun9527/gex/app/order/api/internal/middleware"
+	"github.com/luxun9527/gex/app/order/rpc/orderservice"
 	orderpb "github.com/luxun9527/gex/app/order/rpc/pb"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/pkg/confx"
-	"github.com/luxun9527/gex/common/pkg/pool"
+	"github.com/luxun9527/gex/common/pkg/etcd"
 	"github.com/luxun9527/gex/common/proto/define"
 	logger "github.com/luxun9527/zaplog"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -16,20 +18,16 @@ import (
 	"github.com/zeromicro/go-zero/zrpc"
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/naming/resolver"
 	"google.golang.org/grpc"
 	"gopkg.in/yaml.v3"
 	"sync"
 )
 
-type GetOrderClientFunc func(cc grpc.ClientConnInterface) orderpb.OrderServiceClient
-type GetMatchClientFunc func(cc grpc.ClientConnInterface) matchpb.MatchServiceClient
-
 type ServiceContext struct {
 	Config           config.Config
-	OrderClients     *pool.RpcClients
-	MatchClients     *pool.RpcClients
-	GetOrderClient   GetOrderClientFunc
-	GetMatchClient   GetMatchClientFunc
+	OrderClient      orderpb.OrderServiceClient
+	MatchClient      matchpb.MatchServiceClient
 	Auth             rest.Middleware
 	AccountRpcClient accountservice.AccountService
 	Symbols          *sync.Map
@@ -82,15 +80,27 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			}
 		}
 	}))
+	//自定义负载均衡策略
+	var clientOpts []zrpc.ClientOption
+	serviceConfig := grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"symbol_lb"}`)
+
+	//自定义resolver
+	etcdConfig := etcd.EtcdConfig{Endpoints: c.MatchRpcConf.Etcd.Hosts}
+	etcdCli := etcdConfig.MustNewEtcdClient()
+	etcdResolver, err := resolver.NewBuilder(etcdCli)
+	if err != nil {
+		logx.Severef("NewBuilder error: %v", err)
+	}
+	r := grpc.WithResolvers(etcdResolver)
+
+	clientOpts = append(clientOpts, zrpc.WithDialOption(r), zrpc.WithDialOption(serviceConfig))
 
 	accountRpcClient := accountservice.NewAccountService(zrpc.MustNewClient(c.AccountRpcConf))
 	return &ServiceContext{
 		Config:           c,
 		Auth:             middleware.NewAuthMiddleware(accountRpcClient).Handle,
-		OrderClients:     pool.NewRpcClients(c.OrderRpcConf.Etcd),
-		MatchClients:     pool.NewRpcClients(c.MatchRpcConf.Etcd),
-		GetOrderClient:   orderpb.NewOrderServiceClient,
-		GetMatchClient:   matchpb.NewMatchServiceClient,
+		MatchClient:      matchservice.NewMatchService(zrpc.MustNewClient(c.MatchRpcConf, clientOpts...)),
+		OrderClient:      orderservice.NewOrderService(zrpc.MustNewClient(c.OrderRpcConf, clientOpts...)),
 		AccountRpcClient: accountRpcClient,
 		Symbols:          &symbolConfig,
 	}

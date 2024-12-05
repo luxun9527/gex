@@ -12,6 +12,7 @@ import (
 	logger "github.com/luxun9527/zaplog"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cast"
+	"google.golang.org/grpc/metadata"
 	"strings"
 
 	"github.com/luxun9527/gex/app/order/api/internal/svc"
@@ -50,7 +51,7 @@ func (l *CreateOrderLogic) validateUserBalance(uid int64, coinId int32, freezeQt
 }
 
 func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.Empty, err error) {
-	//todo 重复提交校验
+	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", req.SymbolName))
 
 	//参数校验
 	s, ok := l.svcCtx.Symbols.Load(req.SymbolName)
@@ -93,13 +94,8 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 		}
 
 		//卖买盘校验，市价单在没有买卖盘的时候不能下
-		conn, ok := l.svcCtx.MatchClients.GetConn(req.SymbolName)
-		if !ok {
-			logx.Sloww("match service not found", logx.Field("symbol", req.SymbolName))
-			return nil, errs.Internal
-		}
-		client := l.svcCtx.GetMatchClient(conn)
-		depthList, err := client.GetDepth(l.ctx, &matchpb.GetDepthReq{
+
+		depthList, err := l.svcCtx.MatchClient.GetDepth(ctx, &matchpb.GetDepthReq{
 			Symbol: req.SymbolName,
 			Level:  1,
 		})
@@ -136,13 +132,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 			return nil, err
 		}
 
-		conn, ok := l.svcCtx.MatchClients.GetConn(req.SymbolName)
-		if !ok {
-			logx.Sloww("match service not found", logx.Field("symbol", req.SymbolName))
-			return nil, errs.Internal
-		}
-		client := l.svcCtx.GetMatchClient(conn)
-		depthList, err := client.GetDepth(l.ctx, &matchpb.GetDepthReq{
+		depthList, err := l.svcCtx.MatchClient.GetDepth(ctx, &matchpb.GetDepthReq{
 			Symbol: req.SymbolName,
 			Level:  1,
 		})
@@ -199,13 +189,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 	}
 
 	//用户资产校验
-	conn, ok := l.svcCtx.OrderClients.GetConn(req.SymbolName)
-	if !ok {
-		logx.Sloww("symbol not found", logx.Field("symbol", req.SymbolName))
-		return nil, errs.Internal
-	}
-	client := l.svcCtx.GetOrderClient(conn)
-	_, err = client.Order(l.ctx, &orderpb.CreateOrderReq{
+	_, err = l.svcCtx.OrderClient.Order(l.ctx, &orderpb.CreateOrderReq{
 		UserId:     cast.ToInt64(uid),
 		SymbolId:   symbolInfo.SymbolID,
 		SymbolName: req.SymbolName,

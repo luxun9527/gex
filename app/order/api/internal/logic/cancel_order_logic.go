@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 	orderpb "github.com/luxun9527/gex/app/order/rpc/pb"
-	"github.com/luxun9527/gex/common/errs"
 	"github.com/spf13/cast"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/luxun9527/gex/app/order/api/internal/svc"
 	"github.com/luxun9527/gex/app/order/api/internal/types"
@@ -27,15 +27,9 @@ func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cance
 }
 
 func (l *CancelOrderLogic) CancelOrder(req *types.CancelOrderReq) (resp *types.Empty, err error) {
-	// todo: add your logic here and delete this line
+	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", cast.ToString(req.SymbolName)))
 	uid := l.ctx.Value("uid")
-	conn, ok := l.svcCtx.OrderClients.GetConn(req.SymbolName)
-	if !ok {
-		logx.Sloww("symbol not found", logx.Field("symbol", req.SymbolName))
-		return nil, errs.Internal
-	}
-	client := l.svcCtx.GetOrderClient(conn)
-	_, err = client.CancelOrder(l.ctx, &orderpb.CancelOrderReq{
+	_, err = l.svcCtx.OrderClient.CancelOrder(ctx, &orderpb.CancelOrderReq{
 		Id:  cast.ToInt64(req.ID),
 		Uid: cast.ToInt64(uid),
 	})
