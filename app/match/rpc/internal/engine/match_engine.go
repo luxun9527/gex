@@ -10,7 +10,7 @@ import (
 	commonWs "github.com/luxun9527/gex/common/proto/ws"
 	"github.com/luxun9527/gex/common/utils"
 	ws "github.com/luxun9527/gpush/proto"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cast"
 	"github.com/yitter/idgenerator-go/idgen"

@@ -8,7 +8,7 @@ import (
 	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
 	"github.com/luxun9527/gex/common/proto/define"
 	gpushPb "github.com/luxun9527/gpush/proto"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -26,7 +26,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
-	logger.InitZapLogger(&c.LoggerConfig)
+	logger.InitDefaultLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	//获取交易对背配置

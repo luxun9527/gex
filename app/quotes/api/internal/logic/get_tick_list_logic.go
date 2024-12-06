@@ -5,6 +5,8 @@ import (
 	matchpb "github.com/luxun9527/gex/app/match/rpc/pb"
 	"github.com/luxun9527/gex/app/quotes/api/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/api/internal/types"
+	"github.com/luxun9527/gex/common/errs"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,12 +26,18 @@ func NewGetTickListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTi
 }
 
 func (l *GetTickListLogic) GetTickList(req *types.GetTickReq) (resp *types.GetTickResp, err error) {
+	_, ok := l.svcCtx.Symbols.Load(req.Symbol)
+	if !ok {
+		return nil, errs.WarpMessage(errs.ParamValidateFailed, "symbol not existed")
+	}
 
-	tickListResp, err := l.svcCtx.MatchClients.GetTick(l.ctx, &matchpb.GetTickReq{
+	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", req.Symbol))
+	tickListResp, err := l.svcCtx.MatchClients.GetTick(ctx, &matchpb.GetTickReq{
 		Symbol: req.Symbol,
 		Limit:  req.Limit,
 	})
 	if err != nil {
+		logx.Errorf("getTickList err: %v", err)
 		return nil, err
 	}
 	tickerList := make([]*types.TickInfo, 0, len(tickListResp.TickList))

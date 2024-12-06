@@ -7,7 +7,7 @@ import (
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"gorm.io/gorm"
 
 	"github.com/gookit/goutil/strutil"
@@ -54,7 +54,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	//生成token
 	token, err := l.svcCtx.JwtClient.CreateToken(claims)
 	if err != nil {
-		logx.Errorw("create token failed", logger.ErrorField(err))
+		logx.Errorf("create token failed err", err)
 		return nil, err
 	}
 	tokenMd5 := strutil.Md5(token)

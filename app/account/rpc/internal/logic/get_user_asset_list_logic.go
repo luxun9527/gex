@@ -3,15 +3,16 @@ package logic
 import (
 	"context"
 	"github.com/luxun9527/gex/common/errs"
-	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/proto/define"
-"github.com/luxun9527/gex/common/utils"
+	"github.com/luxun9527/gex/common/proto/define"
+	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zlog"
 
-"github.com/luxun9527/gex/app/account/rpc/internal/svc"
-"github.com/luxun9527/gex/app/account/rpc/pb"
+	"github.com/luxun9527/gex/app/account/rpc/internal/svc"
+	"github.com/luxun9527/gex/app/account/rpc/pb"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type GetUserAssetListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

@@ -9,7 +9,7 @@ import (
 	"github.com/luxun9527/gex/common/proto/enum"
 	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
 	commonUtils "github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 

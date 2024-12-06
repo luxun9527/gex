@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
 	"github.com/luxun9527/gex/common/errs"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 
 	"github.com/luxun9527/gex/app/account/api/internal/svc"
 	"github.com/luxun9527/gex/app/account/api/internal/types"

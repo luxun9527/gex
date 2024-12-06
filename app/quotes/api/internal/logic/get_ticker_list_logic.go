@@ -5,7 +5,9 @@ import (
 	"github.com/luxun9527/gex/app/match/rpc/pb"
 	"github.com/luxun9527/gex/app/quotes/api/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/api/internal/types"
+	"github.com/luxun9527/gex/common/errs"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/metadata"
 )
 
 type GetTickerListLogic struct {
@@ -23,7 +25,12 @@ func NewGetTickerListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 func (l *GetTickerListLogic) GetTickerList(req *types.GetTickerListReq) (resp *types.GetTickerListResp, err error) {
-	tickerResp, err := l.svcCtx.MatchClients.GetTicker(l.ctx, &pb.GetTickerReq{Symbol: req.Symbol})
+	_, ok := l.svcCtx.Symbols.Load(req.Symbol)
+	if !ok {
+		return nil, errs.WarpMessage(errs.ParamValidateFailed, "symbol not existed")
+	}
+	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", req.Symbol))
+	tickerResp, err := l.svcCtx.MatchClients.GetTicker(ctx, &pb.GetTickerReq{Symbol: req.Symbol})
 	if err != nil {
 		logx.Errorw("GetTickerList error", logx.Field("symbol", req.Symbol), logx.Field("err", err))
 		return nil, err

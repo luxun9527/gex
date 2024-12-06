@@ -8,7 +8,7 @@ import (
 	pulsarConfig "github.com/luxun9527/gex/common/pkg/pulsar"
 	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"go.etcd.io/etcd/api/v3/mvccpb"
@@ -27,7 +27,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitZapLogger(&c.LoggerConfig)
+	logger.InitDefaultLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	var symbolConfig sync.Map

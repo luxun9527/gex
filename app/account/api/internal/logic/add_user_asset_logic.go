@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/spf13/cast"
 
 	"github.com/luxun9527/gex/app/account/api/internal/svc"

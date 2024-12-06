@@ -2,14 +2,15 @@ package logic
 
 import (
 	"context"
-	logger "github.com/luxun9527/zaplog"
-"github.com/luxun9527/gex/common/utils"
+	"github.com/luxun9527/gex/common/utils"
+	logger "github.com/luxun9527/zlog"
 
-"github.com/luxun9527/gex/app/match/rpc/internal/svc"
-"github.com/luxun9527/gex/app/match/rpc/pb"
+	"github.com/luxun9527/gex/app/match/rpc/internal/svc"
+	"github.com/luxun9527/gex/app/match/rpc/pb"
 
-"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
 type GetTickLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

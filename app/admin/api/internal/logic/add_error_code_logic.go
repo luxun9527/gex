@@ -7,7 +7,7 @@ import (
 	"github.com/luxun9527/gex/app/admin/api/internal/svc"
 	"github.com/luxun9527/gex/app/admin/api/internal/types"
 	"github.com/luxun9527/gex/common/errs"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"

@@ -12,7 +12,7 @@ import (
 	"github.com/luxun9527/gex/common/pkg/confx"
 	"github.com/luxun9527/gex/common/pkg/etcd"
 	"github.com/luxun9527/gex/common/proto/define"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -34,7 +34,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitZapLogger(&c.LoggerConfig)
+	logger.InitDefaultLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	errs.InitTranslatorFromEtcd(c.LanguageEtcdConf)

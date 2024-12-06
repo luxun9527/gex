@@ -6,7 +6,7 @@ import (
 	matchQuery "github.com/luxun9527/gex/app/admin/api/internal/dao/match/query"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
@@ -20,7 +20,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitZapLogger(&c.LoggerConfig)
+	logger.InitDefaultLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	cli, err := c.EtcdConf.NewEtcdClient()

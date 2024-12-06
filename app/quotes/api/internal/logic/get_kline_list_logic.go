@@ -5,6 +5,7 @@ import (
 	"github.com/luxun9527/gex/app/quotes/api/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/api/internal/types"
 	klinepb "github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
+	"github.com/luxun9527/gex/common/errs"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc/metadata"
 )
@@ -24,6 +25,10 @@ func NewGetKlineListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetK
 }
 
 func (l *GetKlineListLogic) GetKlineList(req *types.KlineListReq) (resp *types.KlineListResp, err error) {
+	_, ok := l.svcCtx.Symbols.Load(req.Symbol)
+	if !ok {
+		return nil, errs.WarpMessage(errs.ParamValidateFailed, "symbol not existed")
+	}
 	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", req.Symbol))
 	klineResp, err := l.svcCtx.KlineClients.GetKline(ctx, &klinepb.GetKlineReq{
 		StartTime: req.StartTime,

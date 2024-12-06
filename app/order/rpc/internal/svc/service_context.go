@@ -9,7 +9,7 @@ import (
 	"github.com/luxun9527/gex/common/pkg/etcd"
 	"github.com/luxun9527/gex/common/proto/define"
 	ws "github.com/luxun9527/gpush/proto"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/spf13/cast"
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,7 +33,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c *config.Config) *ServiceContext {
-	logger.InitZapLogger(&c.LoggerConfig)
+	logger.InitDefaultLogger(&c.LoggerConfig)
 	writer := logger.NewZapWriter(logger.GetZapLogger())
 	logx.SetWriter(writer)
 	logx.DisableStat()
@@ -58,7 +58,7 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	etcd.Register(c.EtcdRegisterConf)
 
 	//使用交易对的Id作为workid
-	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID))
+	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID % 64))
 	idgen.SetIdGenerator(options)
 
 	c.SymbolInfo = &symbolInfo

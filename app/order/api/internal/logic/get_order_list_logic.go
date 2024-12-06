@@ -28,7 +28,6 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 }
 
 func (l *GetOrderListLogic) GetOrderList(req *types.GetOrderListReq) (resp *types.GetOrderListResp, err error) {
-	// todo: add your logic here and delete this line
 	uid := l.ctx.Value("uid")
 
 	ctx := metadata.NewIncomingContext(l.ctx, metadata.Pairs("symbol", cast.ToString(req.SymbolName)))

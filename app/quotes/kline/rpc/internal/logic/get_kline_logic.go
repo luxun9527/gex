@@ -10,7 +10,7 @@ import (
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/proto/define"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 
 	"github.com/zeromicro/go-zero/core/logx"

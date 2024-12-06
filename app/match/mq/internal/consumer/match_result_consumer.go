@@ -7,7 +7,7 @@ import (
 	"github.com/luxun9527/gex/app/match/mq/internal/svc"
 	matchMq "github.com/luxun9527/gex/common/proto/mq/match"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 )

@@ -9,7 +9,7 @@ import (
 	"github.com/luxun9527/gex/common/proto/define"
 	enum "github.com/luxun9527/gex/common/proto/enum"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cast"
 	"google.golang.org/grpc/metadata"
@@ -189,7 +189,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.E
 	}
 
 	//用户资产校验
-	_, err = l.svcCtx.OrderClient.Order(l.ctx, &orderpb.CreateOrderReq{
+	_, err = l.svcCtx.OrderClient.Order(ctx, &orderpb.CreateOrderReq{
 		UserId:     cast.ToInt64(uid),
 		SymbolId:   symbolInfo.SymbolID,
 		SymbolName: req.SymbolName,

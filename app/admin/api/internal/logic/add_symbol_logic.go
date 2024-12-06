@@ -31,19 +31,21 @@ func (l *AddSymbolLogic) AddSymbol(req *types.AddSymbolReq) (resp *types.AddSymb
 		coin   = l.svcCtx.AdminQuery.Coin
 		symbol = l.svcCtx.AdminQuery.Symbol
 	)
-	baseCoinInfo, err := coin.WithContext(l.ctx).Where(coin.ID.Eq(req.BaseCoinID)).Take()
+	baseCoinInfo, err := coin.WithContext(l.ctx).Where(coin.CoinID.Eq(req.BaseCoinID)).Take()
 	if err != nil {
+		logx.Errorf("AddSymbol find BaseCoinID err: %v", err)
 		return nil, err
 	}
-	quoteCoinInfo, err := coin.WithContext(l.ctx).Where(coin.ID.Eq(uint32(req.QuoteCoinID))).Take()
+	quoteCoinInfo, err := coin.WithContext(l.ctx).Where(coin.CoinID.Eq(req.QuoteCoinID)).Take()
 	if err != nil {
+		logx.Errorf("AddSymbol find QuoteCoinID err: %v", err)
 		return nil, err
 	}
 	symbolName := baseCoinInfo.CoinName + "_" + quoteCoinInfo.CoinName
 	c := &model.Symbol{
 		SymbolName:    symbolName,
 		SymbolID:      req.SymbolId,
-		BaseCoinID:    req.BaseCoinID,
+		BaseCoinID:    uint32(req.BaseCoinID),
 		BaseCoinName:  baseCoinInfo.CoinName,
 		BaseCoinPrec:  baseCoinInfo.Prec,
 		QuoteCoinID:   uint32(req.QuoteCoinID),

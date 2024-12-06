@@ -13,7 +13,7 @@ import (
 	"github.com/luxun9527/gex/common/proto/ws"
 	commonWs "github.com/luxun9527/gex/common/proto/ws"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 )
 
 type TickerHandler struct {

@@ -7,7 +7,7 @@ import (
 	"github.com/luxun9527/gex/app/account/rpc/internal/dao/model"
 	"github.com/luxun9527/gex/common/errs"
 	"github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 

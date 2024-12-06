@@ -5,7 +5,7 @@ import (
 	"github.com/luxun9527/gex/app/account/api/internal/middleware"
 	"github.com/luxun9527/gex/app/account/rpc/accountservice"
 	"github.com/luxun9527/gex/common/errs"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/mojocn/base64Captcha"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
@@ -21,7 +21,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	logger.InitZapLogger(&c.LoggerConfig)
+	logger.InitDefaultLogger(&c.LoggerConfig)
 	logx.SetWriter(logger.NewZapWriter(logger.GetZapLogger()))
 	logx.DisableStat()
 	sc := &ServiceContext{

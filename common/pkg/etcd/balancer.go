@@ -37,7 +37,7 @@ func (p *symbolPicker) Pick(info balancer.PickInfo) (balancer.PickResult, error)
 	}
 	md, ok := metadata.FromIncomingContext(info.Ctx)
 	if !ok {
-		return balancer.PickResult{}, nil
+		return balancer.PickResult{}, NotAvailableConn
 	}
 	symbol := md.Get("symbol")[0]
 	conns, ok := p.subConns[symbol]

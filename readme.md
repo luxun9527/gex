@@ -88,7 +88,7 @@ make clear 删除镜像和容器（会删除所有的容器和新建的镜像。
 
 新增一个zap core即可，将指定级别的日志输出到我们的im中具体参考
 
-https://github.com/luxun9527/zaplog
+https://github.com/luxun9527/zlog
 
 ### Docke部署
 

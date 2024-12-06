@@ -9,7 +9,7 @@ import (
 	enum "github.com/luxun9527/gex/common/proto/enum"
 	"github.com/luxun9527/gex/common/utils"
 	commonUtils "github.com/luxun9527/gex/common/utils"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

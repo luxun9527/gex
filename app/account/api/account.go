@@ -5,7 +5,7 @@ import (
 	"github.com/luxun9527/gex/app/account/api/internal/config"
 	"github.com/luxun9527/gex/app/account/api/internal/handler"
 	"github.com/luxun9527/gex/app/account/api/internal/svc"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/conf"

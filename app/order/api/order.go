@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/luxun9527/gex/common/pkg/validatorx"
-	logger "github.com/luxun9527/zaplog"
+	logger "github.com/luxun9527/zlog"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 

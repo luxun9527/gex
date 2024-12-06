@@ -67,9 +67,9 @@ type GetSymbolListResp struct {
 }
 
 type AddSymbolReq struct {
-	BaseCoinID  uint32 `json:"base_coin_id"`
-	QuoteCoinID int32  `json:"quote_coin_id"`
-	SymbolId    int32  `json:"symbol_id"`
+	BaseCoinID  int32 `json:"base_coin_id"`
+	QuoteCoinID int32 `json:"quote_coin_id"`
+	SymbolId    int32 `json:"symbol_id"`
 }
 
 type AddSymbolResp struct {
