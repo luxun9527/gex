@@ -52,6 +52,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if err != nil {
 		logx.Severef("init pulsar consumer failed %v", logger.ErrorField(err))
 	}
+	logx.Infof("init pulsar consumer success")
 	sc := &ServiceContext{
 		MatchConsumer: consumer,
 		Config:        c,

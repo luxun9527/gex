@@ -50,18 +50,24 @@ func NewServiceContext(c *config.Config) *ServiceContext {
 	}
 	logx.Infof("dtm client init success %v", target)
 
-	//注册到etcd
+	//注册到etcd orderapi使用
 	d := strings.Split(c.RpcServerConf.ListenOn, ":")
 	c.EtcdRegisterConf.Key += "/" + c.Symbol
 	c.EtcdRegisterConf.Port = cast.ToInt32(d[1])
 	c.EtcdRegisterConf.MataData = attributes.New("symbol", c.Symbol)
 	etcd.Register(c.EtcdRegisterConf)
+	//注册到etcd dtm使用
+	c.Etcd.Key += "_" + c.Symbol
+
+	c.OrderRpcConf.Etcd.Key += "_" + c.Symbol
 
 	//使用交易对的Id作为workid
 	var options = idgen.NewIdGeneratorOptions(uint16(c.SymbolInfo.SymbolID % 64))
 	idgen.SetIdGenerator(options)
 
 	c.SymbolInfo = &symbolInfo
+
+	//初始化pulsar客户端
 	client, err := c.PulsarConfig.BuildClient()
 	if err != nil {
 		logx.Severef("init pulsar client failed %v", err)

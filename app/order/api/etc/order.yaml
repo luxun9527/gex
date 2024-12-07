@@ -2,6 +2,12 @@ Name: OrderApi
 Host: 0.0.0.0
 Port: 20013
 TimeOut: 100000
+AccountRpcConf:
+  etcd:
+    Key: accountRpc
+    Hosts:
+      - 192.168.2.159:2379
+  NonBlock: true
 OrderRpcConf:
   Etcd:
     Key: orderRpc

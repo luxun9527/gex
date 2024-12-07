@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/config"
+	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/logic"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/server"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/internal/svc"
 	"github.com/luxun9527/gex/app/quotes/kline/rpc/pb"
@@ -23,7 +24,7 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(&c)
-	//logic.InitKlineHandler(ctx)
+	logic.InitKlineHandler(ctx)
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterKlineServiceServer(grpcServer, server.NewKlineServiceServer(ctx))
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {

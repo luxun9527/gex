@@ -12,7 +12,8 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	AccountRpcConf   zrpc.RpcClientConf
+	AccountRpcConf zrpc.RpcClientConf
+	//dtm使用
 	OrderRpcConf     zrpc.RpcClientConf
 	DtmConf          zrpc.RpcClientConf
 	PulsarConfig     pulsar.PulsarConfig

@@ -1,14 +1,21 @@
 Name: order.rpc
 ListenOn: 0.0.0.0:20001
 Timeout: 1000000
+Etcd:
+  Hosts:
+    - 192.168.2.159:2379
+  Key: orderRpcDtm
+
 etcdRegisterConf:
   etcdConf:
     endpoints: ["192.168.2.159:2379"]
   key: orderRpc
+
 RedisConf:
   Host: 192.168.2.159:6379
   Type: node
   PingTimeout: 5s
+
 DtmConf:
   Etcd:
     Key: dtmservice
@@ -16,6 +23,7 @@ DtmConf:
       - 192.168.2.159:2379
   NonBlock: true
   TimeOut: 1000000
+
 AccountRpcConf:
   Etcd:
     Hosts:
@@ -23,13 +31,16 @@ AccountRpcConf:
     Key: accountRpc
   NonBlock: true
   TimeOut: 1000000
+
 OrderRpcConf:
   Etcd:
     Hosts:
       - 192.168.2.159:2379
-    Key: orderRpc/IKUN_USDT
+    Key: orderRpcDtm
   NonBlock: true
   TimeOut: 1000000
+
+
 WsConf:
   Etcd:
     Key: proxy
@@ -37,6 +48,7 @@ WsConf:
       - 192.168.2.159:2379
   NonBlock: true
   TimeOut: 1000000
+
 PulsarConfig:
   hosts:
     - 192.168.2.159:6650
@@ -75,7 +87,9 @@ GormConf:
   password: root
   maxIdleConns: 10
   maxOpenConns: 100
+
 Symbol: IKUN_USDT
+
 SymbolEtcdConfig:
   Endpoints:
     - 192.168.2.159:2379
