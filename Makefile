@@ -63,7 +63,6 @@ clear:
 	chmod +x ./deploy/scripts/remove_images.sh
 	./deploy/scripts/remove_containers.sh
 	./deploy/scripts/remove_images.sh
-	rm -rf deploy/depend/pulsar/data/*
 	rm -rf deploy/depend/mysql/data/*
 
 pre:

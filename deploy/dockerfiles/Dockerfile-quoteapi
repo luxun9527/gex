@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM docker.1panel.live/library/busybox
 WORKDIR /app
 COPY ../../bin/quoteapi /app/quoteapi
 COPY ../../app/quotes/api/etc/quote-deploy.yaml /app/quote.yaml

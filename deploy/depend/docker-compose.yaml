@@ -1,25 +1,31 @@
 version: "3.7"
 services:
   pulsar:
-    image: apachepulsar/pulsar:2.9.1
-    command: bin/pulsar standalone
+    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/pulsar:3.1.2  # 原镜像`apachepulsar/pulsar:3.1.2`
     container_name: pulsar
-    ports:
-      - "8080:8080"
-      - "6650:6650"
     restart: unless-stopped
-    volumes:
-      - "./pulsar/conf/:/pulsar/conf"
-      - "./pulsar/data/:/pulsar/data"
+    #    volumes:
+    #      - "./pulsar/data:/pulsar/data"
+    #      - "./pulsar/conf:/pulsar/conf"
+    environment: # 设置环境变量,相当于docker run命令中的-e
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+      BOOKIE_MEM: -Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    command: >
+      /bin/bash -c 
+      "bin/apply-config-from-env.py conf/standalone.conf && exec bin/pulsar standalone --advertised-address pulsar"
+    ports:
+      - "6650:6650"
+      - "8080:8080"
     deploy:
       resources:
         limits:
-          cpus: '2.50'
+          cpus: '3.50'
     networks:
       - gex
   #/deploy/depend/pulsar/conf 是相对docker-compose.yaml文件的位置的。
   dashboard:
-    image: apachepulsar/pulsar-manager:v0.2.0
+    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/pulsar-manager:v0.2.0
     container_name: pulsar_manager
     ports:
       - "9527:9527"
@@ -33,7 +39,7 @@ services:
     networks:
       - gex
   nginx:
-    image: nginx:1.21.1           # 镜像`nginx:1.21.1`
+    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nginx:1.21.1           # 镜像`nginx:1.21.1`
     container_name: nginx               # 容器名为'nginx'
     restart: unless-stopped                                       # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
@@ -49,7 +55,7 @@ services:
     networks:
       - gex
   mysql:
-    image: mysql:8.0  # 原镜像`mysql:8.0`
+    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql:8.0  # 原镜像`mysql:8.0`
     container_name: mysql8                                    # 容器名为'mysql8'
     restart: unless-stopped                                               # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
@@ -98,8 +104,8 @@ services:
     restart: unless-stopped
     entrypoint: ["/app/proxy","-config","/app/config.toml"]
     ports: # 映射端口
-    - "10067:10067"
-    - "10068:10068"
+      - "10067:10067"
+      - "10068:10068"
     volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
       - "./ws/proxy/config-deploy.toml:/app/config.toml"
     networks:

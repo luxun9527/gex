@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM docker.1panel.live/library/busybox
 WORKDIR /app
 COPY ../../bin/matchrpc /app/matchrpc
 COPY ../../app/match/rpc/etc/match-deploy.yaml /app/match.yaml

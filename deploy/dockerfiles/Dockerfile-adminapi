@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM docker.1panel.live/library/busybox
 WORKDIR /app
 COPY ../../bin/adminapi /app/adminapi
 COPY ../../app/admin/api/etc/admin-deploy.yaml /app/admin.yaml
