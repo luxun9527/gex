@@ -9,7 +9,7 @@ if [ -z "$network_exists" ]; then
     echo "网络 gex 创建成功！"
 fi
 
-lang='50006: 超过最小精度11
+lang='50006: 超过最小精度
 100001: 内部错误
 100002: 内部错误
 100003: 内部错误
@@ -33,21 +33,21 @@ lang='50006: 超过最小精度11
 500005: 订单簿没有卖单
 500006: 超过币种最小精度'
 
-coin1='coinid: 3
+coin1='coinid: 10001
 coinname: IKUN
 prec: 3'
 
-coin2='coinid: 2
+coin2='coinid: 10002
 coinname: USDT
-prec: 3'
+prec: 5'
 symbol='symbolname: IKUN_USDT
-symbolid: 6
+symbolid: 1
 basecoinname: IKUN
-basecoinid: 3
+basecoinid: 10001
 quotecoinname: USDT
-quotecoinid: 2
+quotecoinid: 10002
 baseCoinPrec: 3
-quoteCoinPrec: 3'
+quoteCoinPrec: 5'
 
 docker-compose -f deploy/depend/docker-compose.yaml up -d
 
