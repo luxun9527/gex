@@ -3,17 +3,17 @@ ListenOn: 0.0.0.0:20002
 Timeout: 1000000
 Etcd:
   Hosts:
-    - 192.168.2.159:2379
+    - etcd:2379
   Key: accountRpc
 
 SymbolEtcdConfig:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5
 
 
 GormConf:
-  ip: 192.168.2.159
+  ip: mysql8
   port: 3307
   dbName: trade
   username: root
@@ -49,8 +49,8 @@ LoggerConfig:
 
 PulsarConfig:
   hosts:
-    - 192.168.2.159:6650
+    - pulsar:6650
 RedisConf:
-  Host: 192.168.2.159:6379
+  Host: redis:6379
   Type: node
   PingTimeout: 5s

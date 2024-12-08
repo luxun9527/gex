@@ -21,7 +21,6 @@ type Config struct {
 	RedisConf        redis.RedisConf
 	GormConf         commongorm.GormConf
 	SymbolInfo       *define.SymbolInfo `json:",optional"`
-	SnowFlakeWorkID  int64
 	WsConf           zrpc.RpcClientConf
 	Symbol           string
 	SymbolEtcdConfig etcd.EtcdConfig

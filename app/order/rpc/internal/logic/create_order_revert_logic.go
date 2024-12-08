@@ -53,18 +53,18 @@ func (l *CreateOrderRevertLogic) CreateOrderRevert(in *pb.CreateOrderReq) (*pb.O
 	toSQL := entrustOrder.WithContext(l.ctx).UnderlyingDB().ToSQL(func(tx *gorm.DB) *gorm.DB {
 		return tx.Table(commonUtils.WithShardingSuffix(order.TableName(), in.UserId)).
 			Select(entrustOrder.Status.ColumnName().String()).
-			Clauses(entrustOrder.OrderID.Eq(in.OrderId)).
+			Where("order_id = ?", in.OrderId).
 			Updates(order)
 	})
-
+	logx.Infof("Create Order Revert:%s", toSQL)
 	if err := barrier.CallWithDB(db, func(tx *sql.Tx) error {
 		if _, err := tx.Exec(toSQL); err != nil {
 			return err
 		}
-		logx.Sloww("Create Order Revert", logx.Field("data", in))
+		logx.Slowf("Create Order Revert Sql %v", toSQL)
 		return nil
 	}); err != nil {
-		logx.Errorw("Create Order Revert exec failed", logger.ErrorField(err), logx.Field("data", in))
+		logx.Errorw("Create Order Revert exec failed sql", logx.Field("sql", toSQL), logger.ErrorField(err), logx.Field("data", in))
 		return nil, errs.Internal
 
 	}

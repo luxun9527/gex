@@ -4,7 +4,7 @@ Port: 20015
 TimeOut: 1000000
 EtcdConf:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 3
 
 LoggerConfig:
@@ -35,7 +35,7 @@ LoggerConfig:
 
 
 AdminGormConf:
-  ip: 192.168.2.159
+  ip: mysql8
   port: 3307
   dbName: admin
   username: root
@@ -43,7 +43,7 @@ AdminGormConf:
   maxIdleConns: 10
   maxOpenConns: 100
 MatchGormConf:
-  ip: 192.168.2.159
+  ip: mysql8
   port: 3307
   dbName: trade
   username: root
@@ -52,5 +52,5 @@ MatchGormConf:
   maxOpenConns: 100
 LanguageEtcdConf:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5

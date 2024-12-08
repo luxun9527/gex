@@ -1,18 +1,19 @@
 Name: order.rpc
 ListenOn: 0.0.0.0:20001
 Timeout: 1000000
+#注册给dtm分布式事务框架用的
 Etcd:
   Hosts:
-    - 192.168.2.159:2379
+    - etcd:2379
   Key: orderRpcDtm
-
+#注册给orderapi用的
 etcdRegisterConf:
   etcdConf:
-    endpoints: ["192.168.2.159:2379"]
+    endpoints: ["etcd:2379"]
   key: orderRpc
 
 RedisConf:
-  Host: 192.168.2.159:6379
+  Host: redis:6379
   Type: node
   PingTimeout: 5s
 
@@ -20,14 +21,14 @@ DtmConf:
   Etcd:
     Key: dtmservice
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
   TimeOut: 1000000
 
 AccountRpcConf:
   Etcd:
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
     Key: accountRpc
   NonBlock: true
   TimeOut: 1000000
@@ -35,7 +36,7 @@ AccountRpcConf:
 OrderRpcConf:
   Etcd:
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
     Key: orderRpcDtm
   NonBlock: true
   TimeOut: 1000000
@@ -45,14 +46,14 @@ WsConf:
   Etcd:
     Key: proxy
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
   TimeOut: 1000000
 
 PulsarConfig:
   hosts:
-    - 192.168.2.159:6650
-SnowFlakeWorkID: 1
+    - pulsar:6650
+
 LoggerConfig:
   level: debug  #日志等级 debug info warn error
   stacktrace: true #默认为true 在error级别及以上显示堆栈
@@ -80,7 +81,7 @@ LoggerConfig:
     level: warn # 指定上报级别
 
 GormConf:
-  ip: 192.168.2.159
+  ip: mysql8
   port: 3307
   dbName: trade
   username: root
@@ -92,5 +93,5 @@ Symbol: IKUN_USDT
 
 SymbolEtcdConfig:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5

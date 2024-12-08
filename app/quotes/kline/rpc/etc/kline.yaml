@@ -3,15 +3,15 @@ ListenOn: 0.0.0.0:20009
 Symbol: IKUN_USDT
 etcdRegisterConf:
   etcdConf:
-    endpoints: ["192.168.2.159:2379"]
+    endpoints: ["etcd:2379"]
   key: klineRpc
 
 SymbolEtcdConfig:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5
 GormConf:
-  ip: 192.168.2.159
+  ip: mysql8
   port: 3307
   dbName: trade
   username: root
@@ -22,10 +22,10 @@ WsConf:
   Etcd:
     Key: proxy
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
 RedisConf:
-  Host: 192.168.2.159:6379
+  Host: redis:6379
   Type: node
   PingTimeout: 5s
 LoggerConfig:
@@ -56,5 +56,5 @@ LoggerConfig:
 
 PulsarConfig:
   hosts:
-    - 192.168.2.159:6650
+    - pulsar:6650
 

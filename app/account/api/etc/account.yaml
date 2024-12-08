@@ -7,7 +7,7 @@ AccountRpcConf:
   etcd:
     Key: accountRpc
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
 LoggerConfig:
   level: debug  #日志等级 debug info warn error
@@ -36,5 +36,5 @@ LoggerConfig:
     level: warn # 指定上报级别 达到刷新间隔或最大记录数 触发发送  开发测试调小一点，生产环境调大一点
 
 LanguageEtcdConf:
-  Endpoints: ["192.168.2.159:2379"]
+  Endpoints: ["etcd:2379"]
   DialTimeout: 5

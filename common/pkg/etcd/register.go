@@ -29,7 +29,7 @@ func Register(conf EtcdRegisterConf) {
 			logx.Severef("etcd new manager err: %v", err)
 		}
 		//设置租约时间
-		resp, err := cli.Grant(context.Background(), 5)
+		resp, err := cli.Grant(context.Background(), 30)
 		if err != nil {
 			logx.Severef("etcd grant err: %v", err)
 		}

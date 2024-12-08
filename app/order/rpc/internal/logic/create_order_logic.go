@@ -104,6 +104,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.OrderEmpty, e
 		return nil, errs.CastToDtmError(errs.Internal)
 
 	}
+	//return nil, errs.CastToDtmError(errs.PulsarErr)
 	//构建消息发送
 	msg := &matchMq.MatchReq{Operate: &matchMq.MatchReq_NewOrder{
 		NewOrder: &matchMq.NewOrderOperate{

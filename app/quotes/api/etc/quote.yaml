@@ -6,13 +6,13 @@ MatchRpcConf:
   Etcd:
     Key: matchRpc
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
 KlineRpcConf:
   Etcd:
     Key: klineRpc
     Hosts:
-      - 192.168.2.159:2379
+      - etcd:2379
   NonBlock: true
 
 LoggerConfig:
@@ -42,9 +42,9 @@ LoggerConfig:
     level: warn # 指定上报级别
 LanguageEtcdConf:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5
 SymbolEtcdConfig:
   Endpoints:
-    - 192.168.2.159:2379
+    - etcd:2379
   DialTimeout: 5

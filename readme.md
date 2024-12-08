@@ -16,7 +16,9 @@
 
 ## 基本架构
 
-![](https://cdn.learnku.com/uploads/images/202403/24/51993/qySFFLK2ia.png!large)
+
+
+![img](https://cdn.nlark.com/yuque/0/2024/png/12466223/1733649642983-07a74740-d89c-4c95-90b7-a038fd4cbe95.png)
 
 ## 基本功能
 

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/dtm-labs/client/dtmgrpc"
 	accountpb "github.com/luxun9527/gex/app/account/rpc/pb"
 	"github.com/luxun9527/gex/app/order/rpc/internal/svc"
@@ -11,6 +12,7 @@ import (
 	"github.com/luxun9527/gex/common/utils"
 	logger "github.com/luxun9527/zlog"
 	"github.com/spf13/cast"
+	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -50,6 +52,17 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 	} else {
 		freezeReq.CoinId = l.svcCtx.Config.SymbolInfo.BaseCoinID
 	}
+
+	//订单Id的规则
+	//市价单MO
+	//限价单LO
+	//买1 卖 2
+	orderId := "mo"
+	if in.OrderType == enum.OrderType_LO {
+		orderId = "lo"
+	}
+	orderId = fmt.Sprintf("%v%v%v", orderId, int32(in.Side), idgen.NextId())
+
 	createOrderReq := &pb.CreateOrderReq{
 		UserId:     in.UserId,
 		SymbolId:   in.SymbolId,
@@ -59,6 +72,7 @@ func (l *OrderLogic) Order(in *pb.CreateOrderReq) (*pb.OrderEmpty, error) {
 		Side:       in.Side,
 		OrderType:  in.OrderType,
 		Amount:     in.Amount,
+		OrderId:    orderId,
 	}
 	gid, err := l.svcCtx.DtmClient.NewGid(l.ctx, &emptypb.Empty{})
 	if err != nil {
