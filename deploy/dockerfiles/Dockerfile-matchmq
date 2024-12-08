@@ -1,5 +1,5 @@
 FROM docker.1panel.live/library/busybox
 WORKDIR /app
 COPY ../../bin/matchmq /app/matchmq
-COPY ../../app/match/mq/etc/match-deploy.yaml /app/match.yaml
+COPY ../../app/match/mq/etc/match.yaml /app/match.yaml
 
